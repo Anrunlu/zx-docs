@@ -14,9 +14,9 @@ export default hopeTheme({
 
   logo: "logo1.png",
 
-  repo: "vuepress-theme-hope/vuepress-theme-hope",
-
   docsDir: "src",
+
+  editLink: false,
 
   // 导航栏
   navbar,
@@ -25,7 +25,7 @@ export default hopeTheme({
   sidebar,
 
   // 页脚
-  footer: "默认页脚",
+  footer: "知新新知",
   displayFooter: true,
 
   // 加密配置

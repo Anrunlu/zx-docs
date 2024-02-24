@@ -1,11 +1,6 @@
 ---
-title: Python程序设计
-icon: fab fa-markdown
-order: 2
-category:
-  - 教学文档
-tag:
-  - Python
+title: 序言
+icon: lightbulb
 ---
 
 ## 什么是计算机语言？

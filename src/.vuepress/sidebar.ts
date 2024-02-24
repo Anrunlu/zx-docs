@@ -22,4 +22,5 @@ export default sidebar({
       link: "https://plugin-md-enhance.vuejs.press/zh/guide/content/revealjs/demo.html",
     },
   ],
+  "/teachbook/python/": "structure",
 });
