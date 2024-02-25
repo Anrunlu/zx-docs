@@ -10,7 +10,11 @@ export default hopeTheme({
     url: "https://c605.cn",
   },
 
-  iconAssets: "fontawesome-with-brands",
+  iconAssets: [
+    "fontawesome",
+    "fontawesome-with-brands",
+    "https://at.alicdn.com/t/c/font_4443509_txk9zuhruc.css",
+  ],
 
   logo: "logo1.png",
 
@@ -30,9 +34,7 @@ export default hopeTheme({
 
   // 加密配置
   encrypt: {
-    config: {
-      "/demo/encrypt.html": ["1234"],
-    },
+    config: {},
   },
 
   // 多语言配置

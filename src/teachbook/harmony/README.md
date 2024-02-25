@@ -1,6 +1,6 @@
 ---
-title: Python 程序设计
-icon: fab fa-python
+title: 鸿蒙应用开发
+icon: iconfont icon-a-outline-harmony-one
 order: 0
 ---
 

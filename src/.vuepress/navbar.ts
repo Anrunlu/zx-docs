@@ -2,29 +2,14 @@ import { navbar } from "vuepress-theme-hope";
 
 export default navbar([
   "/",
-  // "/demo/",
-  // {
-  //   text: "指南",
-  //   icon: "lightbulb",
-  //   prefix: "/guide/",
-  //   children: [
-  //     {
-  //       text: "Bar",
-  //       icon: "lightbulb",
-  //       prefix: "bar/",
-  //       children: ["baz", { text: "...", icon: "ellipsis", link: "" }],
-  //     },
-  //     {
-  //       text: "Foo",
-  //       icon: "lightbulb",
-  //       prefix: "foo/",
-  //       children: ["ray", { text: "...", icon: "ellipsis", link: "" }],
-  //     },
-  //   ],
-  // },
   {
-    text: "Python程序设计",
+    text: "Python 程序设计",
     icon: "fab fa-python",
     link: "/teachbook/python/",
+  },
+  {
+    text: "鸿蒙应用开发",
+    icon: "iconfont icon-a-outline-harmony-one",
+    link: "/teachbook/harmony/",
   },
 ]);
