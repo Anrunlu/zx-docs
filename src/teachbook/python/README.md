@@ -1,6 +1,7 @@
 ---
 title: Python 程序设计
 icon: fab fa-python
+author: 周子力
 order: 0
 ---
 
