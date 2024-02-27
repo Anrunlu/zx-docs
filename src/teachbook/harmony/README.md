@@ -51,3 +51,4 @@ HarmonyOS 在2019年8月9日华为开发者大会上首次公开亮相
 
 HarmonyOS NEXT是华为公司自研操作系统，该系统是鸿蒙抛弃Linux内核及安卓开放源代码项目（AOSP）等代码的首个大版本，该系统仅支持鸿蒙内核和鸿蒙系统的应用，不再兼容安卓应用
 
+[鸿蒙应用开发网站](https://developer.huawei.com/consumer/cn/doc/harmonyos-guides-V2/1_1_u5feb_u901f_u5165_u95e8-0000001478340845-V2?catalogVersion=V2)
