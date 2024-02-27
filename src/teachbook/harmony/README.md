@@ -10,6 +10,9 @@ order: 0
 
 ## 鸿蒙系统（HarmonyOS）简介
 
+[鸿蒙宣传片](https://www.bilibili.com/video/BV1254y137WA?t=35.4)
+
+[问届代客泊车](https://www.bilibili.com/video/BV1TN4y1h77R?t=20.6)
 
 HarmonyOS是一款面向万物互联时代的、全新的分布式操作系统。
 
@@ -36,9 +39,12 @@ HarmonyOS 在2019年8月9日华为开发者大会上首次公开亮相
 
 2024年1月18日，HarmonyOS NEXT星河版正式面向开发者开放申请
 
-![picture 2](https://oss.docs.z-xin.net/9dab64d99710474272da3badad6c8b11ff2d3cb8d41b39aac18b55a00a28ae2e.png)  
+2024年秋 鸿蒙下一个大版本将会更新，鸿蒙原生应用（数量）上来后，华为手机体验将会大幅度提升，比如： 刚发布的Pocket2等到下一个大版本更新体验后，预计性能可能有甚至30%的提升。
 
-![picture 5](https://oss.docs.z-xin.net/06d26020dc77915940c04c0392999736a14159ed9bad8fd386af8e81e61714ec.png)  
+![picture 7](https://oss.docs.z-xin.net/fc9507b4a6f2627a8a87fc982b2be0a01c7253ae2d82d9fe206dacb7d4e22db7.png)  
+
+![picture 6](https://oss.docs.z-xin.net/fa5c8545512c69ff56ea8b5b1370835e54839a2f2082d134169de04c528f6b49.png)  
+
 
 
 
