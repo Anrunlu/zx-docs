@@ -1,6 +1,6 @@
 ---
-title: Python字符串
-icon: fas fa-list
+title: Python 字符串
+icon: fas fa-font
 author: 周子力
 order: 8
 category:
@@ -8,7 +8,8 @@ category:
 tag:
   - Python
 ---
-# Python字符串
+
+# Python 字符串
 
 ## 1.什么字符串
 
@@ -16,28 +17,26 @@ tag:
 
 ## 2.语法及基本操作
 
-Python语言，如何知道是不是字符串呢？只要它看到是用引号封装起来的。那么就认为是字符串。
+Python 语言，如何知道是不是字符串呢？只要它看到是用引号封装起来的。那么就认为是字符串。
 
 ### 2.2 创建字符串并赋值给变量
 
 - 一对引号字符串
 
-``` python
+```python
 name1 = 'Tom'
 name2 = "Rose"
 ```
 
-
-
 - 三引号字符串
 
-``` python
+```python
 name3 = ''' 张三 '''
 name4 = """ student """
-a = ''' i am 张三, 
+a = ''' i am 张三,
         nice to meet you! '''
 
-b = """ i am Rose, 
+b = """ i am Rose,
         nice to meet you! """
 ```
 
@@ -45,14 +44,14 @@ b = """ i am Rose,
 
 > 思考：如果创建一个字符串` I'm Tom`?
 
-``` python
+```python
 c = "I'm Tom"
 d = 'I\'m Tom'
 ```
 
 - 通过键盘输入创建
 
-``` python
+```python
 name = input('请输入您的名字：')
 print(f'您输入的名字是{name}')
 print(type(name))
@@ -61,8 +60,6 @@ password = input('请输入您的密码：')
 print(f'您输入的密码是{password}')
 print(type(password))
 ```
-
-
 
 ### 2.3 查询字符串
 
@@ -75,7 +72,7 @@ print(name[1]) #通过变量的方式，用到了下标
 
 ### 2.4 查询字符串进阶-切片
 
-``` python
+```python
 name = "abcdefg"
 
 print(name[2:5:1])  # cde
@@ -89,8 +86,6 @@ print(name[-4:-1])  # def
 print(name[::-1])  # gfedcba
 ```
 
-
-
 ## 3.字符串高阶操作
 
 字符串的常用高阶操作方法有查找、修改和判断三大类。
@@ -103,7 +98,7 @@ print(name[::-1])  # gfedcba
 
 1. 语法
 
-``` python
+```python
 字符串序列.find(子串, 开始位置下标, 结束位置下标)
 ```
 
@@ -111,7 +106,7 @@ print(name[::-1])  # gfedcba
 
 2. 快速体验
 
-``` python
+```python
 mystr = "hello world and itcast and itheima and Python"
 
 print(mystr.find('and'))  # 12
@@ -123,7 +118,7 @@ print(mystr.find('ands'))  # -1
 
 1. 语法
 
-``` python
+```python
 字符串序列.index(子串, 开始位置下标, 结束位置下标)
 ```
 
@@ -131,7 +126,7 @@ print(mystr.find('ands'))  # -1
 
 2. 快速体验
 
-``` python
+```python
 mystr = "hello world and itcast and itheima and Python"
 
 print(mystr.index('and'))  # 12
@@ -139,13 +134,13 @@ print(mystr.index('and', 15, 30))  # 23
 print(mystr.index('ands'))  # 报错
 ```
 
-- rfind()： 和find()功能相同，但查找方向为==右侧==开始。
-- rindex()：和index()功能相同，但查找方向为==右侧==开始。
+- rfind()： 和 find()功能相同，但查找方向为==右侧==开始。
+- rindex()：和 index()功能相同，但查找方向为==右侧==开始。
 - count()：返回某个子串在字符串中出现的次数
 
 1. 语法
 
-``` python
+```python
 字符串序列.count(子串, 开始位置下标, 结束位置下标)
 ```
 
@@ -153,7 +148,7 @@ print(mystr.index('ands'))  # 报错
 
 2. 快速体验
 
-``` python
+```python
 mystr = "hello world and itcast and itheima and Python"
 
 print(mystr.count('and'))  # 3
@@ -169,7 +164,7 @@ print(mystr.count('and', 0, 20))  # 1
 
 1. 语法
 
-``` python
+```python
 字符串序列.replace(旧子串, 新子串, 替换次数)
 ```
 
@@ -177,7 +172,7 @@ print(mystr.count('and', 0, 20))  # 1
 
 2. 快速体验
 
-``` python
+```python
 mystr = "hello world and itcast and itheima and Python"
 
 # 结果：hello world he itcast he itheima he Python
@@ -190,21 +185,19 @@ print(mystr)
 
 > 注意：数据按照是否能直接修改分为==可变类型==和==不可变类型==两种。字符串类型的数据修改的时候不能改变原有字符串，属于不能直接修改数据的类型即是不可变类型。
 
-
-
 - split()：按照指定字符分割字符串。
 
 1. 语法
 
-``` python
+```python
 字符串序列.split(分割字符, num)
 ```
 
-> 注意：num表示的是分割字符出现的次数，即将来返回数据个数为num+1个。
+> 注意：num 表示的是分割字符出现的次数，即将来返回数据个数为 num+1 个。
 
 2. 快速体验
 
-``` python
+```python
 mystr = "hello world and itcast and itheima and Python"
 
 # 结果：['hello world ', ' itcast ', ' itheima ', ' Python']
@@ -223,13 +216,13 @@ print(mystr.split(' ', 2))
 
 1. 语法
 
-``` python
+```python
 字符或子串.join(多字符串组成的序列)
 ```
 
 2. 快速体验
 
-``` python
+```python
 list1 = ['chuan', 'zhi', 'bo', 'ke']
 t1 = ('aa', 'b', 'cc', 'ddd')
 # 结果：chuan_zhi_bo_ke
@@ -238,11 +231,9 @@ print('_'.join(list1))
 print('...'.join(t1))
 ```
 
-
-
 - capitalize()：将字符串第一个字符转换成大写。
 
-``` python
+```python
 mystr = "hello world and itcast and itheima and Python"
 
 # 结果：Hello world and itcast and itheima and python
@@ -251,40 +242,32 @@ print(mystr.capitalize())
 
 > 注意：capitalize()函数转换后，只字符串第一个字符大写，其他的字符全都小写。
 
-
-
 - title()：将字符串每个单词首字母转换成大写。
 
-``` python
+```python
 mystr = "hello world and itcast and itheima and Python"
 
 # 结果：Hello World And Itcast And Itheima And Python
 print(mystr.title())
 ```
 
-
-
 - lower()：将字符串中大写转小写。
 
-``` python
+```python
 mystr = "hello world and itcast and itheima and Python"
 
 # 结果：hello world and itcast and itheima and python
 print(mystr.lower())
 ```
 
-
-
 - upper()：将字符串中小写转大写。
 
-``` python
+```python
 mystr = "hello world and itcast and itheima and Python"
 
 # 结果：HELLO WORLD AND ITCAST AND ITHEIMA AND PYTHON
 print(mystr.upper())
 ```
-
-
 
 - lstrip()：删除字符串左侧空白字符。
 
@@ -300,8 +283,6 @@ mystr = "   abcdefghijklmn"
 mystr.rstrip()
 ```
 
-
-
 - strip()：删除字符串两侧空白字符。
 
 ```python
@@ -309,13 +290,11 @@ mystr = "   abcdefghijklmn"
 mystr.strip()
 ```
 
-
-
 - ljust()：返回一个原字符串左对齐,并使用指定字符(默认空格)填充至对应长度 的新字符串。
 
 1. 语法
 
-``` python
+```python
 字符串序列.ljust(长度, 填充字符)
 ```
 
@@ -326,18 +305,14 @@ mystr = 'test'
 mystr.ljust(8,'.')
 ```
 
-
-
-- rjust()：返回一个原字符串右对齐,并使用指定字符(默认空格)填充至对应长度 的新字符串，语法和ljust()相同。
+- rjust()：返回一个原字符串右对齐,并使用指定字符(默认空格)填充至对应长度 的新字符串，语法和 ljust()相同。
 
 ```python
 mystr = 'test'
 mystr.rjust(8,'.')
 ```
 
-
-
-- center()：返回一个原字符串居中对齐,并使用指定字符(默认空格)填充至对应长度 的新字符串，语法和ljust()相同。
+- center()：返回一个原字符串居中对齐,并使用指定字符(默认空格)填充至对应长度 的新字符串，语法和 ljust()相同。
 
 ```python
 mystr = 'test'
@@ -352,13 +327,13 @@ mystr.center(8,'.')
 
 1. 语法
 
-``` python
+```python
 字符串序列.startswith(子串, 开始位置下标, 结束位置下标)
 ```
 
 2. 快速体验
 
-``` python
+```python
 mystr = "hello world and itcast and itheima and Python   "
 
 # 结果：True
@@ -368,19 +343,17 @@ print(mystr.startswith('hello'))
 print(mystr.startswith('hello', 5, 20))
 ```
 
-
-
 - endswith()：：检查字符串是否是以指定子串结尾，是则返回 True，否则返回 False。如果设置开始和结束位置下标，则在指定范围内检查。
 
 1. 语法
 
-``` python
+```python
 字符串序列.endswith(子串, 开始位置下标, 结束位置下标)
 ```
 
 2. 快速体验
 
-``` python
+```python
 mystr = "hello world and itcast and itheima and Python"
 
 # 结果：True
@@ -393,11 +366,9 @@ print(mystr.endswith('python'))
 print(mystr.endswith('Python', 2, 20))
 ```
 
-
-
 - isalpha()：如果字符串至少有一个字符并且所有字符都是字母则返回 True, 否则返回 False。
 
-``` python
+```python
 mystr1 = 'hello'
 mystr2 = 'hello12345'
 
@@ -408,11 +379,9 @@ print(mystr1.isalpha())
 print(mystr2.isalpha())
 ```
 
-
-
 - isdigit()：如果字符串只包含数字则返回 True 否则返回 False。
 
-``` python
+```python
 mystr1 = 'aaa12345'
 mystr2 = '12345'
 
@@ -423,11 +392,9 @@ print(mystr1.isdigit())
 print(mystr2.isdigit())
 ```
 
-
-
 - isalnum()：如果字符串至少有一个字符并且所有字符都是字母或数字则返 回 True,否则返回 False。
 
-``` python
+```python
 mystr1 = 'aaa12345'
 mystr2 = '12345-'
 
@@ -438,11 +405,9 @@ print(mystr1.isalnum())
 print(mystr2.isalnum())
 ```
 
-
-
 - isspace()：如果字符串中只包含空白，则返回 True，否则返回 False。
 
-``` python
+```python
 mystr1 = '1 2 3 4 5'
 mystr2 = '     '
 
@@ -453,21 +418,16 @@ print(mystr1.isspace())
 print(mystr2.isspace())
 ```
 
-
-
 # 五. 总结
 
 - 下标
-  - 计算机为数据序列中每个元素分配的从0开始的编号
+  - 计算机为数据序列中每个元素分配的从 0 开始的编号
 - 切片
 
-``` python
+```python
 序列名[开始位置下标:结束位置下标:步长]
 ```
 
 - 常用操作方法
   - find()
   - index()
-
-
-

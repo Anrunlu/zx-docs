@@ -1,5 +1,5 @@
 ---
-title: Python集合
+title: Python 集合
 icon: fas fa-list
 author: 周子力
 order: 11
@@ -8,7 +8,8 @@ category:
 tag:
   - Python
 ---
-# Python集合
+
+# Python 集合
 
 ## 1.什么是集合？
 
@@ -28,7 +29,7 @@ tag:
 
 创建集合使用`{}`或`set()`， 但是如果要创建空集合只能使用`set()`，因为`{}`用来创建空字典。
 
-``` python
+```python
 s1 = {10, 20, 30, 40, 50}
 print(s1)
 
@@ -54,7 +55,7 @@ print(type(s5))  # dict
 
 - add()
 
-``` python
+```python
 s1 = {10, 20}
 s1.add(100)
 s1.add(10)
@@ -65,7 +66,7 @@ print(s1)  # {100, 10, 20}
 
 - update(), 追加的数据是序列。
 
-``` python
+```python
 s1 = {10, 20}
 # s1.update(100)  # 报错
 s1.update([100, 200])
@@ -77,7 +78,7 @@ print(s1)
 
 - remove()，删除集合中的指定数据，如果数据不存在则报错。
 
-``` python
+```python
 s1 = {10, 20}
 
 s1.remove(10)
@@ -87,11 +88,9 @@ s1.remove(10)  # 报错
 print(s1)
 ```
 
-
-
 - discard()，删除集合中的指定数据，如果数据不存在也不会报错。
 
-``` python
+```python
 s1 = {10, 20}
 
 s1.discard(10)
@@ -101,11 +100,9 @@ s1.discard(10)
 print(s1)
 ```
 
-
-
 - pop()，随机删除集合中的某个数据，并返回这个数据。
 
-``` python
+```python
 s1 = {10, 20, 30, 40, 50}
 
 del_num = s1.pop()
@@ -118,7 +115,7 @@ print(s1)
 - in：判断数据在集合序列
 - not in：判断数据不在集合序列
 
-``` python
+```python
 s1 = {10, 20, 30, 40, 50}
 
 print(10 in s1)
@@ -131,13 +128,13 @@ print(10 not in s1)
 
   - 有数据集合
 
-  ``` python
+  ```python
   s1 = {数据1, 数据2, ...}
   ```
 
   - 无数据集合
 
-  ``` python
+  ```python
   s1 = set()
   ```
 
@@ -149,10 +146,3 @@ print(10 not in s1)
   - 删除数据
     - remove()
     - discard()
-
-
-
-
-
-
-

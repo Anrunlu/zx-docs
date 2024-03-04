@@ -1,6 +1,6 @@
 ---
-title: Python公共操作
-icon: fas fa-list
+title: Python 公共操作
+icon: fas fa-wrench
 author: 周子力
 order: 10
 category:
@@ -9,7 +9,7 @@ tag:
   - Python
 ---
 
-# Python公共操作（与数据结构相关）
+# Python 公共操作（与数据结构相关）
 
 ## 1.什么是公共操作？
 
@@ -24,36 +24,36 @@ tag:
 | 运算符 |      描述      |      支持的容器类型      |
 | :----: | :------------: | :----------------------: |
 |   +    |      合并      |    字符串、列表、元组    |
-|   *    |      复制      |    字符串、列表、元组    |
+|   \*   |      复制      |    字符串、列表、元组    |
 |   in   |  元素是否存在  | 字符串、列表、元组、字典 |
 | not in | 元素是否不存在 | 字符串、列表、元组、字典 |
 
-### 2.1   +
+### 2.1 +
 
-``` python
-# 1. 字符串 
+```python
+# 1. 字符串
 str1 = 'aa'
 str2 = 'bb'
 str3 = str1 + str2
 print(str3)  # aabb
 
 
-# 2. 列表 
+# 2. 列表
 list1 = [1, 2]
 list2 = [10, 20]
 list3 = list1 + list2
 print(list3)  # [1, 2, 10, 20]
 
-# 3. 元组 
+# 3. 元组
 t1 = (1, 2)
 t2 = (10, 20)
 t3 = t1 + t2
 print(t3)  # (10, 20, 100, 200)
 ```
 
-### 2.2   *
+### 2.2 \*
 
-``` python
+```python
 # 1. 字符串
 print('-' * 10)  # ----------
 
@@ -66,9 +66,9 @@ t1 = ('world',)
 print(t1 * 4)  # ('world', 'world', 'world', 'world')
 ```
 
-### 2.3  in或not in
+### 2.3 in 或 not in
 
-``` python
+```python
 # 1. 字符串
 print('a' in 'abcd')  # True
 print('a' not in 'abcd')  # False
@@ -84,22 +84,20 @@ print('aa' in t1)  # False
 print('aa' not in t1)  # True
 ```
 
-
-
 ## 3. 公共方法
 
-| 函数                    | 描述                                                         |
-| ----------------------- | ------------------------------------------------------------ |
-| len()                   | 计算容器中元素个数                                           |
-| del 或 del()            | 删除                                                         |
-| max()                   | 返回容器中元素最大值                                         |
-| min()                   | 返回容器中元素最小值                                         |
-| range(start, end, step) | 生成从start到end的数字，步长为 step，供for循环使用           |
+| 函数                    | 描述                                                                                                                    |
+| ----------------------- | ----------------------------------------------------------------------------------------------------------------------- |
+| len()                   | 计算容器中元素个数                                                                                                      |
+| del 或 del()            | 删除                                                                                                                    |
+| max()                   | 返回容器中元素最大值                                                                                                    |
+| min()                   | 返回容器中元素最小值                                                                                                    |
+| range(start, end, step) | 生成从 start 到 end 的数字，步长为 step，供 for 循环使用                                                                |
 | enumerate()             | 函数用于将一个可遍历的数据对象(如列表、元组或字符串)组合为一个索引序列，同时列出数据和数据下标，一般用在 for 循环当中。 |
 
 ### 3.1 len()
 
-``` python
+```python
 # 1. 字符串
 str1 = 'abcdefg'
 print(len(str1))  # 7
@@ -123,7 +121,7 @@ print(len(dict1))  # 2
 
 ### 3.2 del()
 
-``` python
+```python
 # 1. 字符串
 str1 = 'abcdefg'
 del str1
@@ -137,7 +135,7 @@ print(list1)  # [20, 30, 40]
 
 ### 3.3 max()
 
-``` python
+```python
 # 1. 字符串
 str1 = 'abcdefg'
 print(max(str1))  # g
@@ -149,7 +147,7 @@ print(max(list1))  # 40
 
 ### 3.4 min()
 
-``` python
+```python
 # 1. 字符串
 str1 = 'abcdefg'
 print(min(str1))  # a
@@ -161,7 +159,7 @@ print(min(list1))  # 10
 
 ### 3.5 range()
 
-``` python
+```python
 # 1 2 3 4 5 6 7 8 9
 for i in range(1, 10, 1):
     print(i)
@@ -175,21 +173,21 @@ for i in range(10):
     print(i)
 ```
 
-> 注意：range()生成的序列不包含end数字。
+> 注意：range()生成的序列不包含 end 数字。
 
 ### 3.6 enumerate()
 
 - 语法
 
-``` python
+```python
 enumerate(可遍历对象, start=0)
 ```
 
-> 注意：start参数用来设置遍历数据的下标的起始值，默认为0。
+> 注意：start 参数用来设置遍历数据的下标的起始值，默认为 0。
 
 - 快速体验
 
-``` python
+```python
 list1 = ['a', 'b', 'c', 'd', 'e']
 
 for i in enumerate(list1):
@@ -199,14 +197,13 @@ for index, char in enumerate(list1, start=1):
     print(f'下标是{index}, 对应的字符是{char}')
 ```
 
-
 ## 4. 容器类型转换
 
 ### 4.1 tuple()
 
 作用：将某个序列转换成元组
 
-``` python
+```python
 list1 = [10, 20, 30, 40, 50, 20]
 s1 = {100, 200, 300, 400, 500}
 
@@ -214,13 +211,11 @@ print(tuple(list1))
 print(tuple(s1))
 ```
 
-
-
 ### 4.2 list()
 
 作用：将某个序列转换成列表
 
-``` python
+```python
 t1 = ('a', 'b', 'c', 'd', 'e')
 s1 = {100, 200, 300, 400, 500}
 
@@ -228,13 +223,11 @@ print(list(t1))
 print(list(s1))
 ```
 
-
-
 ### 4.3 set()
 
 作用：将某个序列转换成集合
 
-``` python
+```python
 list1 = [10, 20, 30, 40, 50, 20]
 t1 = ('a', 'b', 'c', 'd', 'e')
 
@@ -244,15 +237,13 @@ print(set(t1))
 
 > 注意：
 
- 	1. 集合可以快速完成列表去重
- 	2. 集合不支持下标
+1. 集合可以快速完成列表去重
+2. 集合不支持下标
 
-
-
-##  总结
+## 总结
 
 - 运算符
-  - +
+  - -
   - in / not in
 - 公共方法
   - len()
@@ -263,4 +254,3 @@ print(set(t1))
   - tuple()
   - list()
   - set()
-

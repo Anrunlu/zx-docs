@@ -1,5 +1,5 @@
 ---
-title: Python列表
+title: Python 列表
 icon: fas fa-list
 author: 周子力
 order: 15
@@ -8,7 +8,8 @@ category:
 tag:
   - Python
 ---
-# Python列表
+
+# Python 列表
 
 ## 1. 什么是列表？
 
@@ -16,7 +17,7 @@ tag:
 
 ## 2. 列表语法
 
-``` python
+```python
 [数据1, 数据2, 数据3, 数据4......]
 ```
 
@@ -30,7 +31,7 @@ tag:
 
 #### 3.1.1 下标查找
 
-``` python
+```python
 #通过下标的方式
 name_list = ['Tom', 'Lily', 'Rose']
 
@@ -45,13 +46,13 @@ print(name_list[2])  # Rose
 
 1. 语法
 
-``` python
+```python
 列表序列.index(数据, 开始位置下标, 结束位置下标)
 ```
 
 2. 快速体验
 
-``` python
+```python
 name_list = ['Tom', 'Lily', 'Rose']
 
 print(name_list.index('Lily', 0, 2))  # 1
@@ -61,7 +62,7 @@ print(name_list.index('Lily', 0, 2))  # 1
 
 - count()：统计指定数据在当前列表中出现的次数。
 
-``` python
+```python
 name_list = ['Tom', 'Lily', 'Rose']
 
 print(name_list.count('Lily'))  # 1
@@ -69,7 +70,7 @@ print(name_list.count('Lily'))  # 1
 
 - len()：访问列表长度，即列表中数据的个数。
 
-``` python
+```python
 name_list = ['Tom', 'Lily', 'Rose']
 
 print(len(name_list))  # 3
@@ -77,9 +78,9 @@ print(len(name_list))  # 3
 
 ### 3.2 判断是否存在
 
-- in：判断指定数据在某个列表序列，如果在返回True，否则返回False
+- in：判断指定数据在某个列表序列，如果在返回 True，否则返回 False
 
-``` python
+```python
 name_list = ['Tom', 'Lily', 'Rose']
 
 # 结果：True
@@ -89,11 +90,9 @@ print('Lily' in name_list)
 print('Lilys' in name_list)
 ```
 
+- not in：判断指定数据不在某个列表序列，如果不在返回 True，否则返回 False
 
-
-- not in：判断指定数据不在某个列表序列，如果不在返回True，否则返回False
-
-``` python
+```python
 name_list = ['Tom', 'Lily', 'Rose']
 
 # 结果：False
@@ -107,7 +106,7 @@ print('Lilys' not in name_list)
 
 需求：查找用户输入的名字是否已经存在。
 
-``` python
+```python
 name_list = ['Tom', 'Lily', 'Rose']
 
 name = input('请输入您要搜索的名字：')
@@ -126,13 +125,13 @@ else:
 
 1. 语法
 
-``` python
+```python
 列表序列.append(数据)
 ```
 
 2. 体验
 
-``` python
+```python
 name_list = ['Tom', 'Lily', 'Rose']
 
 name_list.append('xiaoming')
@@ -145,9 +144,9 @@ print(name_list)
 
 3. 注意点
 
-如果append()追加的数据是一个序列，则追加整个序列到列表
+如果 append()追加的数据是一个序列，则追加整个序列到列表
 
-``` python
+```python
 name_list = ['Tom', 'Lily', 'Rose']
 
 name_list.append(['xiaoming', 'xiaohong'])
@@ -155,8 +154,6 @@ name_list.append(['xiaoming', 'xiaohong'])
 # 结果：['Tom', 'Lily', 'Rose', ['xiaoming', 'xiaohong']]
 print(name_list)
 ```
-
-
 
 - extend()：列表结尾追加数据，如果数据是一个序列，则将这个序列的数据逐一添加到列表。
 
@@ -179,7 +176,7 @@ name_list.extend('xiaoming')
 print(name_list)
 ```
 
-​	2.2 序列数据
+​ 2.2 序列数据
 
 ```python
 name_list = ['Tom', 'Lily', 'Rose']
@@ -190,19 +187,17 @@ name_list.extend(['xiaoming', 'xiaohong'])
 print(name_list)
 ```
 
-
-
 - insert()：指定位置新增数据。
 
 1. 语法
 
-``` python
+```python
 列表序列.insert(位置下标, 数据)
 ```
 
 2. 快速体验
 
-``` python
+```python
 name_list = ['Tom', 'Lily', 'Rose']
 
 name_list.insert(1, 'xiaoming')
@@ -217,7 +212,7 @@ print(name_list)
 
 1. 语法
 
-``` python
+```python
 del 目标
 ```
 
@@ -225,7 +220,7 @@ del 目标
 
    2.1 删除列表
 
-``` python
+```python
 name_list = ['Tom', 'Lily', 'Rose']
 
 # 结果：报错提示：name 'name_list' is not defined
@@ -233,9 +228,9 @@ del name_list
 print(name_list)
 ```
 
-​	2.2 删除指定数据
+​ 2.2 删除指定数据
 
-``` python
+```python
 name_list = ['Tom', 'Lily', 'Rose']
 
 del name_list[0]
@@ -244,19 +239,17 @@ del name_list[0]
 print(name_list)
 ```
 
-
-
 - pop()：删除指定下标的数据(默认为最后一个)，并返回该数据。
 
 1. 语法
 
-``` python
+```python
 列表序列.pop(下标)
 ```
 
 2. 快速体验
 
-``` python
+```python
 name_list = ['Tom', 'Lily', 'Rose']
 
 del_name = name_list.pop(1)
@@ -268,19 +261,17 @@ print(del_name)
 print(name_list)
 ```
 
-
-
 - remove()：移除列表中某个数据的第一个匹配项。
 
 1. 语法
 
-``` python
+```python
 列表序列.remove(数据)
 ```
 
 2. 快速体验
 
-``` python
+```python
 name_list = ['Tom', 'Lily', 'Rose']
 
 name_list.remove('Rose')
@@ -289,11 +280,9 @@ name_list.remove('Rose')
 print(name_list)
 ```
 
-
-
 - clear()：清空列表
 
-``` python
+```python
 name_list = ['Tom', 'Lily', 'Rose']
 
 name_list.clear()
@@ -304,7 +293,7 @@ print(name_list) # 结果： []
 
 - 修改指定下标数据
 
-``` python
+```python
 name_list = ['Tom', 'Lily', 'Rose']
 
 name_list[0] = 'aaa'
@@ -313,11 +302,9 @@ name_list[0] = 'aaa'
 print(name_list)
 ```
 
-
-
 - 逆置：reverse()
 
-``` python
+```python
 num_list = [1, 5, 2, 3, 6, 8]
 
 num_list.reverse()
@@ -326,21 +313,19 @@ num_list.reverse()
 print(num_list)
 ```
 
-
-
 - 排序：sort()
 
 1. 语法
 
-``` python
+```python
 列表序列.sort( key=None, reverse=False)
 ```
 
-> 注意：reverse表示排序规则，**reverse = True** 降序， **reverse = False** 升序（默认）
+> 注意：reverse 表示排序规则，**reverse = True** 降序， **reverse = False** 升序（默认）
 
 2. 快速体验
 
-``` python
+```python
 num_list = [1, 5, 2, 3, 6, 8]
 
 num_list.sort()
@@ -353,7 +338,7 @@ print(num_list)
 
 函数：copy()
 
-``` python
+```python
 name_list = ['Tom', 'Lily', 'Rose']
 
 name_li2 = name_list.copy()
@@ -370,7 +355,7 @@ print(name_li2)
 
 - 代码
 
-``` python
+```python
 name_list = ['Tom', 'Lily', 'Rose']
 
 i = 0
@@ -383,7 +368,7 @@ while i < len(name_list):
 
 - 代码
 
-``` python
+```python
 name_list = ['Tom', 'Lily', 'Rose']
 
 for i in name_list:
@@ -396,13 +381,13 @@ for i in name_list:
 
 应用场景：要存储班级一、二、三三个班级学生姓名，且每个班级的学生姓名在一个列表。
 
-``` python
+```python
 name_list = [['小明', '小红', '小绿'], ['Tom', 'Lily', 'Rose'], ['张三', '李四', '王五']]
 ```
 
 > 思考： 如何查找到数据"李四"？
 
-``` python
+```python
 # 第一步：按下标查找到李四所在的列表
 print(name_list[2])
 
@@ -412,13 +397,13 @@ print(name_list[2][1])
 
 ## 6. 综合应用 -- 随机分配办公室
 
-需求：有三个办公室，8位老师，8位老师随机分配到3个办公室
+需求：有三个办公室，8 位老师，8 位老师随机分配到 3 个办公室
 
 ## 总结
 
 - 列表的格式
 
-``` python
+```python
 [数据1, 数据2, 数据3]
 ```
 
@@ -430,10 +415,7 @@ print(name_list[2][1])
   - remove()
 - 列表嵌套
 
-``` python
+```python
 name_list = [['小明', '小红', '小绿'], ['Tom', 'Lily', 'Rose'], ['张三', '李四', '王五']]
 name_list[2][1]
 ```
-
-
-

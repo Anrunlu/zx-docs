@@ -1,5 +1,5 @@
 ---
-title: Python函数一
+title: Python 函数一
 icon: fas fa-list
 author: 周子力
 order: 16
@@ -8,7 +8,8 @@ category:
 tag:
   - Python
 ---
-# Python函数一
+
+# Python 函数一
 
 ## 1.什么是函数？
 
@@ -16,11 +17,11 @@ tag:
 
 ## 2.函数的创建与应用
 
-### 2.1函数定义
+### 2.1 函数定义
 
 - 语法
 
-``` python
+```python
 def 函数名(参数):
     代码1
     代码2
@@ -59,7 +60,7 @@ select_func()
 
 如果把函数看作是一个车间（进原料，出产品），那么函数参数就相当于原料。
 
-``` python
+```python
 # 定义函数时同时定义了接收用户数据的参数a和b，a和b是形参
 def add_num2(a, b):
     result = a + b
@@ -87,7 +88,7 @@ print(goods)
 
 需求：制作一个计算器，计算任意两数字之和，并保存结果。
 
-``` python
+```python
 def sum_num(a, b):
     return a + b
 
@@ -113,7 +114,7 @@ print(result)
 
 - 定义函数的说明文档
 
-``` python
+```python
 def 函数名(参数):
     """ 说明文档的位置 """
     代码
@@ -122,13 +123,13 @@ def 函数名(参数):
 
 - 查看函数的说明文档
 
-``` python
+```python
 help(函数名)
 ```
 
 ### 4.2 快速体验
 
-``` python
+```python
 def sum_num(a, b):
     """ 求和函数 """
     return a + b
@@ -143,7 +144,7 @@ help(sum_num)
 
 - 示例
 
-``` python
+```python
 def testB():
     print('---- testB start----')
     print('这里是testB函数执行的代码...(省略)...')
@@ -159,10 +160,9 @@ testA()
 
 - 执行流程
 
-![picture 0](https://oss.docs.z-xin.net/f11c677cebc4bff3b590dd5028c11a0d5d9dc71aced22a6976d7e3a41be242a6.png)  
+![picture 0](https://oss.docs.z-xin.net/f11c677cebc4bff3b590dd5028c11a0d5d9dc71aced22a6976d7e3a41be242a6.png)
 
-
-> - 如果函数A中，调用了另外一个函数B，那么先把函数B中的任务都执行完毕之后才会回到上次 函数A执行的位置。
+> - 如果函数 A 中，调用了另外一个函数 B，那么先把函数 B 中的任务都执行完毕之后才会回到上次 函数 A 执行的位置。
 
 ## 6. 函数应用
 
@@ -170,7 +170,7 @@ testA()
 
 1. 打印一条横线
 
-``` python
+```python
 def print_line():
     print('-' * 20)
 
@@ -180,7 +180,7 @@ print_line()
 
 2. 打印多条横线
 
-``` python 
+```python
 def print_line():
     print('-' * 20)
 
@@ -199,7 +199,7 @@ print_lines(5)
 
 1. 求三个数之和
 
-``` python
+```python
 def sum_num(a, b, c):
     return a + b + c
 
@@ -208,11 +208,9 @@ result = sum_num(1, 2, 3)
 print(result)  # 6
 ```
 
-
-
 2. 求三个数平均值
 
-``` python
+```python
 def average_num(a, b, c):
     sumResult = sum_num(a, b, c)
     return sumResult / 3
@@ -229,7 +227,7 @@ print(result)  # 2.0
 
   - 定义函数
 
-  ``` python
+  ```python
   def 函数名():
       代码1
       代码2
@@ -238,7 +236,7 @@ print(result)  # 2.0
 
   - 调用函数
 
-  ``` python
+  ```python
   函数名()
   ```
 
@@ -252,7 +250,7 @@ print(result)  # 2.0
   - 作用：函数调用后，返回需要的计算结果
   - 写法
 
-  ``` python
+  ```python
   return 表达式
   ```
 
@@ -261,10 +259,9 @@ print(result)  # 2.0
   - 作用：保存函数解释说明的信息
   - 写法
 
-  ``` python
+  ```python
   def 函数名():
       """ 函数说明文档 """
   ```
 
 - 函数嵌套调用：一个函数内部嵌套调用另外一个函数
-
