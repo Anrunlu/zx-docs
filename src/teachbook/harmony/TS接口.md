@@ -1,17 +1,16 @@
 ---
-
-title: TS接口  
-icon: iconfont icon-a-outline-harmony-one  
-author: 周子力  
-order: 13  
+title: TS 接口
+icon: iconfont icon-a-outline-harmony-one
+author: 周子力
+order: 13
 category:
-    -   教学文档  
+  - 教学文档
 tag:
-    -   HarmonyOS
-    -   TypeScript
-
+  - HarmonyOS
+  - TypeScript
 ---
-# TS接口
+
+# TS 接口
 
 ## 1.什么是接口？
 
@@ -19,32 +18,32 @@ tag:
 
 ```ts
 interface Person {
-    name: string;
-    age: number;
+  name: string;
+  age: number;
 }
 
 let tom: Person = {
-    name: 'Tom',
-    age: 25
+  name: "Tom",
+  age: 25,
 };
 ```
 
 上面的例子中，我们定义了一个接口 `Person`，接着定义了一个变量 `tom`，它的类型是 `Person`。这样，我们就约束了 `tom` 的形状必须和接口 `Person` 一致。
 
-接口一般首字母大写。建议在接口名称上加上大写的 I  ，如IPerson。
+接口一般首字母大写。建议在接口名称上加上大写的 I ，如 IPerson。
 
 ## 2.注意事项
 
-### 2.1定义的变量比接口少了一些属性是不允许的
+### 2.1 定义的变量比接口少了一些属性是不允许的
 
 ```ts
 interface Person {
-    name: string;
-    age: number;
+  name: string;
+  age: number;
 }
 
 let tom: Person = {
-    name: 'Tom'
+  name: "Tom",
 };
 
 // index.ts(6,5): error TS2322: Type '{ name: string; }' is not assignable to type 'Person'.
@@ -55,14 +54,14 @@ let tom: Person = {
 
 ```ts
 interface Person {
-    name: string;
-    age: number;
+  name: string;
+  age: number;
 }
 
 let tom: Person = {
-    name: 'Tom',
-    age: 25,
-    gender: 'male'
+  name: "Tom",
+  age: 25,
+  gender: "male",
 };
 
 // index.ts(9,5): error TS2322: Type '{ name: string; age: number; gender: string; }' is not assignable to type 'Person'.
@@ -77,21 +76,21 @@ let tom: Person = {
 
 ```ts
 interface Person {
-    name: string;
-    age?: number;
+  name: string;
+  age?: number;
 }
 
 let tom: Person = {
-    name: 'Tom'
+  name: "Tom",
 };
 interface Person {
-    name: string;
-    age?: number;
+  name: string;
+  age?: number;
 }
 
 let tom: Person = {
-    name: 'Tom',
-    age: 25
+  name: "Tom",
+  age: 25,
 };
 ```
 
@@ -101,14 +100,14 @@ let tom: Person = {
 
 ```ts
 interface Person {
-    name: string;
-    age?: number;
+  name: string;
+  age?: number;
 }
 
 let tom: Person = {
-    name: 'Tom',
-    age: 25,
-    gender: 'male'
+  name: "Tom",
+  age: 25,
+  gender: "male",
 };
 
 // examples/playground/index.ts(9,5): error TS2322: Type '{ name: string; age: number; gender: string; }' is not assignable to type 'Person'.
@@ -121,14 +120,14 @@ let tom: Person = {
 
 ```ts
 interface Person {
-    name: string;
-    age?: number;
-    [propName: string]: any;
+  name: string;
+  age?: number;
+  [propName: string]: any;
 }
 
 let tom: Person = {
-    name: 'Tom',
-    gender: 'male'
+  name: "Tom",
+  gender: "male",
 };
 ```
 
@@ -138,15 +137,15 @@ let tom: Person = {
 
 ```ts
 interface Person {
-    name: string;
-    age?: number;
-    [propName: string]: string;
+  name: string;
+  age?: number;
+  [propName: string]: string;
 }
 
 let tom: Person = {
-    name: 'Tom',
-    age: 25,
-    gender: 'male'
+  name: "Tom",
+  age: 25,
+  gender: "male",
 };
 
 // index.ts(3,5): error TS2411: Property 'age' of type 'number' is not assignable to string index type 'string'.
@@ -164,15 +163,15 @@ let tom: Person = {
 
 ```ts
 interface Person {
-    name: string;
-    age?: number;
-    [propName: string]: string | number;
+  name: string;
+  age?: number;
+  [propName: string]: string | number;
 }
 
 let tom: Person = {
-    name: 'Tom',
-    age: 25,
-    gender: 'male'
+  name: "Tom",
+  age: 25,
+  gender: "male",
 };
 ```
 
@@ -182,16 +181,16 @@ let tom: Person = {
 
 ```ts
 interface Person {
-    readonly id: number;
-    name: string;
-    age?: number;
-    [propName: string]: any;
+  readonly id: number;
+  name: string;
+  age?: number;
+  [propName: string]: any;
 }
 
 let tom: Person = {
-    id: 89757,
-    name: 'Tom',
-    gender: 'male'
+  id: 89757,
+  name: "Tom",
+  gender: "male",
 };
 
 tom.id = 9527;
@@ -205,15 +204,15 @@ tom.id = 9527;
 
 ```ts
 interface Person {
-    readonly id: number;
-    name: string;
-    age?: number;
-    [propName: string]: any;
+  readonly id: number;
+  name: string;
+  age?: number;
+  [propName: string]: any;
 }
 
 let tom: Person = {
-    name: 'Tom',
-    gender: 'male'
+  name: "Tom",
+  gender: "male",
 };
 
 tom.id = 89757;
@@ -224,6 +223,3 @@ tom.id = 89757;
 ```
 
 上例中，报错信息有两处，第一处是在对 `tom` 进行赋值的时候，没有给 `id` 赋值。第二处是在给 `tom.id` 赋值的时候，由于它是只读属性，所以报错了。
-
-
-

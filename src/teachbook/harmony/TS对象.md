@@ -1,22 +1,20 @@
 ---
-
-title: TS对象  
-icon: iconfont icon-a-outline-harmony-one  
-author: 周子力  
-order: 9  
+title: TS 对象
+icon: iconfont icon-a-outline-harmony-one
+author: 周子力
+order: 9
 category:
-    -   教学文档  
+  - 教学文档
 tag:
-    -   HarmonyOS
-    -   TypeScript
-
+  - HarmonyOS
+  - TypeScript
 ---
 
-# TS对象
+# TS 对象
 
 ## 1.什么是对象类型？
 
-是一种类似于json格式，或者python中字典格式的一种数据结构。是 JavaScript 最基本的数据结构。
+是一种类似于 json 格式，或者 python 中字典格式的一种数据结构。是 JavaScript 最基本的数据结构。
 
 ## 2.对象类型语法
 

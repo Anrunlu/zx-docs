@@ -1,17 +1,16 @@
 ---
-
-title: TS枚举  
-icon: iconfont icon-a-outline-harmony-one  
-author: 周子力  
-order: 9  
+title: TS 枚举
+icon: iconfont icon-a-outline-harmony-one
+author: 周子力
+order: 9
 category:
-    -   教学文档  
+  - 教学文档
 tag:
-    -   HarmonyOS
-    -   TypeScript
-
+  - HarmonyOS
+  - TypeScript
 ---
-# TS枚举
+
+# TS 枚举
 
 ## 1.什么是枚举？
 
@@ -20,7 +19,15 @@ Enum 是 TypeScript 新增的一种数据结构和类型，中文译为“枚举
 枚举使用 `enum` 关键字来定义：
 
 ```ts
-enum Days {Sun, Mon, Tue, Wed, Thu, Fri, Sat};
+enum Days {
+  Sun,
+  Mon,
+  Tue,
+  Wed,
+  Thu,
+  Fri,
+  Sat,
+}
 enum Color {
   Red, // 0
   Green, // 1
@@ -36,7 +43,7 @@ let c = Color.Green; // 1
 let c = Color["Green"]; // 1
 ```
 
-## 2.Enum成员的值
+## 2.Enum 成员的值
 
 Enum 成员默认不必赋值，系统会从零开始逐一递增，按照顺序为每个成员赋值，比如 0、1、2……
 

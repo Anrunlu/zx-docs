@@ -1,18 +1,16 @@
 ---
-
-title: TS条件语句  
-icon: iconfont icon-a-outline-harmony-one  
-author: 周子力  
-order: 10  
+title: TS 条件语句
+icon: fas fa-w
+author: 周子力
+order: 10
 category:
-    -   教学文档  
+  - 教学文档
 tag:
-    -   HarmonyOS
-    -   TypeScript
-
+  - HarmonyOS
+  - TypeScript
 ---
 
-# TS条件语句
+# TS 条件语句
 
 ## 1.什么是条件语句？
 
@@ -25,7 +23,7 @@ tag:
 - **if...else if....else 语句**- 使用该语句来选择多个代码块之一来执行
 - **switch 语句** - 使用该语句来选择多个代码块之一来执行
 
-## 2.if语句
+## 2.if 语句
 
 TypeScript if 语句由一个布尔表达式后跟一个或多个语句组成。
 
@@ -37,16 +35,16 @@ if(boolean_expression){
 }
 ```
 
-如果布尔表达式 boolean_expression为 true，则 if 语句内的代码块将被执行。如果布尔表达式为 false，则 if 语句结束后的第一组代码（闭括号后）将被执行。
+如果布尔表达式 boolean_expression 为 true，则 if 语句内的代码块将被执行。如果布尔表达式为 false，则 if 语句结束后的第一组代码（闭括号后）将被执行。
 
 ```typescript
-var  num:number = 5
-if (num > 0) { 
-   console.log("数字是正数") 
+var num: number = 5;
+if (num > 0) {
+  console.log("数字是正数");
 }
 ```
 
-## 2.if...else语句
+## 2.if...else 语句
 
 一个 if 语句后可跟一个可选的 else 语句，else 语句在布尔表达式为 false 时执行。
 
@@ -63,11 +61,11 @@ if(boolean_expression){
 如果布尔表达式 boolean_expression 为 true，则执行 if 块内的代码。如果布尔表达式为 false，则执行 else 块内的代码。
 
 ```typescript
-var num:number = 12; 
-if (num % 2==0) { 
-    console.log("偶数"); 
+var num: number = 12;
+if (num % 2 == 0) {
+  console.log("偶数");
 } else {
-    console.log("奇数"); 
+  console.log("奇数");
 }
 ```
 
@@ -96,13 +94,13 @@ if(boolean_expression 1) {
 - 一旦执行了 **else..if** 内的代码，后面的 **else..if** 或 **else** 将不再执行。
 
 ```typescript
-var num:number = 2 
-if(num > 0) { 
-    console.log(num+" 是正数") 
-} else if(num < 0) { 
-    console.log(num+" 是负数") 
-} else { 
-    console.log(num+" 不是正数也不是负数") 
+var num: number = 2;
+if (num > 0) {
+  console.log(num + " 是正数");
+} else if (num < 0) {
+  console.log(num + " 是负数");
+} else {
+  console.log(num + " 不是正数也不是负数");
 }
 ```
 
@@ -113,17 +111,17 @@ if(num > 0) {
 **switch** 语句的语法：
 
 ```typescript
-switch(expression){
-    case constant-expression  :
-       statement(s);
-       break; /* 可选的 */
-    case constant-expression  :
-       statement(s);
-       break; /* 可选的 */
-  
-    /* 您可以有任意数量的 case 语句 */
-    default : /* 可选的 */
-       statement(s);
+switch (expression) {
+  case constant - expression:
+    statement(s);
+    break; /* 可选的 */
+  case constant - expression:
+    statement(s);
+    break; /* 可选的 */
+
+  /* 您可以有任意数量的 case 语句 */
+  default: /* 可选的 */
+    statement(s);
 }
 ```
 
@@ -134,32 +132,31 @@ switch(expression){
 - case 的 **constant-expression** 必须与 switch 中的变量 expression 具有相同或兼容的数据类型。
 - 当被测试的变量等于 case 中的常量时，case 后跟的语句将被执行，直到遇到 **break** 语句为止。
 - 当遇到 **break** 语句时，switch 终止，控制流将跳转到 switch 语句后的下一行。
-- 不是每一个 case 都需要包含 **break**。如果 case 语句不包含 **break**，控制流将会 *继续* 后续的 case，直到遇到 break 为止。
+- 不是每一个 case 都需要包含 **break**。如果 case 语句不包含 **break**，控制流将会 _继续_ 后续的 case，直到遇到 break 为止。
 - 一个 **switch** 语句可以有一个可选的 **default** case，出现在 switch 的结尾。default 关键字则表示当表达式的值与所有 case 值都不匹配时执行的代码块。default case 中的 **break** 语句不是必需的。
 
 ```typescript
-var grade:string = "A"; 
-switch(grade) { 
-    case "A": { 
-        console.log("优"); 
-        break; 
-    } 
-    case "B": { 
-        console.log("良"); 
-        break; 
-    } 
-    case "C": {
-        console.log("及格"); 
-        break;    
-    } 
-    case "D": { 
-        console.log("不及格"); 
-        break; 
-    }  
-    default: { 
-        console.log("非法输入"); 
-        break;              
-    } 
+var grade: string = "A";
+switch (grade) {
+  case "A": {
+    console.log("优");
+    break;
+  }
+  case "B": {
+    console.log("良");
+    break;
+  }
+  case "C": {
+    console.log("及格");
+    break;
+  }
+  case "D": {
+    console.log("不及格");
+    break;
+  }
+  default: {
+    console.log("非法输入");
+    break;
+  }
 }
 ```
-

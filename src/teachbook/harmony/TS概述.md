@@ -1,29 +1,28 @@
 ---
-
-title: TS概述  
-icon: iconfont icon-a-outline-harmony-one  
-author: 周子力  
-order: 4  
+title: TS 概述
+icon: iconfont icon-a-outline-harmony-one
+author: 周子力
+order: 4
 category:
-    -   教学文档  
+  - 教学文档
 tag:
-    -   HarmonyOS
-    -   TypeScript
-
+  - HarmonyOS
+  - TypeScript
 ---
-# TS概述
 
-## 1.为什么学习TypeScript？
+# TS 概述
 
-鸿蒙开发用的语言是ArkTS，即盘古TS，因为如果不掌握TS是没有办法学习ArkTS的。
+## 1.为什么学习 TypeScript？
 
-## 2.什么是TypeScript？
+鸿蒙开发用的语言是 ArkTS，即盘古 TS，因为如果不掌握 TS 是没有办法学习 ArkTS 的。
+
+## 2.什么是 TypeScript？
 
 TypeScript（简称 TS）是微软公司开发的一种基于 JavaScript （简称 JS）语言的编程语言。TypeScript 可以看成是 JavaScript 的超集（superset），即它继承了后者的全部语法，所有 JavaScript 脚本都可以当作 TypeScript 脚本（但是可能会报错），此外它还增加了一些自己的语法。
 
-[Typescript官网](https://www.typescriptlang.org/)
+[Typescript 官网](https://www.typescriptlang.org/)
 
-## 3.TypeScript的特性
+## 3.TypeScript 的特性
 
 从 TypeScript 的名字就可以看出来，「类型」是其最核心的特性。
 
@@ -34,20 +33,19 @@ JavaScript 是一门非常灵活的编程语言：
 - 基于原型的面向对象编程，使得原型上的属性或方法可以在运行时被修改。
 - 函数是 JavaScript 中的一等公民，可以赋值给变量，也可以当作参数或返回值。
 
-TypeScript是静态类型
+TypeScript 是静态类型
 
 TypeScript 是完全兼容 JavaScript 的，它不会修改 JavaScript 运行时的特性，所以它们都是弱类型
 
-## 4.一个TypeScript的例子
+## 4.一个 TypeScript 的例子
 
 ```typescript
 function sayHello(person: string) {
-    return 'Hello, ' + person;
+  return "Hello, " + person;
 }
 
-let user = 'Tom';
+let user = "Tom";
 console.log(sayHello(user));
-
 ```
 
 ## 5.TypeScript Playground

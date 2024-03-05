@@ -1,18 +1,16 @@
 ---
-
-title: TS装饰器 
-icon: iconfont icon-a-outline-harmony-one  
-author: 周子力  
-order: 15  
+title: TS 装饰器
+icon: iconfont icon-a-outline-harmony-one
+author: 周子力
+order: 15
 category:
-    -   教学文档  
+  - 教学文档
 tag:
-    -   HarmonyOS
-    -   TypeScript
-
+  - HarmonyOS
+  - TypeScript
 ---
 
-# TS装饰器
+# TS 装饰器
 
 ## 1.什么是装饰器？
 
@@ -20,7 +18,7 @@ tag:
 
 常见装饰器：类装饰器、属性装饰器、方法装饰器、参数装饰器
 装饰器的写法：普通装饰器（无法传参）、装饰器工厂（可传参）
-装饰器是过去几年js中的重大成就，已经是ES7的标准特性之一
+装饰器是过去几年 js 中的重大成就，已经是 ES7 的标准特性之一
 
 ## 2.类装饰器
 
@@ -34,4 +32,3 @@ function simpleDecorator(target: any, context: any) {
 @simpleDecorator
 class A {} // "hi, this is class A {}"
 ```
-

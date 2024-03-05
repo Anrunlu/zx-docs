@@ -1,18 +1,16 @@
 ---
-
-title: TS类  
-icon: iconfont icon-a-outline-harmony-one  
-author: 周子力  
-order: 14  
+title: TS 类
+icon: iconfont icon-a-outline-harmony-one
+author: 周子力
+order: 14
 category:
-    -   教学文档  
+  - 教学文档
 tag:
-    -   HarmonyOS
-    -   TypeScript
-
+  - HarmonyOS
+  - TypeScript
 ---
 
-# TS类
+# TS 类
 
 ## 1.什么是类？
 
@@ -45,16 +43,16 @@ tag:
 
 ```js
 class Animal {
-    name;
-    constructor(name) {
-        this.name = name;
-    }
-    sayHi() {
-        return `My name is ${this.name}`;
-    }
+  name;
+  constructor(name) {
+    this.name = name;
+  }
+  sayHi() {
+    return `My name is ${this.name}`;
+  }
 }
 
-let a = new Animal('Jack');
+let a = new Animal("Jack");
 console.log(a.sayHi()); // My name is Jack
 ```
 
@@ -69,11 +67,11 @@ class Cat extends Animal {
     console.log(this.name);
   }
   sayHi() {
-    return 'Meow, ' + super.sayHi(); // 调用父类的 sayHi()
+    return "Meow, " + super.sayHi(); // 调用父类的 sayHi()
   }
 }
 
-let c = new Cat('Tom'); // Tom
+let c = new Cat("Tom"); // Tom
 console.log(c.sayHi()); // Meow, My name is Tom
 ```
 
@@ -87,15 +85,15 @@ class Animal {
     this.name = name;
   }
   get name() {
-    return 'Jack';
+    return "Jack";
   }
   set name(value) {
-    console.log('setter: ' + value);
+    console.log("setter: " + value);
   }
 }
 
-let a = new Animal('Kitty'); // setter: Kitty
-a.name = 'Tom'; // setter: Tom
+let a = new Animal("Kitty"); // setter: Kitty
+a.name = "Tom"; // setter: Tom
 console.log(a.name); // Jack
 ```
 
@@ -110,7 +108,7 @@ class Animal {
   }
 }
 
-let a = new Animal('Jack');
+let a = new Animal("Jack");
 Animal.isAnimal(a); // true
 a.isAnimal(a); // TypeError: a.isAnimal is not a function
 ```
@@ -125,7 +123,7 @@ ES6 中实例的属性只能通过构造函数中的 `this.xxx` 来定义，ES7 
 
 ```js
 class Animal {
-  name = 'Jack';
+  name = "Jack";
 
   constructor() {
     // ...
@@ -172,9 +170,9 @@ class Animal {
   }
 }
 
-let a = new Animal('Jack');
+let a = new Animal("Jack");
 console.log(a.name); // Jack
-a.name = 'Tom';
+a.name = "Tom";
 console.log(a.name); // Tom
 ```
 
@@ -190,9 +188,9 @@ class Animal {
   }
 }
 
-let a = new Animal('Jack');
+let a = new Animal("Jack");
 console.log(a.name);
-a.name = 'Tom';
+a.name = "Tom";
 
 // index.ts(9,13): error TS2341: Property 'name' is private and only accessible within class 'Animal'.
 // index.ts(10,1): error TS2341: Property 'name' is private and only accessible within class 'Animal'.
@@ -209,9 +207,9 @@ var Animal = (function () {
   }
   return Animal;
 })();
-var a = new Animal('Jack');
+var a = new Animal("Jack");
 console.log(a.name);
-a.name = 'Tom';
+a.name = "Tom";
 ```
 
 使用 `private` 修饰的属性或方法，在子类中也是不允许访问的：
@@ -267,7 +265,7 @@ class Cat extends Animal {
   }
 }
 
-let a = new Animal('Jack');
+let a = new Animal("Jack");
 
 // index.ts(7,19): TS2675: Cannot extend a class 'Animal'. Class constructor is marked as private.
 // index.ts(13,9): TS2673: Constructor of class 'Animal' is private and only accessible within the class declaration.
@@ -288,7 +286,7 @@ class Cat extends Animal {
   }
 }
 
-let a = new Animal('Jack');
+let a = new Animal("Jack");
 
 // index.ts(13,9): TS2674: Constructor of class 'Animal' is protected and only accessible within the class declaration.
 ```
@@ -318,9 +316,9 @@ class Animal {
   }
 }
 
-let a = new Animal('Jack');
+let a = new Animal("Jack");
 console.log(a.name); // Jack
-a.name = 'Tom';
+a.name = "Tom";
 
 // index.ts(10,3): TS2540: Cannot assign to 'name' because it is a read-only property.
 ```
@@ -353,7 +351,7 @@ abstract class Animal {
   public abstract sayHi();
 }
 
-let a = new Animal('Jack');
+let a = new Animal("Jack");
 
 // index.ts(9,11): error TS2511: Cannot create an instance of the abstract class 'Animal'.
 ```
@@ -377,7 +375,7 @@ class Cat extends Animal {
   }
 }
 
-let cat = new Cat('Tom');
+let cat = new Cat("Tom");
 
 // index.ts(9,7): error TS2515: Non-abstract class 'Cat' does not implement inherited abstract member 'sayHi' from class 'Animal'.
 ```
@@ -401,7 +399,7 @@ class Cat extends Animal {
   }
 }
 
-let cat = new Cat('Tom');
+let cat = new Cat("Tom");
 ```
 
 上面的例子中，我们实现了抽象方法 `sayHi`，编译通过了。
@@ -416,7 +414,8 @@ var __extends =
     function __() {
       this.constructor = d;
     }
-    d.prototype = b === null ? Object.create(b) : ((__.prototype = b.prototype), new __());
+    d.prototype =
+      b === null ? Object.create(b) : ((__.prototype = b.prototype), new __());
   };
 var Animal = (function () {
   function Animal(name) {
@@ -430,11 +429,11 @@ var Cat = (function (_super) {
     _super.apply(this, arguments);
   }
   Cat.prototype.sayHi = function () {
-    console.log('Meow, My name is ' + this.name);
+    console.log("Meow, My name is " + this.name);
   };
   return Cat;
 })(Animal);
-var cat = new Cat('Tom');
+var cat = new Cat("Tom");
 ```
 
 ## 6. 类的类型
@@ -452,7 +451,6 @@ class Animal {
   }
 }
 
-let a: Animal = new Animal('Jack');
+let a: Animal = new Animal("Jack");
 console.log(a.sayHi()); // My name is Jack
 ```
-

@@ -1,18 +1,16 @@
 ---
-
-title: TS元组  
-icon: iconfont icon-a-outline-harmony-one  
-author: 周子力  
-order: 8  
+title: TS 元组
+icon: fas fa-layer-group
+author: 周子力
+order: 8
 category:
-    -   教学文档  
+  - 教学文档
 tag:
-    -   HarmonyOS
-    -   TypeScript
-
+  - HarmonyOS
+  - TypeScript
 ---
 
-# TS元组
+# TS 元组
 
 ## 1.什么是元组？
 
