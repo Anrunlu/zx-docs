@@ -16,7 +16,7 @@ tag:
 
 ## 1.TypeScript的数据类型
 
-TypeScript 继承了 JavaScript 的类型，在这个基础上，定义了一套自己的类型系统。JavaScript 语言（注意，不是 TypeScript）将值分成 8 种类型。
+TypeScript 继承了 JavaScript 的类型，在这个基础上，定义了一套自己的类型系统。JavaScript 语言（注意，不是 TypeScript）将值分成 9 种类型。
 
 - boolean
 - string
@@ -26,8 +26,9 @@ TypeScript 继承了 JavaScript 的类型，在这个基础上，定义了一套
 - object
 - undefined
 - null
+- any
 
-TypeScript 继承了 JavaScript 的类型设计，以上 8 种类型可以看作 TypeScript 的基本类型。
+TypeScript 继承了 JavaScript 的类型设计，以上 9 种类型可以看作 TypeScript 的基本类型。
 
 注意，上面所有类型的名称都是小写字母，首字母大写的Number、String、Boolean等在 JavaScript 语言中都是内置对象，而不是类型名称。
 
@@ -58,9 +59,9 @@ let sentence: string = `Hello, my name is ${myName}.I'll be ${myAge + 1} years o
 
 ```typescript
 let decLiteral: number = 6;
-let hexLiteral: number = 0xf00d;// ES6 中的二进制表示法
-let binaryLiteral: number = 0b1010;// ES6 中的八进制表示法
-let octalLiteral: number = 0o744;
+let hexLiteral: number = 0xf00d;// ES6 中的16进制表示法
+let binaryLiteral: number = 0b1010;// ES6 中的二进制表示法
+let octalLiteral: number = 0o744;//ES6 中的八进制表示法
 let notANumber: number = NaN;
 let infinityNumber: number = Infinity;
 ```

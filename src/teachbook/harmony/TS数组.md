@@ -20,14 +20,14 @@ tag:
 TypeScript 声明数组的语法格式如下所示：
 
 ```typescript
-let array_name[:datatype];        //声明 
+let array_name:datatype[];        //声明 
 array_name = [val1,val2,valn..]   //初始化
 ```
 
 或者直接在声明时初始化：
 
 ```typescript
-let array_name[:datatype] = [val1,val2…valn]
+let array_name:datatype[] = [val1,val2…valn]
 ```
 
 如果数组声明时未设置类型，则会被认为是 any 类型，在初始化时根据第一个元素的类型来推断数组的类型。
