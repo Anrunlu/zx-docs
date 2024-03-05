@@ -1,3 +1,13 @@
+---
+title: Python Numpy
+icon: fas fa-list
+author: 周子力
+order: 18
+category:
+  - 教学文档
+tag:
+  - Python
+---
 # Python-Numpy
 
 ## 1.Numpy简介
