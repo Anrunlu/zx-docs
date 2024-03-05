@@ -1,7 +1,7 @@
 ---
 
 title: TS变量  
-icon: iconfont icon-a-outline-harmony-one  
+icon: fas fa-code  
 author: 周子力  
 order: 6  
 category:
