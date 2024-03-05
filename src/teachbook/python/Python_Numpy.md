@@ -42,7 +42,8 @@ numpy.array(object, dtype = None, copy =
 True, order = None, subok = False, ndmin = 0)
 ```
 
-![image-20240305164203781](C:\Users\Administrator\AppData\Roaming\Typora\typora-user-images\image-20240305164203781.png)
+![picture 0](https://oss.docs.z-xin.net/2204e28518add38112481180fffd6c12756b0995679288e3c6ecc8a864e2abdc.png)  
+
 
 ```python
 #创建一维数组
