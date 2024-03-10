@@ -2,7 +2,7 @@
 title: Python Numpy
 icon: fas fa-list
 author: 周子力
-order: 18
+order: 27
 category:
   - 教学文档
 tag:
@@ -42,7 +42,7 @@ numpy.array(object, dtype = None, copy =
 True, order = None, subok = False, ndmin = 0)
 ```
 
-![picture 0](https://oss.docs.z-xin.net/2204e28518add38112481180fffd6c12756b0995679288e3c6ecc8a864e2abdc.png)  
+![picture 2](https://oss.docs.z-xin.net/3bdcee7e3935b505a3eb677fffeed9d56e79868c112920f4d27f815e57817afb.png)  
 
 
 ```python
