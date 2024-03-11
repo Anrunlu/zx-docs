@@ -1,3 +1,14 @@
+---
+title: Python Pygame
+icon: fas fa-list
+author: 周子力
+order: 28
+category:
+  - 教学文档
+tag:
+  - Python
+---
+
 # Python Pygame
 
 ## 5.相关技术
