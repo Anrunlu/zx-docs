@@ -1,3 +1,14 @@
+---
+title: Python 思考
+icon: fas fa-layer-group
+author: 周子力
+order: 6
+category:
+  - 教学文档
+tag:
+  - Python
+---
+
 # Python 思考
 
 ## 1.对计算机语言的思考
