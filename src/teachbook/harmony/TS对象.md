@@ -40,8 +40,8 @@ type MyObj = {
 
 // 属性类型以逗号结尾
 type MyObj = {
-  x: number;
-  y: number;
+  x: number,
+  y: number,
 };
 ```
 

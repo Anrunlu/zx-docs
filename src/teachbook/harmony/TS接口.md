@@ -17,18 +17,18 @@ tag:
 所谓接口，其实就是对对象的规划，可以看作是一张图纸。图纸其实就是对产品的抽象，有了这张图纸，可以做出大量的产品。
 
 ```ts
-interface Person {
+interface IPerson {
   name: string;
   age: number;
 }
 
-let tom: Person = {
+let tom: IPerson = {
   name: "Tom",
   age: 25,
 };
 ```
 
-上面的例子中，我们定义了一个接口 `Person`，接着定义了一个变量 `tom`，它的类型是 `Person`。这样，我们就约束了 `tom` 的形状必须和接口 `Person` 一致。
+上面的例子中，我们定义了一个接口 `IPerson`，接着定义了一个变量 `tom`，它的类型是 `IPerson`。这样，我们就约束了 `tom` 的形状必须和接口 `IPerson` 一致。
 
 接口一般首字母大写。建议在接口名称上加上大写的 I ，如 IPerson。
 
