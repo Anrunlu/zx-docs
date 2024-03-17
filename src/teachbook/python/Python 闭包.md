@@ -57,6 +57,8 @@ result() #执行这个函数，那么就可以得到 print(n)的效果。
 
 - 外部函数返回了内部函数
 
+说白了，**闭包就是能够读取其他函数内部变量的函数。**
+
 再来一个例子：
 
 ```py
@@ -103,13 +105,15 @@ f = outer()
 ```python
 def outer():
 # outer函数中的局部变量 
-    num = 10 def inner():
-nonlocal num
-# inner函数中的局部变量
-num = 20
-print(f'原始变量：{num}')  # 10 inner()
-print(f'修改后的变量：{num}')  # 20
-return inner
+    num = 10 
+    def inner():
+        nonlocal num
+        # inner函数中的局部变量
+        num = 20
+    print(f'原始变量：{num}')  # 10 inner()
+    inner()
+    print(f'修改后的变量：{num}')  # 20
+    return inner
 f = outer()
 ```
 
