@@ -26,7 +26,8 @@ tag:
 
 [sklearn官网](https://scikit-learn.org/stable/)
 
-![image-20240331153329855](C:\Users\Administrator\AppData\Roaming\Typora\typora-user-images\image-20240331153329855.png)
+![picture 0](https://oss.docs.z-xin.net/290ec7e684d193896ac7d27da7811ed65299564429f102f272d4a38b71f00568.png)  
+
 
 里面有分类，回归，聚类，维归约，模型选择，预处理等功能。
 
@@ -80,13 +81,15 @@ print(scaler.var_)
 
 大多数机器学习算法中，会选择StandardScaler来进行特征缩放，因为MinMaxScaler对异常值非常感。在PCA，聚类，逻辑回归，支持向量机，神经网络这些算法中，StandardScaler往往是最好的选择。
 
-![image-20240331154806253](C:\Users\Administrator\AppData\Roaming\Typora\typora-user-images\image-20240331154806253.png)
+![picture 1](https://oss.docs.z-xin.net/7b3e9bcf2a951f461cf85f37927cfb565fcc5ba8af5cc213e9fbbf853df61cd8.png)  
+
 
 ## 5.缺失值
 
 因此数据挖掘之中，常常会有重要的字段缺失值很多，但又不能舍弃字段的情况。因 此，数据预处理中非常重要的一项就是处理缺失值。
 
-![image-20240331155041985](C:\Users\Administrator\AppData\Roaming\Typora\typora-user-images\image-20240331155041985.png)
+![picture 3](https://oss.docs.z-xin.net/540e029bcdba8f88a2863783185755e3838bf866f6b62bd6f00bee7afe389a1c.png)  
+
 
 ```py
 from sklearn.impute import SimpleImputer
