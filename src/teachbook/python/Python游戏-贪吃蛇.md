@@ -1,3 +1,14 @@
+---
+title: Python 贪吃蛇
+icon: fas fa-list
+author: 周子力
+order: 35
+category:
+  - 教学文档
+tag:
+  - Python
+---
+
 # Python 贪吃蛇
 
 ## 1.游戏简介
@@ -22,7 +33,9 @@
 
 　　3、拥有加分系统，当蛇头吃到食物时，分数累计加一。
 
-![image-20240306174458259](C:\Users\Administrator\AppData\Roaming\Typora\typora-user-images\image-20240306174458259.png)
+![picture 0](https://oss.docs.z-xin.net/196a34029f381df7d6872395f9a1c7179b0d4146daf028f2e69b66fad929d2aa.gif)  
+
+
 
 ## 3.需求分析
 
