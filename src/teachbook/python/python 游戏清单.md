@@ -1,3 +1,14 @@
+---
+title: Python 游戏清单
+icon: fas fa-list
+author: 周子力
+order: 36
+category:
+  - 教学文档
+tag:
+  - Python
+---
+
 # Python 游戏清单
 ## 1.滑块游戏，通过移动滑块达到目标状态
 - ### 初始状态
