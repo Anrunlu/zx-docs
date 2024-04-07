@@ -11,6 +11,8 @@ tag:
 
 # Python 贪吃蛇-优秀案例
 
+## 一、2024年春
+
 1.[就是吃不到](https://cyberdownload.anrunlu.net/437466ec-922c-4a03-aa65-fccf68654d4c.mp4) 
 
 2.[发光食物](https://cyberdownload.anrunlu.net/5d72d056-9e1b-448f-abd3-6be519a16cb0.mp4)
@@ -32,3 +34,5 @@ tag:
 10.[五角星食物](https://cyberdownload.anrunlu.net/3516c586-f956-434f-bc6a-f7b0461e86df.mp4)
 
 11.[增加障碍的吓人蛇](https://cyberdownload.anrunlu.net/71eed1e5-7505-4dc8-b641-ab831fa6e072.mp4)
+
+12.[有难度的蛇](https://cyberdownload.anrunlu.net/323a0a9d-8dbe-4ac9-8235-cc4cb4418a05.mp4)
