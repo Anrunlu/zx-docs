@@ -13,7 +13,7 @@ tag:
 
 ## 1.游戏简介
 
-很久很久以前，在神秘的阿瑞亚大陆上，有一个被遗忘了很久的小岛，人们称它为“失落之岛”。这个岛屿被茂密的[森林](https://www.sousou.com/tags-1061.html)覆盖，其中充满了各种奇异的动植物和神秘的宝藏。这个岛屿的居民们过着平静而和谐的生活，直到有一天，一场突如其来的灾难打破了这份宁静。
+很久很久以前，在神秘的阿瑞亚大陆上，有一个被遗忘了很久的小岛，人们称它为“失落之岛”。这个岛屿被茂密的覆盖，其中充满了各种奇异的动植物和神秘的宝藏。这个岛屿的居民们过着平静而和谐的生活，直到有一天，一场突如其来的灾难打破了这份宁静。
 
 这个灾难源于一种被称为“黑暗元素”的神秘力量。黑暗元素侵蚀了失落之岛的深处，引发了一场无法控制的魔法风暴。风暴席卷了整个岛屿，摧毁了无数的家园，迫使岛上的居民们逃离家园。
 
@@ -36,7 +36,7 @@ tag:
 ## 2.需求分析
 
 
-![消消乐](https://oss.docs.z-xin.net/0582e7dc079c7ae7c6b10242743551b5871044fb2c3ea118f530138695026fef.gif)  
+
 ![picture 2](https://oss.docs.z-xin.net/9a2d5188deecff512ebef2ab0646c050c4d89eb830587a1e1d13b949d2906b20.gif)  
 
 
@@ -139,17 +139,17 @@ class gemSprite(pygame.sprite.Sprite):
             if self.target_y == self.rect.top:
                 self.fixed = True
 
-        elif self.direction == 'up':
+        elif self.direction == 'up': #向下移动
             self.rect.top = max(self.target_y, self.rect.top - self.speed_y)
             if self.target_y == self.rect.top:
                 self.fixed = True
                 # 左移
-        elif self.direction == 'left':
+        elif self.direction == 'left': #向左移动
             self.rect.left = max(self.target_x, self.rect.left - self.speed_x)
             if self.target_x == self.rect.left:
                 self.fixed = True
                 # 右移
-        elif self.direction == 'right':
+        elif self.direction == 'right':#向右移动
             self.rect.left = min(self.target_x, self.rect.left + self.speed_x)
             if self.target_x == self.rect.left:
                 self.fixed = True
