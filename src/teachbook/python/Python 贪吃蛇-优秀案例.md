@@ -25,3 +25,10 @@ tag:
 
 7.[大食物](https://cyberdownload.anrunlu.net/4e031b7a-7257-4243-ab4c-7d651facd4eb.mp4)
 
+8.[计时蛇](https://cyberdownload.anrunlu.net/cb4fd1fe-0ea6-48b5-a507-b94d45f1e9b8.mp4)
+
+9.[彩色发光蛇](https://cyberdownload.anrunlu.net/912c2173-c190-433c-b075-ed13e66eccc2.mp4)
+
+10.[五角星食物](https://cyberdownload.anrunlu.net/3516c586-f956-434f-bc6a-f7b0461e86df.mp4)
+
+11.[增加障碍的吓人蛇](https://cyberdownload.anrunlu.net/71eed1e5-7505-4dc8-b641-ab831fa6e072.mp4)
