@@ -2,7 +2,7 @@
 title: Python 工资分类预测
 icon: fas fa-list
 author: 周子力
-order: 33
+order: 41
 category:
   - 教学文档
 tag:
