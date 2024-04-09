@@ -1,3 +1,15 @@
+---
+title: Python 消消乐-优秀案例
+icon: fas fa-list
+author: 周子力
+order: 38
+category:
+  - 教学文档
+tag:
+  - Python
+---
+
+
 # Python 消消乐-优秀案例
 
 ## 一、2024年春
