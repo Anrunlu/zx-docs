@@ -2,6 +2,17 @@
 title: Python 线性回归
 icon: fas fa-list
 author: 周子力
+order: 43
+category:
+  - 教学文档
+tag:
+  - Python
+---
+
+---
+title: Python 线性回归
+icon: fas fa-list
+author: 周子力
 order: 42
 category:
   - 教学文档
@@ -75,34 +86,150 @@ $$
 p(y^i|x^i;\theta)=\frac{1}{\sqrt{2\pi}}e^{-\frac{(\theta^Tx^i-y^i)^2}{2\delta^2}}
 $$
 
+最小二乘法：所选择的回归模型应该使所有观察值的残差平方和达到最小，即采用平方损失函数
 
 
+![picture 2](https://oss.docs.z-xin.net/20d3866b67507800a1cf934b2bb94af1bffafca7de44d229b84c0d0b63cbd482.png)  
 
+## 5.求解$\omega$和b的参数
 
+可以看出最小二乘法得到的是一个凸函数，可以看作一元二次方程，目标是求该方程的最小值，即求一元二次方程导数逼近0的点。介绍两种方法，一种通过矩阵运算得到精确解的方法，另一种在数据量巨大数据情况复杂时使用的逼近最优解的方法：**梯度下降法**
 
+非线性的最小二乘可以通过牛顿高斯迭代、LM算法、梯度下降求解
+梯度下降：随机初始化$\omega$和b通过逼近的方式来求解
 
+![picture 3](https://oss.docs.z-xin.net/e1bed41ea6707672b3868a42dcd030507819f1441368a5385ed8002f3ece68e7.png)  
 
+**梯度下降形象解释：** 把损失函数想象成一个山坡，目标是找到山坡最低的点。则随便选一个起点，计算损失函数对于参数矩阵在该点的偏导数，每次往偏导数的反向向走一步，步长通过 α\alpha\alpha 来控制，直到走到最低点，即导数趋近于0的点为止缺点：最小点的时候收敛速度变慢，并且对初始点的选择极为敏感梯度下降有时会陷入局部最优解的问题中，即下山的路上有好多小坑，运气不好掉进坑里，但是由于底部梯度(导数)也为0，故以为找到了山的底部同时，步长选择的过大或者过小，都会影响模型的计算精度及计算效率
 
+## 6.sklearn实现线性回归
+classs sklearn.linear_model.LinearRegression (fit_intercept=True, normalize=False, copy_x=True,n_jobs=None)
 
+![picture 4](https://oss.docs.z-xin.net/75592c3876180a144a08c9fd0e5ef945b7d5cf8c3da0ebfef422a8227cdb2f7b.png)  
 
+线性回归的类可能是我们目前为止学到的最简单的类，仅有四个参数就可以完成一个完整的算法。并且看得出，这些 参数中并没有一个是必填的，更没有对我们的模型有不可替代作用的参数。这说明，线
+性回归的性能，往往取决于数 据本身，而并非是我们的调参能力，线性回归也因此对数据有着很高的要求。幸运的是，现实中大部分连续型变量之 间，都存在着或多或少的线性联系。所以线性回归虽然
+简单，却很强大。
 
+顺便一提，sklearn中的线性回归可以处理多标签问题，只需要在fit的时候输入多维度标签就可以了。
 
+### 6.1案例
+```python
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+#导入三大件
+from sklearn.linear_model import LinearRegression as LR
+#导入线性回归模型
+from sklearn.model_selection import train_test_split
+#导入划分训练集和测试集的模块
+from sklearn.model_selection import cross_val_score
+#导入交叉验证验证
+from sklearn.datasets import fetch_california_housing as fch
+#加利福尼亚房屋价值数据集
+#导入数据，探索数据
+house_value=fch()
+#需要下载，导入
+house_value.data.shape
 
+#查看数据的维度
+#建立datafram
+X=pd.DataFrame(data=house_value.data,columns=house_value.feature_names)
+# MedInc：该街区住户的收入中位数
+# HouseAge：该街区房屋使用年代的中位数
+# AveRooms：该街区平均的房间数目
+# AveBedrms：该街区平均的卧室数目
+# Population： 街区人口
+# AveOccup： 平均入住率
+# Latitude： 街区的纬度
+# Longitude：街区的经度
+X.describe()
+y=house_value.target
+#y是房价的标签
+y.max()
+y.min()
+#查看y的最大最小值
+#数据有量纲的问题，我们应该对数据进行标准化
+from sklearn.preprocessing import StandardScaler
+standard= StandardScaler()
+#实例化标准化的类
+standard.fit(X)
+#传入X
+trans_data=pd.DataFrame(standard.transform(X))
+#标准化三部曲
+trans_data.head()
+#查看数据
+#分训练集和测试集
+X_train,X_test,Y_train,Y_test=train_test_split(trans_data,y,test_size=0.3,random_state=420)
+#恢复索引
+for i in [X_train, X_test]:
+    i.index = range(i.shape[0])
+#建模，无需设置参数，默认normalize=False，同学可自行尝试normalize=True，看对结果是佛会有影响。
+reg = LR().fit(X_train, Y_train)
+y_hat = reg.predict(X_test)
+##建模并训练，预测，得到y_hat。
+y_hat.min()
+y_hat.max()
+reg.coef_
+#查看模型的系数w
+reg.intercept_
+#查看截距项w0
+[*zip(X.columns,reg.coef_)]
+#将系数和特征对应
+# MedInc：该街区住户的收入中位数
 
+# HouseAge：该街区房屋使用年代的中位数
+# AveRooms：该街区平均的房间数目
+# AveBedrms：该街区平均的卧室数目
+# Population： 街区人口
+# AveOccup： 平均入住率
+# Latitude： 街区的纬度
+# Longitude：街区的经度
+```
 
+## 7. 回归类模型的评估指标
+回归类算法的模型评估一直都是回归算法中的一个难点，但不像我们曾经讲过的无监督学习算法中的轮
+廓系数等等评 估指标，回归类与分类型算法的模型评估其实是相似的法则——找真实标签和预测值的
+差异。只不过在分类型算法 中，这个差异只有一种角度来评判，那就是是否预测到了正确的分类，而
+在我们的回归类算法中，我们有两种不同的 角度来看待回归的效果：
+第一，我们是否预测到了正确的数值。
+第二，我们是否拟合到了足够的信息。
+这两种角度，分别对应着不同的模型评估指标。
 
+### 7.1 是否预测了正确的值
+RSS残差平方和的本质是我们的预测值与真实值之间的差异，也就是从第一种角度
+来评估我们回 归的效力，所以RSS既是我们的损失函数，也是我们回归类模型的模型评估指标之一。但是，RSS有着致命的缺点：它是一个无界的和，可以无限地大。我们只知道，我们想要求解最小的
+RSS，从RSS的公式来看，它不能为负，所以 RSS越接近0越好，但我们没有一个概念，究竟多小才算好，多接近0才算好？为了应对这种状况，sklearn中使用RSS 的变体，均方误差MSE（mean squared
+error）来衡量我们的预测值和真实值的差异：
+$$
+MSE=\frac{1}{m}\sum^m_{i=1}(y_i-\hat{y})^2
+$$
 
+均方误差，本质是在RSS的基础上除以了样本总量，得到了每个样本量上的平均误差。有了平均误差，我们就可以将 平均误差和我们的标签的取值范围在一起比较，以此获得一个较为可靠的评估依据。在
+sklearn当中，我们有两种方式：
+调用这个评估指标:
+1.是使用sklearn专用的模型评估模块metrics里的类mean_squared_error。
+2.是调用交叉验证的类cross_val_score并使用里面的scoring参数来设置使用均方误差。
+```python
+from sklearn.metrics import mean_squared_error as MSE
+#导入均方误差
+MSE(y_hat,Y_test)
+#得到误差
+Y_test.mean()
+#查询测试集的y平均值
+cross_val_score(reg,trans_data,y,cv=10,scoring="neg_mean_squared_error").mean()
+#交叉验证(模型，特征，标签，k折，SKlearn中用负均方误差)
+```
+### 7.2是否拟合了足够的信息$R^2$
 
+对于回归类算法而言，只探索数据预测是否准确是不足够的。除了数据本身的数值大小之外，我们还希望我们的模型 能够捕捉到数据的”规律“，比如数据的分布规律，单调性等等，而是否捕获了这些信息并
+无法使用MSE来衡量。
+![picture 5](https://oss.docs.z-xin.net/e8f405b89f0e65361e6e599c4a996b50b3703b07a6a751fc4f0d04cbe401bf72.png)  
 
-
-
-
-
-
-
-
-
-
+来看这张图，其中红色线是我们的真实标签，而蓝色线是我们的拟合模型。这是一种比较极端，但的确可能发生的情况。这张图像上，前半部分的拟合非常成功，看上去我们的真实标签和我们的预测结果几乎重合，但后半部分的拟合 却非常糟糕，模型向着与真实标签完全相反的方向去了。对于这样的一个拟合模型，如果我们使用MSE来对它进行判断，它的MSE会很小，因为大部分样本其实都被完美拟合了，少数样本的真实值和预测值的巨大差异在被均分到每个样本上之后，MSE就会很小。但这样的拟合结果必然不是一个好结果，因为一旦我的新样本是处于拟合曲线的后半段的，我的预测结果必然会有巨大的偏差，而这不是我们希望看到的。所以，我们希望找到新的指标，除了判断预测的数值是否正确之外，还能够判断我们的模型是否拟合了足够多的，数值之外的信息。我们使用方差来衡量数据上的信息量。如果方差越大，代表数据上的信息量越多，而这个信息量不仅包括了数值的大小，还包括了我们希望模型捕捉的那些规律。为了衡量模型对数据上的信息量的捕捉，我们定义了$R^2$来帮助我们, $R^2$越接近1越好。
+$$
+R^2=1-\frac{RSS}{\sum_{i=1}^m(y_i-\bar{y})}
+$$
 
 
 ## 参考
