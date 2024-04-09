@@ -61,7 +61,19 @@ $$
 $$
 那么为什么用误差平方和来表示线性回归问题的损失函数？
 
-这是因为线性回归有这样的假期，对于给定的 $ y_2 $ 
+这是因为线性回归有这样的假设，对于给定的 $ y^i $  总能找到$\varepsilon^{i}$ 使得这个等式成立  $y^i=h_\theta(x^i)+\varepsilon^i$，$\varepsilon^i$表示真实值和预测值之间的误差且服从正态分布$\varepsilon^i\sim N(0,\delta^2)$
+
+为什么要加$\varepsilon$: 是因为建模的时候不可能把所有可能性都考虑。因此把剩下的特征及噪声统一放到一起来考虑。
+
+**为什么误差要服从正态分布：** 误差的产生有很多种因素的影响，误差可以看作是这些因素(随机变量)之和共同作用而产生的，由中心极限定理可知随机变量和的分布近似的服从正态分布
+随机变量$\varepsilon^i$的概率密度函数为：
+$$
+p(\varepsilon^i)=1\frac{1}{\sqrt{2\pi}\delta}e^{-\frac{(e^i)^2}{2\delta^2}}
+$$
+代入$\varepsilon^i=y^i-h_\theta(x^i)$ 则：
+$$
+p(y^i|x^i;\theta)=\frac{1}{\sqrt{2\pi}}e^{-\frac{(\theta^Tx^i-y^i)^2}{2\delta^2}}
+$$
 
 
 
