@@ -51,7 +51,8 @@ doc.add_paragraph('我是曲师大网络空间安全学学院学生')
 
 ```py
 from docx.shared import Pt
-from docx oxml.ns import qn
+from docx.oxml.ns import qn
+from docx.shared import RGBColor
 
 # 创建一个段落
 p = doc.add_paragraph()
@@ -63,7 +64,7 @@ p.add_run('这是斜体的文本。').italic = True
 # 设置字体大小和颜色
 run = p.add_run('这是红色的文本。')
 run.font.size = Pt(14)
-run.font.color.rgb = qn('FF0000')
+run.font.color.rgb = RGBColor(255,0,0)
 
 # 添加下划线
 run = p.add_run('这是带下划线的文本。')
