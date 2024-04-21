@@ -1,5 +1,5 @@
 ---
-title: Python 消消乐-优秀案例
+title: Python 游戏设计思考
 icon: fas fa-list
 author: 周子力
 order: 39
