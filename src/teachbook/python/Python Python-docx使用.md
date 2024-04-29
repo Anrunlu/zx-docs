@@ -43,7 +43,23 @@ doc.add_heading('网安文档',0)
 
 #添加段落
 doc.add_paragraph('我是曲师大网络空间安全学学院学生')
+
+#添加段落中的一个节段
+p=doc.add_paragraph()
+p.add_run('这是一个节段')
 ```
+
+![picture 1](https://oss.docs.z-xin.net/216719e14d402505a62bacbd7338e52d5ef715c6025fd2c55c1c52fdadc7f3f2.png)  
+
+(1)文档对象（Document）：Document对象是Python-docx库的核心，它代表了一个完整的Word文档。通过Document对象，可以访问和修改文档中的其他部分，如段落、表格、图片等。
+(2)段落（Paragraph）：段落是文档中最基本的文本组织单位。每个Paragraph对象代表文档中的一个段落。通过它可以获取和设置段落的文本内容、样式（如字体、字号、颜色等）以及格式（如对齐方式、缩进、间距等）。
+(3)文本（Run）：在Python-docx中，Run对象表示具有相同格式的连续文本序列。一个段落可以包含多个运行，每个运行可以有不同的样式和格式。通过Run对象，你可以获取和设置文本的格式和样式，如字体、字号、颜色、粗体、斜体等。
+(4)表格（Table）：表格是文档中用于组织数据的结构。每个Table对象代表一个表格，包含行（Row）和单元格（Cell）。通过表格对象，你可以获取和设置表格的样式、行高、列宽以及单元格的内容。
+(5)图片（InlineShape）：InlineShape对象用于表示文档中的内联形状。通过遍历文档中的InlineShape对象，你可以找到并处理文档中的图片，如获取图片的路径、大小等信息。
+(6)节（Section）：节是文档中的一个逻辑部分，通常用于控制页面设置（如页边距、纸张大小等）和页眉页脚的显示。通过Document.sections属性，你可以获取文档中的所有节，并设置每节的属性。
+(7)页眉和页脚（Header 和 Footer）：页眉和页脚分别用于在文档的每一页的顶部和底部显示相同的内容。通过Section对象的header和footer属性，你可以获取和设置文档的页眉和页脚内容。
+
+![picture 0](https://oss.docs.z-xin.net/552b9a3270841d79860faa338a65e4892e641baa4989ff861a3b768bad7a306b.png)  
 
 ### 3.3 格式化文本
 
