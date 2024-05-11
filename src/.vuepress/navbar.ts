@@ -11,10 +11,5 @@ export default navbar([
     text: "鸿蒙应用开发",
     icon: "iconfont icon-a-outline-harmony-one",
     link: "/teachbook/harmony/",
-  },
-  {
-    text: "古树管理项目",
-    icon: "iconfont icon-a-outline-harmony-one",
-    link: "/teachbook/tree-docs/",
-  },
+  }
 ]);
