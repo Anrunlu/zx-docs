@@ -15,14 +15,16 @@ tag:
 - xlwt:写入新xls、xlsx文件，效率非常高。但不支持修改已有表格！
 - openpyxl:可读可写可修改！数据从（1，1）开始.[官网](https://openpyxl.readthedocs.io/en/stable/)
 - xlwings:可读可写可修改，支持xls、xlsx。可以与VAB交互。但依赖于Excel程序存在
+## 2. Excel文档
+![picture 0](https://oss.docs.z-xin.net/e4a0c812e3fabec5ace1345047e1e24d95f175c4d220de795a2fcb864ca9fba0.png)  
 
-## 2.工具包安装
+## 3.工具包安装
 ```python
 pip install 包名
 pip install  -i https://pypi.tuna.tsinghua.edu.cn/simple 包名
 ```
-## 3. excel操作
-### 3.1 读取excel文档
+## 4. excel操作
+### 4.1 读取excel文档
 ```python
 def read_openpyxl():
 
@@ -41,7 +43,7 @@ def read_openpyxl():
     #读取Sheet中的某一个Cell中的元素,注意这里的Cell是从(1，1)开始计数的。
     print(ws.cell(1,2).value)
 ```
-### 3.2 写excel文档
+### 4.2 写excel文档
 ```python
 import openpyxl
 from openpyxl.styles import Font
