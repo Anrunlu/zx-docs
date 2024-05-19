@@ -1,4 +1,13 @@
-
+---
+title: Python 网络爬虫-BeautifulSoup
+icon: fas fa-list
+author: 周子力
+order: 63
+category:
+  - 教学文档
+tag:
+  - Python
+---
 
 
 # Python 网络爬虫-BeautiSoup
