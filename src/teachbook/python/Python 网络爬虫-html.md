@@ -1,5 +1,5 @@
 ---
-title: Python 网络爬虫-网页知识
+title: Python 网络爬虫-html
 icon: fas fa-list
 author: 周子力
 order: 60
@@ -10,7 +10,7 @@ tag:
 ---
 
 
-# Python 网络爬虫-网页知识
+# Python 网络爬虫-html
 
 ## 1.什么是网络爬虫
 

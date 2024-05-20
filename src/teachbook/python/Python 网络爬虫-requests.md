@@ -26,7 +26,8 @@ tag:
 
 ----
 
-> 前面我们了解了爬虫的基础知识，接下来我们来学习如何在代码中实现我们的爬虫
+![picture 8](https://oss.docs.z-xin.net/5714790c332e2cf1b56f2a287de748564ebaea6898ca0282101a6e43f5934b62.png)  
+
 
 
 
@@ -90,7 +91,7 @@ response = requests.get(url)
 print(response.content.decode()) # 注意这里！
 ```
 
-1. **response.text是requests模块按照chardet模块推测出的编码字符集进行解码的结果**
+1. **response.text是requests模块按照charset模块推测出的编码字符集进行解码的结果**
 2. 网络传输的字符串都是bytes类型的，所以response.text = response.content.decode('推测出的编码字符集')
 3. 我们可以在网页源码中搜索`charset`，尝试参考该编码字符集，注意存在不准确的情况
 
