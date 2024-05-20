@@ -415,7 +415,7 @@ tag.find_all(“title”,”sister”)
 #得到如”<title class = “sister”>%^*&</title>  
 ```
 A.传字符串
-最简单的过滤器是字符串.在搜索方法中传入一个字符串参数,Beautiful Soup会查找与字符串完整匹配的内容,下面的例子用于查找文档中所有的<b>标签
+最简单的过滤器是字符串.在搜索方法中传入一个字符串参数,Beautiful Soup会查找与字符串完整匹配的内容,下面的例子用于查找文档中所有的`<b>`标签
 ```python
 soup.find_all('b')
 # [<b>The Dormouse's story</b>]
@@ -424,7 +424,7 @@ print soup.find_all('a')
 #[<a class="sister" href="http://example.com/elsie" id="link1"><!-- Elsie --></a>, <a class="sister" href="http://example.com/lacie" id="link2">Lacie</a>, <a class="sister" href="http://example.com/tillie" id="link3">Tillie</a>]
 ```
 B.传正则表达式
-如果传入正则表达式作为参数,Beautiful Soup会通过正则表达式的 match() 来匹配内容.下面例子中找出所有以b开头的标签,这表示<body>和<b>标签都应该被找到
+如果传入正则表达式作为参数,Beautiful Soup会通过正则表达式的 match() 来匹配内容.下面例子中找出所有以b开头的标签,这表示`<body>`和`<b>`标签都应该被找到
 ```python
 import re
 for tag in soup.find_all(re.compile("^b")):
@@ -433,7 +433,7 @@ for tag in soup.find_all(re.compile("^b")):
 # b
 ```
 C.传列表
-如果传入列表参数,Beautiful Soup会将与列表中任一元素匹配的内容返回.下面代码找到文档中所有<a>标签和<b>标签
+如果传入列表参数,Beautiful Soup会将与列表中任一元素匹配的内容返回.下面代码找到文档中所有`<a>`标签和`<b>`标签
 ```python
 soup.find_all(["a", "b"])
 # [<b>The Dormouse's story</b>,
