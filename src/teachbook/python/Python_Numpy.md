@@ -37,6 +37,9 @@ print(a)
 
 numpy模块的array函数可以生成多维数组。例如，如果要生成一个二维数组，需要向array函数传递一个列表类型的参数。每一个列表元素是一维的ndarray类型数组，作为二维数组的行。另外，通过ndarray类的shape属性可以获得数组每一维的元素个数（元组形式），也可以通过shape[n]形式获得每一维的元素个数，其中n是维度，从0开始。
 
+![picture 4](https://oss.docs.z-xin.net/90e3540f1913273de8ff1ddf0363fd178252ef393049703b00a286b643a15c8e.png)  
+
+
 ```python
 numpy.array(object, dtype = None, copy =
 True, order = None, subok = False, ndmin = 0)
