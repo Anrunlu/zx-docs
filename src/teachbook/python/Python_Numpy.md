@@ -13,6 +13,7 @@ tag:
 ## 1.Numpy简介
 
 Numpy(Numerical Python) 是科学计算基础库，提供大量科学计算相关功能，比如数据统计，随机数生成等。其提供最核心类型为多维数组类型（ndarray），支持大量的维度数组与矩阵运算，Numpy支持向量处理ndarray对象，提高程序运算速度。
+[官方文档](https://www.numpy.org.cn/reference/)
 
 ## 2.安装
 
