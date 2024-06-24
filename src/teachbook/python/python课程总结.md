@@ -11,4 +11,5 @@ tag:
 
 # Python课程总结图
 
-![picture 0](https://cyberdownload.anrunlu.net/FgY0qY9Rl5MZzVjTSaNhNuGk59sK)
+
+![picture 0](https://oss.docs.z-xin.net/083f60f7e5ad634dc013119c2691583fc37bf17d685e695652793e9cb1bf84b8.png)  
