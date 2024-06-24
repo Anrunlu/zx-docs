@@ -1,3 +1,17 @@
+---
+title: Python Numpy-实例
+icon: fas fa-list
+author: 周子力
+order: 27
+category:
+  - 教学文档
+tag:
+  - Python
+---
+
+# Python Numpy-实例
+
+
 ```python
 import numpy as np
 a=np.arange(10)
