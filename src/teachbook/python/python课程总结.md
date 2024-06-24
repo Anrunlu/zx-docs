@@ -1,5 +1,5 @@
 ---
-title: Python课程总结
+title: Python课程总结图
 icon: fas fa-list
 author: 周子力
 order: 47
