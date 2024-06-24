@@ -171,6 +171,9 @@ print(x[-2:])
 
 ## 9.二维数组索引与切片
 
+![picture 5](https://oss.docs.z-xin.net/b121e8efb5795417eb5fb0c2401bbf7752887a7b00b3e4ff32f5619b1ff11750.png)  
+
+
 ```python
 x=np.arange(12)
 a=x.reshape(3,4)
