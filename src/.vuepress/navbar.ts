@@ -11,5 +11,10 @@ export default navbar([
     text: "鸿蒙应用开发",
     icon: "iconfont icon-a-outline-harmony-one",
     link: "/teachbook/harmony/",
+  },
+  {
+    text: "算法设计与分析",
+    icon: "iconfont icon-a-outline-harmony-one",
+    link: "/teachbook/algorithm/",
   }
 ]);

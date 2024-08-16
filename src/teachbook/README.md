@@ -13,4 +13,6 @@ order: 0
 
 - [查看详情](harmony/README.md)
 
+## 算法设计与分析
 
+- [查看详情](algorithm/README.md)
