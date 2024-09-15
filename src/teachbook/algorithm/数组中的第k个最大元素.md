@@ -1,5 +1,5 @@
 ---
-title: 数组中的第k个最大元素
+title: 数组中第k个最大元素
 icon: fas fa-layer-group
 author: 程琬茵
 order: 7
@@ -9,7 +9,7 @@ tag:
   - 分治法
 ---
 
-# 数组中的第k个最大元素
+# 数组中第k个最大元素
 ## 1. 题目描述
 
 给定整数数组 `nums` 和整数 `k`，请返回数组中第 `k` 个最大的元素。
@@ -82,7 +82,7 @@ tag:
 输出：`4`
 
 ## 3. 代码
-```c++
+```cpp
 // 分区，将数组根据基准值划分成两部分
 int partition(vector<int>& nums, int left, int right, int pivot_index) {
     int pivot_value = nums[pivot_index];
@@ -105,7 +105,7 @@ int partition(vector<int>& nums, int left, int right, int pivot_index) {
 }
 ```
 
-``` c++
+``` cpp
 // 分治法，递归查找第 k 小的元素
 int quickselect(vector<int>& nums, int left, int right, int k_smallest) {
     if (left == right) {
