@@ -1,6 +1,6 @@
 ---
 title: 数组中第k个最大元素
-icon: fas fa-layer-group
+icon: fas fa-maxcdn
 author: 程琬茵
 order: 7
 category:
