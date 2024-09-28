@@ -1,6 +1,6 @@
 ---
 title: [USACO06NOV] Corn Fields G
-icon: fas fa-cow
+icon: fas fa-layer-group
 author: 刘喆
 order: 6
 category:
