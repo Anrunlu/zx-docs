@@ -1,13 +1,13 @@
 ---
-title: [USACO06NOV] Corn Fields G
+title: Corn Fields
 icon: fas fa-layer-group
 author: 刘喆
 order: 6
 category:
   - 教学文档
 tag:
-- 动态规划
-- 状态压缩动态规划
+  - 动态规划
+  - 状态压缩动态规划
 ---
 
 # [USACO06NOV] Corn Fields G
