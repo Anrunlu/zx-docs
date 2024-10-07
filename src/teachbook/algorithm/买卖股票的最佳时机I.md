@@ -28,24 +28,37 @@ tag:
  
 ## 2. 分析
   用动态规划法
+
   （1）找问题的子问题
   该问题的子问题就是数组的长短，比如：原问题是：[7,1,5,3,6,4],子问题可以是：[7,1,5]，[7,1,5,3]等。
+
   假设dp[i]表示具有i个元素(也就是i天）的数组的最大利润，那么dp[i-1]表示 共i-1天的数组的最大利润。
   接下来就是要考虑 dp[i]和dp[i-1]之间的递推关系。
+
   （2）子问题间的递推关系
+
   对于i天 i-1天 不同的地方是，i天的数据多了第i天的数据，这个数据应该与前面最小值的差，需要与dp[i-1]比大小，把最大值保存下来。
+
   因此，可以写出递推式：
   dp[i]=max(dp[i-1],price[i]-minprice)
+
   注意：这里的第i个元素之间的元素的最小值是minprice。
+
   （3）自底向上求解问题
+
   这里的底就是从第1个元素开始遍历整个数组，因为递归关系是dp[i-1]推出dp[i], 可以从i=1时，即dp[0] 得到dp[1], dp[1]得到dp[2],...,一直得到dp[n]
 
   思路梳理：
   （1）该功能函数的输入是数组prices
+
   （2）创建一个全为0的dp数组，用以存储每天的最大利润,需要计算minPrice, 一开始可以赋值为prices[0]
+
   （3）遍历整个prices数组，逐个计算最大利润，
+
        dp[i]=max(dp[i-1],price[i]-minPrice)
+
    (4) 返回dp中的最后一个元素 dp[-1]
+
 
 
 ## 3. 代码
@@ -81,5 +94,7 @@ print(maxProfit(price),maxProfit(price1))
 ```
 ## 4. 视频
 [买卖股票的最佳时机I题意理解](https://cyberdownload.anrunlu.net/1a414e30-26b7-4dca-a88f-6afe08bd9c90.mp4)
+
 [买卖股票的最佳时机I题目分析](https://cyberdownload.anrunlu.net/5ebb7ba5-c024-410f-bb44-df0a68fa5d6f.mp4)
+
 [买卖股票的最佳时机I思路梳理](https://cyberdownload.anrunlu.net/e7b5e684-fabd-4a9e-a553-bcea72509e68.mp4)
