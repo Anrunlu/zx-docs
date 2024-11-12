@@ -1,5 +1,5 @@
 ---
-title: 跳跃游戏II(leetcode45)
+title: 跳跃游戏II
 icon: fas fa-layer-group
 author: 顾兆林
 order: 6
@@ -10,7 +10,7 @@ tag:
 - 动态规划
 ---
 
-### 题目描述
+### 题目描述(leetcode45)
 
 给定一个长度为 `n` 的 0 索引整数数组 `nums`。初始位置为 `nums[0]`。
 
