@@ -1,5 +1,5 @@
 ---
-title: 选数
+title: N皇后问题
 icon: fas fa-m
 author: 路九阳
 order: 7
