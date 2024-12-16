@@ -1,0 +1,165 @@
+---
+title: 火柴拼正方形
+icon: fa-square-o
+author: 程琬茵
+order: 7
+category:
+  - 教学文档
+tag:
+  - 回溯与分支限界-dfs
+---
+
+
+# 火柴拼正方形
+## 1. 题目描述
+
+你将得到一个整数数组`matchsticks`，其中`matchsticks[i]`是第`i`个火柴棒的长度。你要用**所有的火柴棍**拼成一个正方形。你**不能折断**任何一根火柴棒，但你可以把它们连在一起，而且每根火柴棒必须**使用一次**。
+
+如果你能使这个正方形，则返回`true`，否则返回`false`。
+
+ 
+
+  **示例 1:**
+> 输入：matchsticks = [1,1,2,2,2]
+>
+> ![1734357187032.jpg](https://img.picui.cn/free/2024/12/16/676030c82e45b.jpg)
+> 
+> 输出：true
+>
+> 解释：能拼成一个边长为2的正方形，每边两根火柴。
+
+**示例 2:**
+>
+> 输入: matchsticks = [3,3,3,3,4]
+>
+> 输出: false
+> 
+> 解释：不能用所有火柴拼成一个正方形。
+
+## 2. 分析
+  这道题目可以转化为将数组中的火柴棒分成四个子集，每个子集的和相等，即总和的四分之一。使用回溯法来探索所有可能的组合。
+
+  **具体步骤：**
+
+**1. 基本条件检查：**
+
+- 如果火柴棒的总长度不能被4整除，则无法拼成正方形。
+
+- 如果任意一根火柴棒的长度超过边长，也无法拼成正方形。
+
+**2. 排序优化：**
+
+- 将火柴棒按降序排序，有助于更快地达到剪枝条件，减少不必要的计算。
+
+**3. 回溯法分配火柴棒到四条边：**
+
+- 尝试将每根火柴棒放入四条边中的任意一条。
+
+- 如果某条边已经达到边长，则跳过该边。
+
+**剪枝策略：**
+
+- 如果某一条边当前长度加上当前火柴棒长度超过边长，则跳过该边。
+
+- 如果当前火柴棒长度等于0，则跳过。
+
+排序：将火柴棒按降序排序，使得较长的火柴棒先被尝试分配，有助于快速发现不可能的情况。
+避免重复：如果两条边尝试放入相同长度的火柴棒后未成功，避免在同一层级继续尝试相同的操作。
+
+## 3. 代码实现
+```java
+import java.util.Arrays;
+
+public class MatchsticksToSquare {
+    public boolean makesquare(int[] matchsticks) {
+        if (matchsticks == null || matchsticks.length < 4) {
+            return false;
+        }
+
+        // 计算总长度
+        int totalLength = 0;
+        for (int stick : matchsticks) {
+            totalLength += stick;
+        }
+
+        // 总长度必须能被4整除
+        if (totalLength % 4 != 0) {
+            return false;
+        }
+
+        int target = totalLength / 4;
+        Arrays.sort(matchsticks);
+
+        // 将火柴棒按降序排序，优化剪枝
+        for (int i = 0; i < matchsticks.length / 2; i++) {
+            int temp = matchsticks[i];
+            matchsticks[i] = matchsticks[matchsticks.length - 1 - i];
+            matchsticks[matchsticks.length - 1 - i] = temp;
+        }
+
+        // 检查是否有火柴棒超过边长
+        if (matchsticks[0] > target) {
+            return false;
+        }
+
+        // 初始化四条边
+        int[] sides = new int[4];
+        return backtrack(matchsticks, sides, 0, target);
+    }
+
+    private boolean backtrack(int[] matchsticks, int[] sides, int index, int target) {
+        // 如果所有火柴棒都被成功分配
+        if (index == matchsticks.length) {
+            // 检查四条边是否都等于目标长度
+            return sides[0] == target && sides[1] == target &&
+                   sides[2] == target && sides[3] == target;
+        }
+
+        int currentStick = matchsticks[index];
+
+        for (int i = 0; i < 4; i++) {
+            // 如果将当前火柴棒加入第i条边后超过目标长度，则跳过
+            if (sides[i] + currentStick > target) {
+                continue;
+            }
+
+            // 如果当前边已经与前一条边相同，跳过以避免重复
+            if (i > 0 && sides[i] == sides[i - 1]) {
+                continue;
+            }
+
+            // 将当前火柴棒加入第i条边
+            sides[i] += currentStick;
+
+            // 递归处理下一个火柴棒
+            if (backtrack(matchsticks, sides, index + 1, target)) {
+                return true;
+            }
+
+            // 回溯，移除当前火柴棒
+            sides[i] -= currentStick;
+        }
+
+        // 如果当前火柴棒无法被放入任何一条边，则返回false
+        return false;
+    }
+
+    public static void main(String[] args) {
+        MatchsticksToSquare solver = new MatchsticksToSquare();
+
+        int[][] testCases = {
+            {1,1,2,2,2},
+            {3,3,3,3,4},
+            {5,5,5,5,4,4,4,4,3,3,3,3},
+            {1,1,1,1,1,1,1,1,1,1,1,1,4,4,4,4}
+        };
+
+        for (int[] testCase : testCases) {
+            boolean result = solver.makesquare(testCase);
+            System.out.println("输入: " + Arrays.toString(testCase));
+            System.out.println("是否能拼成正方形: " + result);
+            System.out.println();
+        }
+    }
+}
+```
