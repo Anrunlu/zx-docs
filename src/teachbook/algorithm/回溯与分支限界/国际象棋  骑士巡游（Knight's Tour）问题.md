@@ -1,5 +1,5 @@
 ---
-title: 全排列
+title: 国际象棋  骑士巡游（Knight's Tour）问题
 icon: fas fa-p
 author: 李镓永
 order: 7
