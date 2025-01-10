@@ -8,8 +8,6 @@ category:
 tag:
   - 回溯与分支限界-dfs
 ---
-
-
 # 国际象棋  骑士巡游（Knight's Tour）问题
 ## 描述
 
