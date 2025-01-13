@@ -1,6 +1,6 @@
 ---
-title: 国际象棋  骑士巡游（Knight's Tour）问题
-icon: fas fa-p
+title: 骑士巡游（Knight's Tour）问题
+icon: fas fa-layer-group
 author: 李镓永
 order: 7
 category:
@@ -22,7 +22,7 @@ tag:
 - 如果存在这样的路径，则输出 "Solution exists" 并打印出解决方案矩阵。每个格子中的数字代表马访问该格子的顺序（从1开始），未访问的格子用 -1 表示。输出时，请使用国际象棋的坐标系统，即从白方视角，从左到右依次为 a, b, c, d, e, f, g, h，从前到后依次为 1, 2, 3, 4, 5, 6, 7, 8。
 - 如果不存在这样的路径，则输出 "No solution"。
 
-![](C:\Users\Li-pc\AppData\Roaming\marktext\images\2024-12-10-08-26-22-image.png)
+
 
 （国际象棋中马的走法及标准记谱法如图所示，没有楚河汉界，没有蹩马腿）
 

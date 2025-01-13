@@ -5,6 +5,8 @@ author: 侯小月，杜玉玉
 order: 1
 category:
   - 教学文档
+tag:
+  - 回溯与分支限界-dfs
 
 ---
 
