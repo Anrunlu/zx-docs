@@ -16,3 +16,7 @@ order: 0
 ## 算法设计与分析
 
 - [查看详情](algorithm/README.md)
+
+## 机器学习
+
+- [查看详情](algorithm/README.md)
