@@ -16,5 +16,10 @@ export default navbar([
     text: "算法设计与分析",
     icon: "iconfont icon-a-outline-harmony-one",
     link: "/teachbook/algorithm/",
+  },
+  {
+    text: "机器学习",
+    icon: "iconfont icon-a-outline-harmony-one",
+    link: "/teachbook/machinelearning/",
   }
 ]);
