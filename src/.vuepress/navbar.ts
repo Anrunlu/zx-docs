@@ -20,6 +20,6 @@ export default navbar([
   {
     text: "机器学习",
     icon: "iconfont icon-a-outline-harmony-one",
-    link: "/teachbook/machinelearning/",
+    link: "/teachbook/machineLearning/",
   }
 ]);
