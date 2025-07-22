@@ -4,6 +4,6 @@ export default sidebar({
   "/teachbook/python/": "structure",
   "/teachbook/harmony/": "structure",
   "/teachbook/algorithm/": "structure",
-  "/teachbook/machineLearning/": "structure"
+  // "/teachbook/machineLearning/": "structure"
 
 });

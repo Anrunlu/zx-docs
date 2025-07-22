@@ -17,9 +17,9 @@ export default navbar([
     icon: "iconfont icon-a-outline-harmony-one",
     link: "/teachbook/algorithm/",
   },
-  {
-    text: "机器学习",
-    icon: "iconfont icon-a-outline-harmony-one",
-    link: "/teachbook/machineLearning/",
-  }
+  // {
+  //   text: "机器学习",
+  //   icon: "iconfont icon-a-outline-harmony-one",
+  //   link: "/teachbook/machineLearning/",
+  // }
 ]);
