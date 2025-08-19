@@ -5,14 +5,10 @@ order: 0
 ---
 
 
-![鸿蒙应用开发群](https://oss.docs.z-xin.net/1f863010515efd9e99410135dd883c2eee3da814fab7899a850e9567575728bb.png)  
-
 
 ## 鸿蒙系统（HarmonyOS）简介
 
-[鸿蒙宣传片](https://www.bilibili.com/video/BV1254y137WA?t=35.4)
 
-[问届代客泊车](https://www.bilibili.com/video/BV1TN4y1h77R?t=20.6)
 
 HarmonyOS是一款面向万物互联时代的、全新的分布式操作系统。
 
