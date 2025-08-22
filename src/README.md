@@ -3,8 +3,8 @@ home: true
 icon: fas fa-house
 title: 首页
 heroFullScreen: true
-bgImage: https://cyberdownload.anrunlu.net/7c9eb431-e7c4-431a-9cd2-dc7958bcd3b7.svg
-bgImageDark: https://cyberdownload.anrunlu.net/7c9eb431-e7c4-431a-9cd2-dc7958bcd3b7.svg
+bgImage: https://d.zxin.confnew.com/7c9eb431-e7c4-431a-9cd2-dc7958bcd3b7.svg
+bgImageDark: https://d.zxin.confnew.com/7c9eb431-e7c4-431a-9cd2-dc7958bcd3b7.svg
 bgImageStyle:
   background-attachment: fixed
 heroText: 知新新知

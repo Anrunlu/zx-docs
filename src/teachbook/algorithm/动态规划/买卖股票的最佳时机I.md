@@ -93,8 +93,8 @@ price1=[7,6,4,3,1]
 print(maxProfit(price),maxProfit(price1))
 ```
 ## 4. 视频
-[买卖股票的最佳时机I题意理解](https://cyberdownload.anrunlu.net/1a414e30-26b7-4dca-a88f-6afe08bd9c90.mp4)
+[买卖股票的最佳时机I题意理解](https://d.zxin.confnew.com/1a414e30-26b7-4dca-a88f-6afe08bd9c90.mp4)
 
-[买卖股票的最佳时机I题目分析](https://cyberdownload.anrunlu.net/5ebb7ba5-c024-410f-bb44-df0a68fa5d6f.mp4)
+[买卖股票的最佳时机I题目分析](https://d.zxin.confnew.com/5ebb7ba5-c024-410f-bb44-df0a68fa5d6f.mp4)
 
-[买卖股票的最佳时机I思路梳理](https://cyberdownload.anrunlu.net/e7b5e684-fabd-4a9e-a553-bcea72509e68.mp4)
+[买卖股票的最佳时机I思路梳理](https://d.zxin.confnew.com/e7b5e684-fabd-4a9e-a553-bcea72509e68.mp4)
