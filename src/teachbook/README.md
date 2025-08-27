@@ -17,6 +17,6 @@ order: 0
 
 - [查看详情](algorithm/README.md)
 
-## 机器学习
+<!-- ## 机器学习
 
-- [查看详情](machineLearning/README.md)
+- [查看详情](machineLearning/README.md) -->
