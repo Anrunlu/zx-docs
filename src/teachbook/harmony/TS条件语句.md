@@ -1,6 +1,6 @@
 ---
 title: TS 条件语句
-icon: fas fa-w
+icon: iconfont icon-a-outline-harmony-one
 author: 周子力
 order: 10
 category:
