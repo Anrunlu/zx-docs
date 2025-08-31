@@ -20,3 +20,7 @@ order: 0
 <!-- ## 机器学习
 
 - [查看详情](machineLearning/README.md) -->
+
+## 科技创新实践
+
+- [查看详情](tecinnovation/README.md)
