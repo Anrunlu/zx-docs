@@ -1,8 +1,8 @@
 ---
-title: ArkTS语言-1
+title: ArkTS语言-简介
 icon: iconfont icon-a-outline-harmony-one
 author: 周子力
-order: 21
+order: 16
 category:
   - 教学文档
 tag:
