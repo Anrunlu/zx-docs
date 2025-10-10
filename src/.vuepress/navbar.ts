@@ -27,4 +27,9 @@ export default navbar([
   //   icon: "iconfont icon-a-outline-harmony-one",
   //   link: "/teachbook/machineLearning/",
   // }
+  {
+    text: "中医知识",
+    icon: "iconfont icon-a-outline-harmony-one",
+    link: "/teachbook/chineseMedical/",
+  }
 ]);
