@@ -10,9 +10,9 @@ bgImageStyle:
 heroText: 知新新知
 tagline: 温故知新，交流互鉴，探索发现。
 actions:
-  - text: 使用指南
-    icon: fas fa-lightbulb
-    link: ./demo/
+  # - text: 使用指南
+  #   icon: fas fa-lightbulb
+  #   link: ./demo/
     
 
   - text: 文档

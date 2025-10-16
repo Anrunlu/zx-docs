@@ -14,6 +14,7 @@ export default hopeTheme({
     "fontawesome",
     "fontawesome-with-brands",
     "https://at.alicdn.com/t/c/font_4443509_txk9zuhruc.css",
+    "https://at.alicdn.com/t/c/font_5042357_ka89i4ogc7m.css"
   ],
 
   logo: "logo.png",
