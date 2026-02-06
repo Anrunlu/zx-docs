@@ -9,9 +9,9 @@ order: 0
 
 - [查看详情](python/README.md)
 
-## 鸿蒙应用开发
+<!-- ## 鸿蒙应用开发
 
-- [查看详情](harmony/README.md)
+- [查看详情](harmony/README.md) -->
 
 ## 算法设计与分析
 
@@ -21,6 +21,9 @@ order: 0
 
 - [查看详情](machineLearning/README.md) -->
 
-## 科技创新实践
+<!-- ## 科技创新实践
 
-- [查看详情](tecinnovation/README.md)
+- [查看详情](tecinnovation/README.md) -->
+## 基于 Python的人工智能应用实践实训
+
+- [查看详情](pythonAI/README.md)
