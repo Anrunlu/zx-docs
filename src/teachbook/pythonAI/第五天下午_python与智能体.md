@@ -4,7 +4,7 @@ author: 周子力
 icon: iconfont icon-a-outline-harmony-one
 tag: [Python基础]
 category: 教学文档
-order: 0
+order: 9
 ---
 # 《Python 与扣子（Coze）智能体融合开发》实训培训方案
 

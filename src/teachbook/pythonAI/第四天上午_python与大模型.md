@@ -4,7 +4,7 @@ author: 周子力
 icon: iconfont icon-a-outline-harmony-one
 tag: [Python基础]
 category: 教学文档
-order: 0
+order: 6
 ---
 
 ## 一天Python+通义千问大模型实战培训方案
