@@ -1,5 +1,5 @@
 ---
-title: 第一天上午_Python基础1
+title: 第1天上午_Python基础1
 author: 周子力
 icon: iconfont icon-a-outline-harmony-one
 tag: [Python基础]

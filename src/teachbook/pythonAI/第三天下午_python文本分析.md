@@ -1,10 +1,10 @@
 ---
-title: 第三天下午_Python文本分析
+title: 第3天下午_Python文本分析
 author: 周子力
 icon: iconfont icon-a-outline-harmony-one
 tag: [Python基础]
 category: 教学文档
-order: 0
+order: 5
 ---
 
 # 一日速成：Python文本分析实战培训方案

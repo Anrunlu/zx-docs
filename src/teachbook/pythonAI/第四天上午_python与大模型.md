@@ -1,5 +1,5 @@
 ---
-title: 第四天上午_Python大模型
+title: 第4天上午_Python大模型
 author: 周子力
 icon: iconfont icon-a-outline-harmony-one
 tag: [Python基础]

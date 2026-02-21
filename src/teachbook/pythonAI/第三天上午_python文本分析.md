@@ -1,5 +1,5 @@
 ---
-title: 第三天上午_Python文本分析
+title: 第3天上午_Python文本分析
 author: 周子力
 icon: iconfont icon-a-outline-harmony-one
 tag: [Python基础]

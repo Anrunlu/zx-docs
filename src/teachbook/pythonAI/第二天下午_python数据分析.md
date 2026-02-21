@@ -1,5 +1,5 @@
 ---
-title: 第二天下午_Python数据分析
+title: 第2天下午_Python数据分析
 author: 周子力
 icon: iconfont icon-a-outline-harmony-one
 tag: [Python基础]
