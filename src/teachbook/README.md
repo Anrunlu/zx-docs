@@ -27,7 +27,7 @@ order: 0
 
 ## 知识图谱在NLP中的应用研究专题研讨
 
-- [查看详情](kg-nlp/README.md)
+- [查看详情](kgandnlp/README.md)
 
 ## 基于 Python的人工智能应用实践实训
 
