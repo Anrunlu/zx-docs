@@ -12,11 +12,11 @@ export default navbar([
   //   icon: "iconfont icon-a-outline-harmony-one",
   //   link: "/teachbook/harmony/",
   // },
-  {
-    text: "算法设计与分析",
-    icon: "iconfont icon-a-outline-harmony-one",
-    link: "/teachbook/algorithm/",
-  },
+  // {
+  //   text: "算法设计与分析",
+  //   icon: "iconfont icon-a-outline-harmony-one",
+  //   link: "/teachbook/algorithm/",
+  // },
   // {
   //   text: "科技创新实践",
   //   icon: "iconfont icon-a-outline-harmony-one",
