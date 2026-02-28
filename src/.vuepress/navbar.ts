@@ -33,6 +33,11 @@ export default navbar([
   //   link: "/teachbook/chineseMedical/",
   // }
   {
+    text: "知识图谱在NLP中的应用研究专题研讨",
+    icon: "iconfont icon-a-outline-harmony-one",
+    link: "/teachbook/kg-nlp/",
+  },
+  {
     text: "python人工智能实训",
     icon: "iconfont icon-a-outline-harmony-one",
     link: "/teachbook/pythonAI/",
