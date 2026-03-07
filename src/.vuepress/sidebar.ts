@@ -6,9 +6,7 @@ export default sidebar({
   "/teachbook/algorithm/": "structure",
   "/teachbook/tecinnovation/": "structure",
   "/teachbook/chineseMedical/": "structure",
-  "/teachbook/machineLearning/": "structure"
+  "/teachbook/machineLearning/": "structure",
   "/teachbook/kgandnlp/": "structure",
   "/teachbook/pythonAI/": "structure"
-
-
 });
