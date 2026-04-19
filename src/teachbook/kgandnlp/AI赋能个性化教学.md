@@ -238,3 +238,8 @@ class_knowledge_heatmap.csv（班级知识点热力图数据）
 ![picture 47](https://oss.docs.z-xin.net/83bab56b707aea73a28915b651d39987471a16a18d67dd051c4f0ea85ccbd1f4.gif)  
 
 ![picture 48](https://oss.docs.z-xin.net/950fb7408c36a270ccdb8fe8ddc800c88e6a0cd0bda076e5b7679e495d8eef7c.gif)  
+
+
+### 11. 试卷分析报告
+
+![picture 49](https://oss.docs.z-xin.net/c7c84af49c33ba4ab463e2df970a0289f5f64e122bf75ca939264c01b87d55a9.gif)  
