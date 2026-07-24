@@ -12,11 +12,11 @@ export default navbar([
   //   icon: "iconfont icon-a-outline-harmony-one",
   //   link: "/teachbook/harmony/",
   // },
-  // {
-  //   text: "算法设计与分析",
-  //   icon: "iconfont icon-a-outline-harmony-one",
-  //   link: "/teachbook/algorithm/",
-  // },
+  {
+    text: "算法设计与分析",
+    icon: "iconfont icon-a-outline-harmony-one",
+    link: "/teachbook/algorithm/",
+  },
   {
     text: "科技创新实践",
     icon: "iconfont icon-a-outline-harmony-one",
@@ -32,15 +32,15 @@ export default navbar([
   //   icon: "iconfont icon-a-outline-harmony-one",
   //   link: "/teachbook/chineseMedical/",
   // }
-  {
-    text: "知识图谱在NLP中的应用研究专题研讨",
-    icon: "iconfont icon-a-outline-harmony-one",
-    link: "/teachbook/kgandnlp/",
-  },
-  {
-    text: "python人工智能实训",
-    icon: "iconfont icon-a-outline-harmony-one",
-    link: "/teachbook/pythonAI/",
-  }
+  // {
+  //   text: "知识图谱在NLP中的应用研究专题研讨",
+  //   icon: "iconfont icon-a-outline-harmony-one",
+  //   link: "/teachbook/kgandnlp/",
+  // },
+  // {
+  //   text: "python人工智能实训",
+  //   icon: "iconfont icon-a-outline-harmony-one",
+  //   link: "/teachbook/pythonAI/",
+  // }
 
 ]);

@@ -19,7 +19,7 @@ order: 1
 
 （4）[python类与对象一](../python/Python类与对象一.md)
 
-（5）[python类与对象二](../python/Python类与对象二.md)
+（5）[python类与对象二](../python/Python%20类与对象二.md)
 
 （6）[python类与对象三](../python/Python类与对象三.md)
 
