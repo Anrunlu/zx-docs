@@ -25,6 +25,10 @@ order: 0
 
 - [查看详情](tecinnovation/README.md) -->
 
+## 认知智能中的知识构建研究
+
+- [查看详情](cognitiveIntelligence/README.md)
+
 <!-- ## 知识图谱在NLP中的应用研究专题研讨
 
 - [查看详情](kgandnlp/README.md) -->

@@ -5,6 +5,7 @@ export default sidebar({
   "/teachbook/harmony/": "structure",
   "/teachbook/algorithm/": "structure",
   "/teachbook/tecinnovation/": "structure",
+  "/teachbook/cognitiveIntelligence/": "structure",
   "/teachbook/chineseMedical/": "structure",
   "/teachbook/machineLearning/": "structure",
   "/teachbook/kgandnlp/": "structure",

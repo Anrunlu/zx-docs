@@ -22,6 +22,11 @@ export default navbar([
     icon: "iconfont icon-a-outline-harmony-one",
     link: "/teachbook/tecinnovation/",
   },
+  {
+    text: "认知智能中的知识构建研究",
+    icon: "iconfont icon-a-outline-harmony-one",
+    link: "/teachbook/cognitiveIntelligence/",
+  },
   // {
   //   text: "机器学习",
   //   icon: "iconfont icon-a-outline-harmony-one",
