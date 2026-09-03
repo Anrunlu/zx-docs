@@ -5,6 +5,8 @@ author: 周子力
 order: 0
 ---
 
+新生请先看 [新生指南](../guide/README.md)。
+
 ## Python 程序设计
 
 - [查看详情](python/README.md)

@@ -3,6 +3,11 @@ import { navbar } from "vuepress-theme-hope";
 export default navbar([
   "/",
   {
+    text: "新生指南",
+    icon: "fas fa-compass",
+    link: "/guide/",
+  },
+  {
     text: "Python 程序设计",
     icon: "fab fa-python",
     link: "/teachbook/python/",

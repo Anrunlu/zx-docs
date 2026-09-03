@@ -10,14 +10,11 @@ bgImageStyle:
 heroText: 知新新知
 tagline: 温故知新，交流互鉴，探索发现。
 actions:
-  # - text: 使用指南
-  #   icon: fas fa-lightbulb
-  #   link: ./demo/
-    
-
-  - text: 文档
-    link: ./teachbook/
+  - text: 新生指南
+    link: ./guide/
     type: primary
+  - text: 课程文档
+    link: ./teachbook/
 
 copyright: false
 footer: 版权所有 © 2024-present c605.cn

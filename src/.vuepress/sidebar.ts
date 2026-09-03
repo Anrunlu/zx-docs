@@ -1,6 +1,7 @@
 import { sidebar } from "vuepress-theme-hope";
 
 export default sidebar({
+  "/guide/": "structure",
   "/teachbook/python/": "structure",
   "/teachbook/harmony/": "structure",
   "/teachbook/algorithm/": "structure",
