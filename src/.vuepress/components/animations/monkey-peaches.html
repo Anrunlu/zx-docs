@@ -1,0 +1,1192 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>猴子吃桃 · 生动动画讲解</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: system-ui, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #fff8e1 0%, #e8f4fd 100%);
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 0;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            max-width: 1280px;
+            width: 100%;
+            padding: 30px;
+            border-radius: 36px;
+            box-shadow: 0 25px 40px -12px rgba(0, 20, 30, 0.25);
+        }
+
+        h1 {
+            font-size: 2rem;
+            font-weight: 600;
+            margin: 0 0 8px 0;
+            color: #0b2b3b;
+            letter-spacing: -0.01em;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .subtitle {
+            color: #2c5a6e;
+            margin-bottom: 24px;
+            font-size: 1rem;
+            font-weight: 400;
+            border-left: 4px solid #f5b342;
+            padding-left: 16px;
+            background: #fef9ee;
+            border-radius: 0 12px 12px 0;
+            line-height: 1.6;
+            padding: 12px 20px;
+        }
+
+        .subtitle strong {
+            color: #a13030;
+        }
+
+        .main-area {
+            display: flex;
+            gap: 24px;
+            flex-wrap: wrap;
+            align-items: flex-start;
+        }
+
+        .left-panel {
+            flex: 0 0 700px;
+            max-width: 100%;
+        }
+
+        .right-panel {
+            flex: 1;
+            min-width: 300px;
+            max-width: 100%;
+        }
+
+        canvas {
+            display: block;
+            width: 100%;
+            height: auto;
+            border-radius: 24px;
+            background: #fdfcf9;
+            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.04);
+            border: 1px solid #f0e6d6;
+        }
+
+        .controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            align-items: center;
+            margin-top: 14px;
+        }
+
+        button {
+            background: white;
+            border: none;
+            padding: 11px 20px;
+            font-size: 0.92rem;
+            font-weight: 500;
+            border-radius: 40px;
+            cursor: pointer;
+            color: #0f4055;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+            transition: all 0.15s;
+            border: 1px solid #cddbe7;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+
+        button.primary {
+            background: #0d3f53;
+            border: 1px solid #0d3f53;
+            color: white;
+            box-shadow: 0 6px 14px rgba(13, 63, 83, 0.2);
+        }
+
+        button.primary:hover {
+            background: #104f68;
+            border-color: #104f68;
+        }
+
+        button:hover {
+            background: #e3eef8;
+            border-color: #b1c9db;
+        }
+
+        button.primary:disabled, button:disabled {
+            opacity: 0.45;
+            cursor: not-allowed;
+            box-shadow: none;
+            background: #d9e2ec;
+            border-color: #b9c8d6;
+            color: #5e7b8c;
+        }
+
+        button.primary:disabled {
+            background: #b0c5d2;
+            border-color: #b0c5d2;
+            color: #f0f6fa;
+        }
+
+        .settings {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 16px;
+            background: #f1f7fd;
+            padding: 12px 20px;
+            border-radius: 50px;
+            margin-bottom: 14px;
+        }
+
+        .setting-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.92rem;
+            color: #1f4e62;
+            font-weight: 500;
+        }
+
+        .setting-item input {
+            width: 70px;
+            padding: 7px 10px;
+            border-radius: 30px;
+            border: 1px solid #c2d5e6;
+            font-weight: 600;
+            font-size: 0.92rem;
+            text-align: center;
+            background: white;
+            color: #0d3f53;
+        }
+
+        .setting-item input:focus {
+            outline: 2px solid #7cc3ed;
+            border-color: transparent;
+        }
+
+        /* 面板 */
+        .panel {
+            background: #f8fbfe;
+            border-radius: 22px;
+            padding: 18px 20px;
+            border: 1px solid #dceaf5;
+            margin-bottom: 16px;
+        }
+
+        .panel h2 {
+            font-size: 1rem;
+            font-weight: 600;
+            color: #0b2b3b;
+            margin: 0 0 12px 0;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding-bottom: 8px;
+            border-bottom: 2px dashed #cfe2f0;
+        }
+
+        .panel h2 .badge {
+            background: #f5b342;
+            color: white;
+            border-radius: 20px;
+            padding: 2px 10px;
+            font-size: 0.72rem;
+            font-weight: 600;
+        }
+
+        /* 递推公式 */
+        .formula-box {
+            background: white;
+            border-radius: 16px;
+            padding: 16px 18px;
+            margin-bottom: 14px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.02);
+            border-left: 5px solid #f5b342;
+        }
+
+        .formula-box .label {
+            font-size: 0.78rem;
+            font-weight: 600;
+            color: #5b7e92;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 8px;
+        }
+
+        .formula-box .formula {
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: #0d3f53;
+            font-family: 'Cambria Math', 'Times New Roman', serif;
+            text-align: center;
+            line-height: 1.6;
+        }
+
+        .formula-box .formula .var {
+            color: #a13030;
+            font-style: italic;
+        }
+
+        .formula-box .explain {
+            font-size: 0.82rem;
+            color: #5b7e92;
+            margin-top: 8px;
+            line-height: 1.5;
+            text-align: center;
+        }
+
+        /* 数据表格 */
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.84rem;
+        }
+
+        .data-table th {
+            background: #e3f0fa;
+            color: #0d3f53;
+            font-weight: 600;
+            padding: 8px 6px;
+            text-align: center;
+            border: 1px solid #cfe2f0;
+            font-size: 0.78rem;
+        }
+
+        .data-table td {
+            padding: 7px 6px;
+            text-align: center;
+            border: 1px solid #e0eef8;
+            color: #1f4e62;
+            font-weight: 500;
+        }
+
+        .data-table tr.current td {
+            background: #fff8e1 !important;
+            font-weight: 700;
+        }
+
+        .data-table tr.highlight td {
+            background: #e8f5e9;
+        }
+
+        .data-table .peach-count {
+            color: #a13030;
+            font-weight: 700;
+            font-size: 0.9rem;
+        }
+
+        /* 步骤说明 */
+        .step-explain {
+            background: white;
+            border-radius: 14px;
+            padding: 14px 18px;
+            font-size: 0.92rem;
+            color: #1f4e62;
+            line-height: 1.7;
+            border-left: 5px solid #52b9e9;
+            min-height: 90px;
+        }
+
+        .step-explain .day-badge {
+            display: inline-block;
+            background: #52b9e9;
+            color: white;
+            border-radius: 20px;
+            padding: 2px 12px;
+            font-size: 0.78rem;
+            font-weight: 600;
+            margin-right: 8px;
+        }
+
+        .step-explain .highlight {
+            color: #a13030;
+            font-weight: 700;
+        }
+
+        .step-explain .formula-inline {
+            font-family: 'Cambria Math', 'Times New Roman', serif;
+            font-weight: 600;
+            color: #0d3f53;
+            background: #f1f7fd;
+            padding: 2px 8px;
+            border-radius: 6px;
+            display: inline-block;
+        }
+
+        /* 结果展示 */
+        .result-box {
+            background: linear-gradient(135deg, #fff8e1, #ffe8b3);
+            border-radius: 14px;
+            padding: 16px 18px;
+            text-align: center;
+            border: 1px solid #f5d77a;
+            margin-top: 10px;
+        }
+
+        .result-box .label {
+            font-size: 0.82rem;
+            color: #7a4100;
+            font-weight: 500;
+        }
+
+        .result-box .value {
+            font-size: 2.2rem;
+            font-weight: 700;
+            color: #a13030;
+            line-height: 1.2;
+            margin: 4px 0;
+        }
+
+        .result-box .sub {
+            font-size: 0.78rem;
+            color: #7a4100;
+        }
+
+        .progress-bar-wrapper {
+            margin-top: 8px;
+            background: #e3f0fa;
+            border-radius: 20px;
+            height: 10px;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #f5b342, #52b9e9);
+            border-radius: 20px;
+            transition: width 0.3s ease;
+        }
+
+        .scroll-x {
+            overflow-x: auto;
+        }
+
+        /* 桃子计数小标签 */
+        .peach-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 3px;
+            background: #fff8e1;
+            border: 1px solid #f5d77a;
+            border-radius: 20px;
+            padding: 2px 8px;
+            font-size: 0.82rem;
+            font-weight: 600;
+            color: #a13030;
+        }
+        /* 保留原稿的桃子与猴子绘制，时间轴在面板内滚动以保持文字清晰。 */
+        .left-panel { flex: 1 1 660px; min-width: 0; }
+        .right-panel { flex: 1 1 300px; min-width: 0; }
+        .canvas-viewport { overflow-x: auto; overflow-y: hidden; border-radius: 24px; overscroll-behavior-x: contain; }
+        .canvas-note { font-size: 0.82rem; color: #7a4100; line-height: 1.6; margin: 8px 0; }
+        .canvas-viewport:focus-visible, button:focus-visible, input:focus-visible { outline: 3px solid #a13030; outline-offset: 3px; }
+        @media (max-width: 600px) {
+            body { padding: 10px; }
+            .container { padding: 16px; border-radius: 20px; }
+            h1 { font-size: 1.45rem; line-height: 1.4; }
+            .main-area { gap: 16px; }
+            .settings { border-radius: 16px; padding: 12px; gap: 10px; }
+            .controls { gap: 8px; }
+            .controls button { flex: 1 1 40%; padding: 10px 12px; }
+            .panel { padding: 14px; }
+            .formula-box { padding: 12px; }
+            .formula-box .formula { font-size: 1rem; overflow-wrap: anywhere; }
+            .data-table th, .data-table td { padding: 7px 3px; }
+        }
+        @media (prefers-reduced-motion: reduce) { .progress-bar { transition: none; } }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>🐒 猴子吃桃 · 生动动画讲解</h1>
+    <div class="subtitle">
+        猴子从第1天起，每天吃掉<strong>当天早晨桃子的一半，再多吃1个</strong>。第 <strong>D</strong> 天早晨只剩 <strong>1 个</strong>，当天不再吃桃。<br>
+        看动画：<strong>每天吃一半，再多吃一个</strong>！从后往前推，找回第一天的桃子数。
+    </div>
+
+    <div class="main-area">
+        <!-- 左侧：画布与操作 -->
+        <div class="left-panel">
+            <div class="settings">
+                <div class="setting-item">
+                    <label for="dayInput">📅 总天数 D</label>
+                    <input type="number" id="dayInput" min="1" max="10" step="1" value="10">
+                </div>
+                <button id="applyBtn" style="padding: 7px 16px; font-size: 0.88rem;">应用</button>
+            </div>
+
+            <div class="canvas-viewport" tabindex="0" role="region" aria-label="桃子数量逆推时间轴，可横向滚动查看各天">
+                <canvas id="peachCanvas" width="700" height="460" aria-label="从最后一天向前逆推的猴子吃桃动画，数值见每日桃子数表">桃子数量逆推过程</canvas>
+            </div>
+            <p class="canvas-note">黄色是当前天，蓝色是已知数量，问号表示待求；时间轴可横向滚动。</p>
+
+            <div class="controls">
+                <button id="prevBtn">◀ 上一步</button>
+                <button id="nextBtn" class="primary">下一步 ▶</button>
+                <button id="playBtn" class="primary">▶ 自动演示</button>
+                <button id="resetBtn">⟲ 重置</button>
+            </div>
+        </div>
+
+        <!-- 右侧：信息面板 -->
+        <div class="right-panel">
+            <div class="panel">
+                <h2>🧮 逆推关系 <span class="badge">从后往前</span></h2>
+                <div class="formula-box">
+                    <div class="label">逆推公式</div>
+                    <div class="formula">
+                        前一天 = (<span class="var">后一天剩余</span> + 1) × 2
+                    </div>
+                    <div class="explain">
+                        因为吃掉一半 + 1 个，所以剩下的 ×2 + 2 就是前一天的桃子数。
+                    </div>
+                </div>
+            </div>
+
+            <div class="panel">
+                <h2>📊 每日桃子数</h2>
+                <div class="scroll-x">
+                    <table class="data-table" id="dataTable">
+                        <thead>
+                            <tr>
+                                <th>天数</th>
+                                <th>早上剩余</th>
+                                <th>关系</th>
+                            </tr>
+                        </thead>
+                        <tbody id="dataBody"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="panel">
+                <h2>💡 当前步骤</h2>
+                <div class="step-explain" id="stepExplain">
+                    准备就绪，点击"下一步"开始从最后一天逆推。
+                </div>
+                <div class="progress-bar-wrapper" role="progressbar" aria-label="逆推计算进度" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+                    <div class="progress-bar" id="progressBar" style="width: 0%;"></div>
+                </div>
+            </div>
+
+            <div class="panel" id="resultPanel" style="display: none;">
+                <h2>🎯 最终结果</h2>
+                <div class="result-box">
+                    <div class="label">第1天早晨有</div>
+                    <div class="value" id="resultValue">0</div>
+                    <div class="sub">个桃子 🍑</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    (function() {
+        // ---------- 核心状态 ----------
+        let totalDays = 10;
+        let peaches = [];         // peaches[day] = 第 day 天早上的桃子数
+        let currentDay = totalDays;
+        let isFinished = false;
+
+        // 自动播放
+        let isPlaying = false;
+        let playTimer = null;
+        let animationFrame = null;
+        const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+
+        function cancelAnimation() {
+            if (animationFrame !== null) cancelAnimationFrame(animationFrame);
+            animationFrame = null;
+            animation.active = false;
+        }
+
+        // 动画状态
+        let animation = {
+            active: false,
+            type: 'idle',        // 'idle' | 'eat' | 'reverse'
+            progress: 0,
+            fromDay: 0,
+            toDay: 0,
+            peachEaten: 0,
+            peachLeft: 0,
+            peachBefore: 0,
+            reverseFromPeaches: 0,
+            reverseToPeaches: 0
+        };
+
+        // canvas
+        const canvas = document.getElementById('peachCanvas');
+        const ctx = canvas.getContext('2d');
+        let CW = 700;
+        const CH = 460;
+        canvas.width = CW;
+        canvas.height = CH;
+
+        // DOM
+        const viewport = canvas.parentElement;
+        const dayInput = document.getElementById('dayInput');
+        const applyBtn = document.getElementById('applyBtn');
+        const prevBtn = document.getElementById('prevBtn');
+        const nextBtn = document.getElementById('nextBtn');
+        const playBtn = document.getElementById('playBtn');
+        const resetBtn = document.getElementById('resetBtn');
+        const dataBody = document.getElementById('dataBody');
+        const stepExplain = document.getElementById('stepExplain');
+        const progressBar = document.getElementById('progressBar');
+        const resultPanel = document.getElementById('resultPanel');
+        const resultValue = document.getElementById('resultValue');
+
+        // 桃子绘制尺寸
+        const PEACH_RADIUS = 9;
+
+        // 绘制单个桃子 (带叶子)
+        function drawPeach(x, y, radius, alpha = 1, highlight = false) {
+            ctx.save();
+            ctx.globalAlpha = alpha;
+
+            // 桃子主体
+            const gradient = ctx.createRadialGradient(x - radius * 0.3, y - radius * 0.3, radius * 0.2, x, y, radius);
+            gradient.addColorStop(0, highlight ? '#ffd9a0' : '#ffcfa0');
+            gradient.addColorStop(0.7, highlight ? '#ffb347' : '#ff9e4a');
+            gradient.addColorStop(1, highlight ? '#f5a623' : '#e8833a');
+
+            ctx.beginPath();
+            // 桃子形状：椭圆偏圆
+            ctx.ellipse(x, y + radius * 0.1, radius, radius * 0.9, 0, 0, 2 * Math.PI);
+            ctx.fillStyle = gradient;
+            ctx.fill();
+
+            // 高光
+            ctx.beginPath();
+            ctx.ellipse(x - radius * 0.3, y - radius * 0.3, radius * 0.25, radius * 0.2, -0.5, 0, 2 * Math.PI);
+            ctx.fillStyle = 'rgba(255,255,255,0.5)';
+            ctx.fill();
+
+            // 叶子
+            ctx.beginPath();
+            ctx.ellipse(x + radius * 0.3, y - radius * 0.9, radius * 0.35, radius * 0.18, 0.6, 0, 2 * Math.PI);
+            ctx.fillStyle = '#5cb85c';
+            ctx.fill();
+
+            // 小梗
+            ctx.beginPath();
+            ctx.moveTo(x, y - radius * 0.7);
+            ctx.lineTo(x + radius * 0.05, y - radius * 1.0);
+            ctx.strokeStyle = '#7a5a3a';
+            ctx.lineWidth = 1.5;
+            ctx.stroke();
+
+            ctx.restore();
+        }
+
+        // 绘制猴子头
+        function drawMonkey(x, y, size, eating = false) {
+            ctx.save();
+
+            // 脸
+            ctx.beginPath();
+            ctx.arc(x, y, size, 0, 2 * Math.PI);
+            ctx.fillStyle = '#b07d5a';
+            ctx.fill();
+            ctx.strokeStyle = '#8a5f3f';
+            ctx.lineWidth = 2;
+            ctx.stroke();
+
+            // 内脸（浅色）
+            ctx.beginPath();
+            ctx.ellipse(x, y + size * 0.15, size * 0.7, size * 0.6, 0, 0, 2 * Math.PI);
+            ctx.fillStyle = '#e8c9a8';
+            ctx.fill();
+
+            // 眼睛
+            const eyeY = y - size * 0.15;
+            ctx.beginPath();
+            ctx.arc(x - size * 0.35, eyeY, size * 0.15, 0, 2 * Math.PI);
+            ctx.fillStyle = 'white';
+            ctx.fill();
+            ctx.beginPath();
+            ctx.arc(x + size * 0.35, eyeY, size * 0.15, 0, 2 * Math.PI);
+            ctx.fillStyle = 'white';
+            ctx.fill();
+
+            // 瞳孔
+            const pupilOffset = eating ? size * 0.05 : 0;
+            ctx.beginPath();
+            ctx.arc(x - size * 0.35 + pupilOffset, eyeY, size * 0.08, 0, 2 * Math.PI);
+            ctx.fillStyle = '#0b2b3b';
+            ctx.fill();
+            ctx.beginPath();
+            ctx.arc(x + size * 0.35 + pupilOffset, eyeY, size * 0.08, 0, 2 * Math.PI);
+            ctx.fillStyle = '#0b2b3b';
+            ctx.fill();
+
+            // 鼻子
+            ctx.beginPath();
+            ctx.arc(x, y + size * 0.15, size * 0.08, 0, 2 * Math.PI);
+            ctx.fillStyle = '#5a3a25';
+            ctx.fill();
+
+            // 嘴
+            ctx.beginPath();
+            if (eating) {
+                // 正在吃：张嘴
+                ctx.arc(x, y + size * 0.4, size * 0.2, 0, Math.PI);
+            } else {
+                // 微笑
+                ctx.arc(x, y + size * 0.35, size * 0.2, 0.1 * Math.PI, 0.9 * Math.PI);
+            }
+            ctx.strokeStyle = '#5a3a25';
+            ctx.lineWidth = 2;
+            ctx.stroke();
+
+            // 耳朵
+            ctx.beginPath();
+            ctx.arc(x - size * 1.0, y - size * 0.1, size * 0.3, 0, 2 * Math.PI);
+            ctx.fillStyle = '#b07d5a';
+            ctx.fill();
+            ctx.strokeStyle = '#8a5f3f';
+            ctx.lineWidth = 1.5;
+            ctx.stroke();
+
+            ctx.beginPath();
+            ctx.arc(x + size * 1.0, y - size * 0.1, size * 0.3, 0, 2 * Math.PI);
+            ctx.fillStyle = '#b07d5a';
+            ctx.fill();
+            ctx.strokeStyle = '#8a5f3f';
+            ctx.lineWidth = 1.5;
+            ctx.stroke();
+
+            ctx.restore();
+        }
+
+        // 天数节点保留足够间距，避免10天的数值和公式重叠。
+        function fitCanvas() {
+            CW = Math.max(viewport.clientWidth, 180 + (totalDays - 1) * 125);
+            canvas.width = CW;
+            canvas.height = CH;
+            canvas.style.width = `${CW}px`;
+            canvas.style.height = `${CH}px`;
+            revealCurrentDay();
+            drawCanvas();
+        }
+
+        function dayX(day) {
+            if (totalDays === 1) return CW / 2;
+            return 90 + (day - 1) * (CW - 180) / (totalDays - 1);
+        }
+
+        function revealCurrentDay() {
+            // 同时呈现本次逆推的两天，保持动画路径可见。
+            const center = currentDay > 1 ? (dayX(currentDay) + dayX(currentDay - 1)) / 2 : dayX(1);
+            viewport.scrollLeft = Math.max(0, center - viewport.clientWidth / 2);
+        }
+
+        function resetState(n) {
+            stopPlaying();
+            cancelAnimation();
+            totalDays = n;
+            peaches = new Array(totalDays + 1).fill(null);
+            peaches[totalDays] = 1;
+            currentDay = totalDays;
+            isFinished = totalDays === 1;
+            fitCanvas();
+            updateUI();
+        }
+
+        function finishStep() {
+            const { toDay, reverseToPeaches } = animation;
+            animation.active = false;
+            animationFrame = null;
+            peaches[toDay] = reverseToPeaches;
+            currentDay = toDay;
+            isFinished = currentDay === 1;
+            if (isFinished) stopPlaying();
+            revealCurrentDay();
+            updateUI();
+            if (isPlaying) playTimer = setTimeout(nextStep, 350);
+        }
+
+        function nextStep() {
+            if (animation.active || currentDay <= 1) return;
+            const fromPeaches = peaches[currentDay];
+            animation = {
+                active: true, type: 'reverse', progress: 0,
+                fromDay: currentDay, toDay: currentDay - 1,
+                reverseFromPeaches: fromPeaches, reverseToPeaches: 2 * (fromPeaches + 1)
+            };
+            updateUI();
+            if (reducedMotion.matches) { finishStep(); return; }
+            const started = performance.now();
+            function animLoop(timestamp) {
+                if (!animation.active) return;
+                animation.progress = Math.min(1, (timestamp - started) / 800);
+                drawCanvas();
+                if (animation.progress < 1) animationFrame = requestAnimationFrame(animLoop);
+                else finishStep();
+            }
+            animationFrame = requestAnimationFrame(animLoop);
+        }
+
+        function prevStep() {
+            if (animation.active || currentDay >= totalDays) return;
+            peaches[currentDay] = null;
+            currentDay++;
+            isFinished = false;
+            revealCurrentDay();
+            updateUI();
+        }
+
+        function startPlaying() {
+            if (isPlaying || totalDays === 1) return;
+            if (currentDay <= 1) resetState(totalDays);
+            isPlaying = true;
+            playBtn.textContent = '⏸ 暂停';
+            playBtn.classList.remove('primary');
+            // 正在执行的一步完成后会调度下一步，避免多个动画同时改写状态。
+            if (!animation.active) playTimer = setTimeout(nextStep, 100);
+        }
+
+        function stopPlaying() {
+            isPlaying = false;
+            if (playTimer !== null) clearTimeout(playTimer);
+            playTimer = null;
+            playBtn.textContent = '▶ 自动演示';
+            playBtn.classList.add('primary');
+        }
+
+        // ---------- 更新界面 ----------
+        function updateUI() {
+            drawCanvas();
+            updateDataTable();
+            updateStepExplain();
+            updateProgress();
+            updateResult();
+            updateButtons();
+        }
+
+        // ---------- 绘制画布 ----------
+        function drawCanvas() {
+            ctx.clearRect(0, 0, CW, CH);
+
+            // 背景
+            const bgGrad = ctx.createLinearGradient(0, 0, 0, CH);
+            bgGrad.addColorStop(0, '#fdfcf9');
+            bgGrad.addColorStop(1, '#f5f0e6');
+            ctx.fillStyle = bgGrad;
+            ctx.fillRect(0, 0, CW, CH);
+
+            const viewLeft = viewport.scrollLeft;
+            const viewWidth = viewport.clientWidth;
+            const viewCenter = viewLeft + viewWidth / 2;
+            const compact = viewWidth < 420;
+
+            // 天空/树背景装饰
+            ctx.beginPath();
+            ctx.arc(viewLeft + 60, 60, 40, 0, 2 * Math.PI);
+            ctx.fillStyle = 'rgba(255, 220, 150, 0.3)';
+            ctx.fill();
+
+            // 标题
+            ctx.font = 'bold 17px "Segoe UI", system-ui, sans-serif';
+            ctx.fillStyle = '#0b2b3b';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'top';
+            ctx.fillText(`第 ${totalDays} 天早晨剩 1 个`, viewCenter, 16);
+
+            // 绘制时间轴
+            const timelineY = 130;
+            const startX = 90;
+            const endX = CW - 90;
+
+            // 时间轴连线
+            ctx.beginPath();
+            ctx.moveTo(startX - 30, timelineY);
+            ctx.lineTo(endX + 30, timelineY);
+            ctx.strokeStyle = '#e0d6c6';
+            ctx.lineWidth = 3;
+            ctx.stroke();
+
+            // 逆推方向箭头（从右到左）
+            ctx.beginPath();
+            ctx.moveTo(startX - 30, timelineY);
+            ctx.lineTo(startX - 18, timelineY - 6);
+            ctx.lineTo(startX - 18, timelineY + 6);
+            ctx.closePath();
+            ctx.fillStyle = '#f5b342';
+            ctx.fill();
+
+            // 每一天
+            for (let day = 1; day <= totalDays; day++) {
+                const x = dayX(day);
+                const y = timelineY;
+                const peachCount = peaches[day];
+                const isKnown = peachCount !== null;
+                const isCurrent = (day === currentDay);
+                const isAnimating = animation.active && animation.type === 'reverse' &&
+                                    (day === animation.fromDay || day === animation.toDay);
+
+                // 天数标签
+                ctx.font = 'bold 13px "Segoe UI", system-ui, sans-serif';
+                ctx.fillStyle = isCurrent ? '#a13030' : (isKnown ? '#0d3f53' : '#94a3b8');
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'bottom';
+                ctx.fillText(`第 ${day} 天`, x, y - 50);
+
+                // 节点圆
+                ctx.beginPath();
+                ctx.arc(x, y, 20, 0, 2 * Math.PI);
+                if (isCurrent) {
+                    ctx.fillStyle = '#f5b342';
+                    ctx.fill();
+                    ctx.strokeStyle = '#d99a2a';
+                    ctx.lineWidth = 3;
+                } else if (isKnown) {
+                    ctx.fillStyle = '#52b9e9';
+                    ctx.fill();
+                    ctx.strokeStyle = '#2c9bcc';
+                    ctx.lineWidth = 2.5;
+                } else {
+                    ctx.fillStyle = '#f0f4f8';
+                    ctx.fill();
+                    ctx.strokeStyle = '#c2d5e6';
+                    ctx.lineWidth = 2;
+                }
+                ctx.stroke();
+
+                // 当前节点光晕
+                if (isCurrent) {
+                    ctx.beginPath();
+                    ctx.arc(x, y, 26, 0, 2 * Math.PI);
+                    ctx.strokeStyle = 'rgba(245, 179, 66, 0.5)';
+                    ctx.lineWidth = 3;
+                    ctx.setLineDash([4, 4]);
+                    ctx.stroke();
+                    ctx.setLineDash([]);
+                }
+
+                // 节点内文字：桃子数或问号
+                ctx.font = 'bold 14px "Segoe UI", system-ui, sans-serif';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                if (isKnown) {
+                    ctx.fillStyle = isCurrent ? '#563100' : 'white';
+                    ctx.fillText(peachCount, x, y + 1);
+                } else {
+                    ctx.fillStyle = '#94a3b8';
+                    ctx.fillText('?', x, y + 1);
+                }
+
+                // 如果该天已知桃子数，在下方画真实的桃子图标
+                if (isKnown && peachCount <= 12) {
+                    // 画一堆小桃子（最多显示12个）
+                    const peachRowY = y + 45;
+                    const displayCount = Math.min(peachCount, 12);
+                    const columns = Math.min(5, displayCount);
+                    for (let p = 0; p < displayCount; p++) {
+                        const px = x + ((p % columns) - (columns - 1) / 2) * 18;
+                        const py = peachRowY + Math.floor(p / columns) * 22;
+                        drawPeach(px, py, PEACH_RADIUS, 0.9, isCurrent);
+                    }
+
+
+                } else if (isKnown && peachCount > 12) {
+                    // 数量太多，只显示文字
+                    ctx.font = 'bold 12px "Segoe UI", system-ui, sans-serif';
+                    ctx.fillStyle = '#a13030';
+                    ctx.textAlign = 'center';
+                    ctx.textBaseline = 'middle';
+                    ctx.fillText(`${peachCount} 个`, x, y + 50);
+                }
+
+                // 在节点之间画逆推箭头
+                if (day > 1) {
+                    const prevX = dayX(day - 1);
+                    const midX = (x + prevX) / 2;
+                    const arrowY = timelineY - 90;
+
+                    const isReverseActive = animation.active && animation.type === 'reverse' &&
+                                            animation.toDay === day - 1 && animation.fromDay === day;
+
+                    // 弧线
+                    ctx.beginPath();
+                    ctx.moveTo(x, timelineY - 22);
+                    ctx.quadraticCurveTo(midX, arrowY, prevX, timelineY - 22);
+                    if (isReverseActive) {
+                        ctx.strokeStyle = '#f5b342';
+                        ctx.lineWidth = 3;
+                    } else if (peaches[day - 1] !== null) {
+                        ctx.strokeStyle = '#52b9e9';
+                        ctx.lineWidth = 2.5;
+                    } else {
+                        ctx.strokeStyle = '#e0d6c6';
+                        ctx.lineWidth = 2;
+                    }
+                    ctx.stroke();
+
+                    // 箭头
+                    if (peaches[day - 1] !== null || isReverseActive) {
+                        ctx.beginPath();
+                        const angle = Math.atan2(0, prevX - x);
+                        const arrowSize = 9;
+                        ctx.moveTo(prevX, timelineY - 22);
+                        ctx.lineTo(prevX - arrowSize * Math.cos(angle - Math.PI / 6),
+                                   timelineY - 22 - arrowSize * Math.sin(angle - Math.PI / 6));
+                        ctx.lineTo(prevX - arrowSize * Math.cos(angle + Math.PI / 6),
+                                   timelineY - 22 - arrowSize * Math.sin(angle + Math.PI / 6));
+                        ctx.closePath();
+                        ctx.fillStyle = isReverseActive ? '#f5b342' : '#52b9e9';
+                        ctx.fill();
+                    }
+
+                    // 逆推公式显示在弧线中间
+                    if (isReverseActive || peaches[day - 1] !== null) {
+                        const formulaY = arrowY + 10;
+                        ctx.font = 'bold 11px "Segoe UI", system-ui, sans-serif';
+                        ctx.fillStyle = isReverseActive ? '#a13030' : '#5b7e92';
+                        ctx.textAlign = 'center';
+                        ctx.textBaseline = 'top';
+                        const fromP = peaches[day];
+                        const toP = peaches[day - 1];
+                        if (fromP !== null && toP !== null) {
+                            ctx.fillText(`(${fromP}+1)×2=${toP}`, midX, formulaY);
+                        } else if (fromP !== null) {
+                            const calced = (fromP + 1) * 2;
+                            ctx.fillText(`(${fromP}+1)×2=？`, midX, formulaY);
+                        }
+                    }
+                }
+            }
+
+            // 绘制猴子角色
+            const monkeyX = viewLeft + (compact ? 42 : 70);
+            const monkeyY = 360;
+            const isEating = animation.active && animation.type === 'eat';
+            drawMonkey(monkeyX, monkeyY, 30, isEating);
+
+            // 猴子旁边的话
+            ctx.font = '13px "Segoe UI", system-ui, sans-serif';
+            ctx.fillStyle = '#7a4100';
+            ctx.textAlign = 'left';
+            ctx.textBaseline = 'middle';
+            if (isFinished) {
+                ctx.fillText('😋 桃子找到啦！', monkeyX + 45, monkeyY - 10);
+                ctx.fillText(`第一天有 ${peaches[1]} 个`, monkeyX + 45, monkeyY + 12);
+            } else if (currentDay === totalDays) {
+                ctx.fillText('第 ' + totalDays + ' 天只剩 1 个', monkeyX + 45, monkeyY - 10);
+                ctx.fillText('往前推一推？', monkeyX + 45, monkeyY + 12);
+            } else {
+                ctx.fillText('🧐 正在逆推中...', monkeyX + 45, monkeyY - 10);
+                ctx.fillText(`第 ${currentDay} 天有 ${peaches[currentDay]} 个`, monkeyX + 45, monkeyY + 12);
+            }
+
+            // 如果正在执行逆推动画，显示动画中的数字变化
+            if (animation.active && animation.type === 'reverse') {
+                const fromX = dayX(animation.fromDay);
+                const toX = dayX(animation.toDay);
+                const animX = fromX + (toX - fromX) * animation.progress;
+                const animY = timelineY - 20 - Math.sin(animation.progress * Math.PI) * 60;
+
+                // 漂浮的桃子数字
+                ctx.font = 'bold 20px "Segoe UI", system-ui, sans-serif';
+                ctx.fillStyle = '#a13030';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                // 展示确切的两步逆运算，不把插值误当成某一天的真实数量。
+                const displayVal = animation.progress < 0.45
+                    ? `${animation.reverseFromPeaches}+1`
+                    : animation.reverseToPeaches;
+                ctx.fillText(displayVal, animX, animY);
+
+                // 底部公式
+                ctx.font = 'bold 14px "Segoe UI", system-ui, sans-serif';
+                ctx.fillStyle = '#0d3f53';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'top';
+                const formulaStr = `(${animation.reverseFromPeaches} + 1) × 2 = ${animation.reverseToPeaches}`;
+                ctx.fillText(formulaStr, viewCenter, 220);
+            }
+
+            // 初始化提示
+            if (!animation.active && currentDay === totalDays && !isFinished) {
+                ctx.font = 'bold 14px "Segoe UI", system-ui, sans-serif';
+                ctx.fillStyle = '#5b7e92';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'top';
+                ctx.fillText('点击“下一步”，从后往前推', viewCenter, 240);
+            }
+
+            // 完成后显示大结果
+            if (isFinished && peaches[1] !== null) {
+                ctx.font = 'bold 20px "Segoe UI", system-ui, sans-serif';
+                ctx.fillStyle = '#a13030';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'top';
+                ctx.fillText('第1天早晨有', viewCenter, 240);
+                ctx.fillText(`${peaches[1]} 个桃子 🍑`, viewCenter, 270);
+            }
+        }
+
+        // ---------- 数据表格 ----------
+        function updateDataTable() {
+            let html = '';
+            for (let day = 1; day <= totalDays; day++) {
+                const peachCount = peaches[day];
+                const isKnown = peachCount !== null;
+                const isCurrent = (day === currentDay);
+                let cls = '';
+                if (isCurrent) cls = 'current';
+                if (day === 1 && isFinished) cls = 'highlight';
+
+                let relationText = '';
+                if (day === totalDays) {
+                    relationText = '已知条件';
+                } else if (day < totalDays && peaches[day + 1] !== null && isKnown) {
+                    relationText = `(${peaches[day + 1]} + 1) × 2`;
+                } else {
+                    relationText = '待推算';
+                }
+
+                html += `<tr class="${cls}">
+                    <td><strong>第 ${day} 天</strong></td>
+                    <td>${isKnown ? `<span class="peach-count">${peachCount} 🍑</span>` : '<span style="color:#94a3b8;">?</span>'}</td>
+                    <td style="font-size:0.78rem; color:#5b7e92;">${relationText}</td>
+                </tr>`;
+            }
+            dataBody.innerHTML = html;
+        }
+
+        // ---------- 步骤说明 ----------
+        function updateStepExplain() {
+            if (totalDays === 1) {
+                stepExplain.innerHTML = `<span class="day-badge" style="background:#a13030;">✅ 完成</span>
+                    已知第1天早晨就剩1个桃子，因此答案为1。<br>
+                    无须逆推，也没有吃桃操作。`;
+            } else if (animation.active) {
+                stepExplain.innerHTML = `<span class="day-badge">正在逆推</span>
+                    从第 ${animation.fromDay} 天回推第 ${animation.toDay} 天：先补回多吃的1个，再恢复为两倍。<br>
+                    <span class="formula-inline">(${animation.reverseFromPeaches} + 1) × 2 = ${animation.reverseToPeaches}</span>`;
+            } else if (currentDay === totalDays && !isFinished) {
+                stepExplain.innerHTML = `
+                    <span class="day-badge">初始状态</span>
+                    已知第 <strong>${totalDays}</strong> 天早上剩余 <strong>1</strong> 个桃子 🍑。<br>
+                    点击"下一步"，用逆推公式往前推算第 <strong>${totalDays - 1}</strong> 天的桃子数。
+                `;
+            } else if (currentDay > 1 && currentDay < totalDays) {
+                const currentPeaches = peaches[currentDay];
+                stepExplain.innerHTML = `
+                    <span class="day-badge">第 ${currentDay} 天</span>
+                    已推出第 <strong>${currentDay}</strong> 天早上剩余 <strong>${currentPeaches}</strong> 个桃子。<br>
+                    继续往前推：第 <strong>${currentDay - 1}</strong> 天 = (<span class="highlight">${currentPeaches}</span> + 1) × 2 = 
+                    <span class="formula-inline">${(currentPeaches + 1) * 2}</span>
+                `;
+            } else if (currentDay === 1 && isFinished) {
+                stepExplain.innerHTML = `
+                    <span class="day-badge" style="background:#a13030;">✅ 完成</span>
+                    逆推完成！第一天早上有 <strong class="highlight">${peaches[1]}</strong> 个桃子。<br>
+                    验证：从第 1 天开始，每天吃一半加一个，第 <strong>${totalDays}</strong> 天正好剩 1 个。
+                `;
+            } else {
+                stepExplain.innerHTML = `准备就绪，点击"下一步"开始从最后一天逆推。`;
+            }
+        }
+
+        // ---------- 进度条 ----------
+        function updateProgress() {
+            const percent = totalDays === 1 ? 100 : (totalDays - currentDay) / (totalDays - 1) * 100;
+            progressBar.style.width = percent + '%';
+            progressBar.parentElement.setAttribute('aria-valuenow', String(Math.round(percent)));
+        }
+
+        // ---------- 结果显示 ----------
+        function updateResult() {
+            if (isFinished && peaches[1] !== null) {
+                resultPanel.style.display = 'block';
+                resultValue.textContent = peaches[1];
+            } else {
+                resultPanel.style.display = 'none';
+            }
+        }
+
+        // ---------- 按钮状态 ----------
+        function updateButtons() {
+            prevBtn.disabled = animation.active || currentDay >= totalDays;
+            nextBtn.disabled = animation.active || currentDay <= 1;
+            playBtn.disabled = totalDays === 1;
+        }
+
+        // ---------- 事件绑定 ----------
+        nextBtn.addEventListener('click', () => { stopPlaying(); nextStep(); });
+        prevBtn.addEventListener('click', () => { stopPlaying(); prevStep(); });
+
+        playBtn.addEventListener('click', () => {
+            if (isPlaying) stopPlaying();
+            else startPlaying();
+        });
+
+        resetBtn.addEventListener('click', () => {
+            stopPlaying();
+            const n = Number(dayInput.value);
+            if (!Number.isInteger(n) || n < 1 || n > 10) {
+                dayInput.setCustomValidity('请输入1到10之间的整数天数');
+                dayInput.reportValidity();
+                return;
+            }
+            resetState(n);
+        });
+
+        applyBtn.addEventListener('click', () => {
+            stopPlaying();
+            const n = Number(dayInput.value);
+            if (!Number.isInteger(n) || n < 1 || n > 10) {
+                dayInput.setCustomValidity('请输入1到10之间的整数天数');
+                dayInput.reportValidity();
+                return;
+            }
+            resetState(n);
+        });
+
+        dayInput.addEventListener('input', () => dayInput.setCustomValidity(''));
+
+        dayInput.addEventListener('change', () => {
+            let v = Number(dayInput.value);
+            if (isNaN(v) || v < 1) dayInput.value = 1;
+            if (v > 10) dayInput.value = 10;
+        });
+
+        document.addEventListener('keydown', (e) => {
+            if (e.target.closest('input, textarea, select, button')) return;
+            if (e.key === 'ArrowRight') { e.preventDefault(); stopPlaying(); nextStep(); }
+            else if (e.key === 'ArrowLeft') { e.preventDefault(); stopPlaying(); prevStep(); }
+            else if (e.key === ' ') { e.preventDefault(); if (isPlaying) stopPlaying(); else startPlaying(); }
+        });
+
+        // ---------- 启动 ----------
+        function initPage() {
+            const n = Number(dayInput.value);
+            resetState(n);
+        }
+        initPage();
+        viewport.addEventListener('scroll', drawCanvas, { passive: true });
+        new ResizeObserver(fitCanvas).observe(viewport);
+        window.addEventListener('pagehide', () => { stopPlaying(); cancelAnimation(); });
+    })();
+</script>
+</body>
+</html>

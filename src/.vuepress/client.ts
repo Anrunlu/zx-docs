@@ -8,5 +8,6 @@ export default defineClientConfig({
     app.component("ClassroomPolitics", ClassroomPolitics);
     app.component("JosephusAnimation", JosephusAnimation);
     app.component("HanoiAnimation", defineAsyncComponent(() => import("./components/HanoiAnimation.vue")));
+    app.component("MonkeyPeachesAnimation", defineAsyncComponent(() => import("./components/MonkeyPeachesAnimation.vue")));
   },
 });
