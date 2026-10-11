@@ -1,0 +1,1024 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>约瑟夫环 · 原问题与子问题编号关系演示</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: system-ui, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+        }
+
+        body {
+            background: #f5f7fb;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 0;
+            margin: 0;
+            padding: 12px;
+        }
+
+        .container {
+            background: white;
+            max-width: 1200px;
+            width: 100%;
+            padding: 30px;
+            border-radius: 36px;
+            box-shadow: 0 25px 40px -12px rgba(0, 20, 30, 0.25);
+        }
+
+        h1 {
+            font-size: 2rem;
+            font-weight: 600;
+            margin: 0 0 8px 0;
+            color: #0b2b3b;
+            letter-spacing: -0.01em;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .subtitle {
+            color: #2c5a6e;
+            margin-bottom: 24px;
+            font-size: 1rem;
+            font-weight: 400;
+            border-left: 4px solid #52b9e9;
+            padding-left: 16px;
+            background: #eef8fe;
+            border-radius: 0 12px 12px 0;
+            line-height: 1.5;
+            padding: 12px 20px;
+        }
+
+        .subtitle strong {
+            color: #0d3f53;
+        }
+
+        .main-area {
+            display: flex;
+            gap: 24px;
+            flex-wrap: wrap;
+            align-items: flex-start;
+        }
+
+        .left-panel {
+            flex: 1 1 540px;
+            min-width: 0;
+            max-width: 100%;
+        }
+
+        .right-panel {
+            flex: 1;
+            min-width: min(320px, 100%);
+            max-width: 100%;
+        }
+
+        .canvas-wrapper {
+            background: #ffffff;
+            border-radius: 24px;
+            display: flex;
+            justify-content: center;
+            margin-bottom: 16px;
+        }
+
+        canvas {
+            display: block;
+            width: 100%;
+            height: auto;
+            max-width: 640px;
+            border-radius: 24px;
+            background: #ffffff;
+            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.02);
+        }
+
+        .info-panel {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            background: #e9f2f9;
+            padding: 14px 22px;
+            border-radius: 60px;
+            margin-bottom: 16px;
+        }
+
+        .status {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            font-size: 1rem;
+        }
+
+        .status span {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #1b4b5e;
+            font-weight: 500;
+        }
+
+        .status .badge {
+            background: white;
+            padding: 6px 16px;
+            border-radius: 40px;
+            font-weight: 600;
+            color: #0d3f53;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.03);
+            min-width: 70px;
+            text-align: center;
+        }
+
+        .controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            align-items: center;
+        }
+
+        button {
+            background: white;
+            border: none;
+            padding: 12px 24px;
+            font-size: 0.95rem;
+            font-weight: 500;
+            border-radius: 40px;
+            cursor: pointer;
+            color: #0f4055;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+            transition: all 0.15s;
+            border: 1px solid #cddbe7;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+
+        button.primary {
+            background: #0d3f53;
+            border: 1px solid #0d3f53;
+            color: white;
+            box-shadow: 0 6px 14px rgba(13, 63, 83, 0.2);
+        }
+
+        button.primary:hover {
+            background: #104f68;
+            border-color: #104f68;
+        }
+
+        button:hover {
+            background: #e3eef8;
+            border-color: #b1c9db;
+        }
+
+        button.primary:disabled, button:disabled {
+            opacity: 0.45;
+            cursor: not-allowed;
+            box-shadow: none;
+            background: #d9e2ec;
+            border-color: #b9c8d6;
+            color: #5e7b8c;
+        }
+
+        button.primary:disabled {
+            background: #b0c5d2;
+            border-color: #b0c5d2;
+            color: #f0f6fa;
+        }
+
+        .settings {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 16px;
+            background: #f1f7fd;
+            padding: 12px 20px;
+            border-radius: 50px;
+            margin-bottom: 16px;
+        }
+
+        .setting-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.95rem;
+            color: #1f4e62;
+            font-weight: 500;
+        }
+
+        .setting-item input {
+            width: 65px;
+            padding: 8px 10px;
+            border-radius: 30px;
+            border: 1px solid #c2d5e6;
+            font-weight: 600;
+            font-size: 0.95rem;
+            text-align: center;
+            background: white;
+            color: #0d3f53;
+        }
+
+        .setting-item input:focus {
+            outline: 2px solid #7cc3ed;
+            border-color: transparent;
+        }
+
+        /* ---------- 右侧关系面板 ---------- */
+        .relation-panel {
+            background: #f8fbfe;
+            border-radius: 24px;
+            padding: 22px;
+            border: 1px solid #dceaf5;
+            margin-bottom: 16px;
+        }
+
+        .relation-panel h2 {
+            font-size: 1.15rem;
+            font-weight: 600;
+            color: #0b2b3b;
+            margin: 0 0 16px 0;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding-bottom: 10px;
+            border-bottom: 2px dashed #cfe2f0;
+        }
+
+        .relation-panel h2 .icon {
+            font-size: 1.3rem;
+        }
+
+        .recursion-box {
+            background: white;
+            border-radius: 16px;
+            padding: 16px 18px;
+            margin-bottom: 14px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.02);
+            border-left: 5px solid #52b9e9;
+        }
+
+        .recursion-box.highlight {
+            border-left-color: #f5b342;
+            background: #fffdf5;
+        }
+
+        .recursion-box .label {
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: #5b7e92;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 6px;
+        }
+
+        .recursion-box .formula {
+            font-size: 1.05rem;
+            font-weight: 600;
+            color: #0d3f53;
+            line-height: 1.6;
+            font-family: 'Cambria Math', 'Times New Roman', serif;
+        }
+
+        .recursion-box .formula .var {
+            color: #a13030;
+            font-style: italic;
+        }
+
+        .recursion-box .explain {
+            font-size: 0.85rem;
+            color: #5b7e92;
+            margin-top: 8px;
+            line-height: 1.5;
+        }
+
+        .mapping-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.88rem;
+            margin-top: 6px;
+        }
+
+        .mapping-table th {
+            background: #e3f0fa;
+            color: #0d3f53;
+            font-weight: 600;
+            padding: 8px 10px;
+            text-align: center;
+            border: 1px solid #cfe2f0;
+            font-size: 0.82rem;
+        }
+
+        .mapping-table td {
+            padding: 7px 10px;
+            text-align: center;
+            border: 1px solid #e0eef8;
+            color: #1f4e62;
+            font-weight: 500;
+        }
+
+        .mapping-table tr:nth-child(even) td {
+            background: #fafdff;
+        }
+
+        .mapping-table .old-id {
+            color: #a13030;
+            font-weight: 600;
+        }
+
+        .mapping-table .new-id {
+            color: #1e6e9c;
+            font-weight: 600;
+        }
+
+        .mapping-table .current-row {
+            background: #fff8e1 !important;
+        }
+
+        .history-bar {
+            margin-top: 16px;
+            font-size: 0.88rem;
+            color: #325f73;
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 6px 12px;
+            background: #f1f7fd;
+            padding: 10px 16px;
+            border-radius: 40px;
+        }
+
+        .history-label {
+            font-weight: 600;
+            color: #0b2b3b;
+        }
+
+        .history-num {
+            background: #ffe9e9;
+            color: #a13030;
+            padding: 3px 9px;
+            border-radius: 40px;
+            font-weight: 600;
+            font-size: 0.82rem;
+            display: inline-block;
+            line-height: 1.2;
+        }
+
+        .history-num.survivor {
+            background: #d2f0d9;
+            color: #1a6e35;
+        }
+
+        .arrow {
+            color: #94a3b8;
+            font-weight: bold;
+        }
+
+        .empty-hint {
+            color: #94a3b8;
+            font-size: 0.85rem;
+            font-style: italic;
+        }
+
+        .legend {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 16px;
+            font-size: 0.8rem;
+            color: #5b7e92;
+            margin-top: 8px;
+            padding: 8px 0 0 0;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .legend-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            display: inline-block;
+        }
+
+        .legend-dot.original {
+            background: #0d3f53;
+        }
+
+        .legend-dot.sub {
+            background: #52b9e9;
+        }
+    
+        @media (max-width: 700px) {
+            body { padding: 0; }
+            .container { padding: 16px; border-radius: 16px; box-shadow: none; }
+            h1 { font-size: 1.25rem; line-height: 1.5; }
+            .main-area { gap: 16px; }
+            .left-panel, .right-panel { flex: 1 1 100%; min-width: 0; }
+            .settings, .info-panel { border-radius: 16px; gap: 12px; padding: 12px; }
+            .relation-panel { padding: 14px; }
+            .controls { width: 100%; }
+            .controls button { flex: 1; padding: 10px 12px; }
+            .status { gap: 12px; }
+            .mapping-table th, .mapping-table td { padding: 7px 5px; }
+            .formula { overflow-wrap: anywhere; }
+        }
+        button:focus-visible { outline: 3px solid #52b9e9; outline-offset: 3px; }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>🔄 约瑟夫环 · 原问题 ↔ 子问题 编号关系</h1>
+    <div class="subtitle">
+        <strong>编号从 0 开始</strong> · 每淘汰一人后，从下一个人开始<strong>重新编号为 0</strong>，形成子问题；本轮报数期间编号保持不变。<br>
+        图中<strong>深色数字</strong>为初始圆环编号，<strong>蓝色小标签</strong>为当前圆环编号，直观对比两者关系。黄色标记是下一位报数者，中央显示已经报出的数。
+    </div>
+
+    <div class="main-area">
+        <!-- 左侧：可视化与操作 -->
+        <div class="left-panel">
+            <div class="settings">
+                <div class="setting-item">
+                    <span>👥 总人数 N</span>
+                    <input type="number" id="totalInput" min="1" max="20" value="7" aria-label="总人数">
+                </div>
+                <div class="setting-item">
+                    <span>🎯 报数 K</span>
+                    <input type="number" id="kInput" min="1" max="100" value="3" aria-label="报数间隔">
+                </div>
+                <button id="applyBtn" style="padding: 8px 18px; font-size: 0.9rem;">应用</button>
+                <button id="resetBtn" style="padding: 8px 18px; font-size: 0.9rem;">⟲ 重置</button>
+            </div>
+
+            <div class="canvas-wrapper">
+                <canvas id="josephusCanvas" width="640" height="640" role="img" aria-label="约瑟夫环报数和出局过程，下方提供编号映射表"></canvas>
+            </div>
+
+            <div class="info-panel">
+                <div class="status">
+                    <span>🔹 报数: <span class="badge" id="currentCountDisplay">0</span></span>
+                    <span>🔸 剩余: <span class="badge" id="aliveCountDisplay">0</span></span>
+                </div>
+                <div class="controls">
+                    <button id="prevBtn">◀ 上一步</button>
+                    <button id="nextBtn" class="primary">下一步 ▶</button>
+                </div>
+            </div>
+
+            <div class="history-bar">
+                <span class="history-label">📋 出列顺序:</span>
+                <span id="historyList"></span>
+            </div>
+        </div>
+
+        <!-- 右侧：原问题/子问题编号关系 -->
+        <div class="right-panel">
+            <div class="relation-panel">
+                <h2><span class="icon">🧩</span> 原问题 ↔ 子问题 编号映射</h2>
+
+                <div class="recursion-box highlight" id="recursionBox">
+                    <div class="label">当前递推关系</div>
+                    <div class="formula" id="formulaDisplay">
+                        f(<span class="var">n</span>) = [ f(<span class="var">n-1</span>) + <span class="var">k</span> ] % <span class="var">n</span>
+                    </div>
+                    <div class="explain" id="formulaExplain">
+                        子问题中的编号 <strong>x</strong>，对应原问题中的编号 <strong>(x + k) % n</strong>。
+                    </div>
+                </div>
+
+                <div class="recursion-box" id="currentStateBox">
+                    <div class="label">当前状态</div>
+                    <div class="formula" id="currentStateDisplay">
+                        原问题规模 <span class="var">n</span> = 7，报数 <span class="var">k</span> = 3
+                    </div>
+                    <div class="explain" id="currentStateExplain">
+                        初始化，尚未淘汰。
+                    </div>
+                </div>
+
+                <div style="margin-top: 8px;">
+                    <div class="label" style="font-size:0.8rem; font-weight:600; color:#5b7e92; text-transform:uppercase; letter-spacing:0.05em; margin-bottom:8px;">
+                        编号映射表
+                    </div>
+                    <table class="mapping-table" id="mappingTable">
+                        <thead>
+                            <tr>
+                                <th>初始编号</th>
+                                <th>当前环编号</th>
+                                <th>说明</th>
+                            </tr>
+                        </thead>
+                        <tbody id="mappingBody">
+                            <tr><td colspan="3" class="empty-hint">初始化中...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="legend">
+                    <div class="legend-item">
+                        <span class="legend-dot original"></span> 初始编号（深色）
+                    </div>
+                    <div class="legend-item">
+                        <span class="legend-dot sub"></span> 当前环编号（蓝色标签）
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    (function() {
+        // ---------- 核心状态 ----------
+        let total = 7;
+        let k = 3;
+        let people = [];            // { id, alive }
+        let stepHistory = [];
+        let currentStepIndex = -1;
+        let eliminationOrder = [];
+
+        let currentIndex = 0;
+        let count = 0;
+        let roundStartIndex = 0;   // 本轮报1的起点，报数中途不改变
+        let lastReduction = null; // 上一层圆环到当前子问题的映射
+
+        // canvas
+        const canvas = document.getElementById('josephusCanvas');
+        const ctx = canvas.getContext('2d');
+        const CW = 640, CH = 640;
+        canvas.width = CW;
+        canvas.height = CH;
+
+        // DOM
+        const totalInput = document.getElementById('totalInput');
+        const kInput = document.getElementById('kInput');
+        const applyBtn = document.getElementById('applyBtn');
+        const resetBtn = document.getElementById('resetBtn');
+        const prevBtn = document.getElementById('prevBtn');
+        const nextBtn = document.getElementById('nextBtn');
+        const currentCountDisplay = document.getElementById('currentCountDisplay');
+        const aliveCountDisplay = document.getElementById('aliveCountDisplay');
+        const historyList = document.getElementById('historyList');
+        const formulaDisplay = document.getElementById('formulaDisplay');
+        const formulaExplain = document.getElementById('formulaExplain');
+        const currentStateDisplay = document.getElementById('currentStateDisplay');
+        const currentStateExplain = document.getElementById('currentStateExplain');
+        const mappingBody = document.getElementById('mappingBody');
+
+        // ---------- 初始化 ----------
+        function initState(n, step) {
+            total = n;
+            k = step;
+            people = [];
+            for (let i = 0; i < total; i++) {
+                people.push({ id: i, alive: true });
+            }
+            currentIndex = 0;
+            count = 0;
+            roundStartIndex = 0;
+            lastReduction = null;
+            eliminationOrder = [];
+
+            stepHistory = [];
+            currentStepIndex = -1;
+            saveSnapshot();
+            updateUIFromSnapshot();
+        }
+
+        // ---------- 快照 ----------
+        function saveSnapshot() {
+            const snapshot = {
+                people: people.map(p => ({ id: p.id, alive: p.alive })),
+                currentIndex: currentIndex,
+                count: count,
+                roundStartIndex: roundStartIndex,
+                lastReduction: lastReduction ? { parentOrder: [...lastReduction.parentOrder], eliminatedId: lastReduction.eliminatedId } : null,
+                eliminationOrder: [...eliminationOrder]
+            };
+            if (currentStepIndex < stepHistory.length - 1) {
+                stepHistory = stepHistory.slice(0, currentStepIndex + 1);
+            }
+            stepHistory.push(snapshot);
+            currentStepIndex = stepHistory.length - 1;
+        }
+
+        function restoreFromSnapshot(index) {
+            if (index < 0 || index >= stepHistory.length) return;
+            const snap = stepHistory[index];
+            people = snap.people.map(p => ({ id: p.id, alive: p.alive }));
+            currentIndex = snap.currentIndex;
+            count = snap.count;
+            roundStartIndex = snap.roundStartIndex;
+            lastReduction = snap.lastReduction ? { parentOrder: [...snap.lastReduction.parentOrder], eliminatedId: snap.lastReduction.eliminatedId } : null;
+            eliminationOrder = [...snap.eliminationOrder];
+            currentStepIndex = index;
+            updateUIFromSnapshot();
+        }
+
+        // ---------- 下一步 ----------
+        function goToNextStep() {
+            const aliveCount = people.filter(p => p.alive).length;
+            if (aliveCount <= 1) return;
+
+            let idx = currentIndex;
+            while (!people[idx].alive) {
+                idx = (idx + 1) % total;
+            }
+
+            let newCount = count + 1;
+            let newCurrentIndex = idx;
+
+            if (newCount === k) {
+                lastReduction = { parentOrder: computeMapping().subToOrig, eliminatedId: people[idx].id };
+                people[idx].alive = false;
+                eliminationOrder.push(people[idx].id);
+                newCount = 0;
+
+                let nextIdx = (idx + 1) % total;
+                let found = false;
+                for (let i = 0; i < total; i++) {
+                    const checkIdx = (nextIdx + i) % total;
+                    if (people[checkIdx].alive) {
+                        newCurrentIndex = checkIdx;
+                        found = true;
+                        break;
+                    }
+                }
+                if (!found) newCurrentIndex = idx;
+                roundStartIndex = newCurrentIndex;
+            } else {
+                let nextIdx = (idx + 1) % total;
+                let found = false;
+                for (let i = 0; i < total; i++) {
+                    const checkIdx = (nextIdx + i) % total;
+                    if (people[checkIdx].alive) {
+                        newCurrentIndex = checkIdx;
+                        found = true;
+                        break;
+                    }
+                }
+            }
+
+            currentIndex = newCurrentIndex;
+            count = newCount;
+            saveSnapshot();
+            updateUIFromSnapshot();
+        }
+
+        // ---------- 界面更新 ----------
+        function updateUIFromSnapshot() {
+            drawCanvas();
+            updateStatsAndHistory();
+            updateButtons();
+            updateRelationPanel();
+        }
+
+        // ---------- 计算存活列表和子问题映射 ----------
+        // 返回：{ aliveList, subZeroIdx, mapping (原id -> 子id), subToOrig (子id -> 原id) }
+        function computeMapping() {
+            const aliveList = [];
+            for (let i = 0; i < total; i++) {
+                if (people[i].alive) aliveList.push(i);
+            }
+
+            const aliveCount = aliveList.length;
+            if (aliveCount === 0) {
+                return { aliveList: [], subZeroIdx: -1, mapping: {}, subToOrig: [] };
+            }
+
+            // 子问题的0号：本轮开始报1的存活者（roundStartIndex）
+            let subZeroIdx = -1;
+            if (people[roundStartIndex] && people[roundStartIndex].alive) {
+                subZeroIdx = roundStartIndex;
+            } else {
+                // 回退到第一个存活者
+                subZeroIdx = aliveList[0];
+            }
+
+            const startPos = aliveList.indexOf(subZeroIdx);
+            const mapping = {};     // 原id -> 子id
+            const subToOrig = [];   // 子id -> 原id（数组索引即子id）
+
+            for (let j = 0; j < aliveCount; j++) {
+                const pos = (startPos + j) % aliveCount;
+                const originalId = aliveList[pos];
+                const subId = j;
+                mapping[originalId] = subId;
+                subToOrig[subId] = originalId;
+            }
+
+            return { aliveList, subZeroIdx, mapping, subToOrig };
+        }
+
+        // ---------- 绘制 ----------
+        function drawCanvas() {
+            ctx.clearRect(0, 0, CW, CH);
+            const centerX = CW / 2;
+            const centerY = CH / 2;
+            const radius = 230;   // 稍大半径，留出子标签空间
+            const n = people.length;
+            const fontScale = Math.min(2.2, Math.max(1, CW / Math.max(1, canvas.clientWidth)));
+
+            // 计算映射
+            const { aliveList, mapping } = computeMapping();
+            const aliveCount = aliveList.length;
+
+            // 背景圈
+            ctx.beginPath();
+            ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI);
+            ctx.strokeStyle = '#d9e6f2';
+            ctx.lineWidth = 2;
+            ctx.setLineDash([6, 8]);
+            ctx.stroke();
+            ctx.setLineDash([]);
+
+            for (let i = 0; i < n; i++) {
+                const angle = (i / n) * 2 * Math.PI - Math.PI / 2;
+                const x = centerX + radius * Math.cos(angle);
+                const y = centerY + radius * Math.sin(angle);
+
+                const person = people[i];
+                const isAlive = person.alive;
+                const isCurrent = (i === currentIndex && isAlive);
+
+                // 圆
+                ctx.beginPath();
+                ctx.arc(x, y, 30, 0, 2 * Math.PI);
+                if (!isAlive) {
+                    ctx.fillStyle = '#eef2f6';
+                    ctx.fill();
+                    ctx.strokeStyle = '#cbd5e1';
+                    ctx.lineWidth = 2;
+                } else if (isCurrent) {
+                    ctx.fillStyle = '#fee7a0';
+                    ctx.fill();
+                    ctx.strokeStyle = '#f5b342';
+                    ctx.lineWidth = 4;
+                } else {
+                    ctx.fillStyle = '#ffffff';
+                    ctx.fill();
+                    ctx.strokeStyle = '#9fc5e8';
+                    ctx.lineWidth = 2.5;
+                }
+                ctx.stroke();
+
+                if (isCurrent && isAlive) {
+                    ctx.beginPath();
+                    ctx.arc(x, y, 34, 0, 2 * Math.PI);
+                    ctx.strokeStyle = '#ffbb33';
+                    ctx.lineWidth = 2;
+                    ctx.setLineDash([4, 4]);
+                    ctx.stroke();
+                    ctx.setLineDash([]);
+                }
+
+                // ---- 原问题编号（大字体，圆内） ----
+                ctx.font = `bold ${17 * fontScale}px "Segoe UI", system-ui, sans-serif`;
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                if (!isAlive) {
+                    ctx.fillStyle = '#94a3b8';
+                } else if (isCurrent) {
+                    ctx.fillStyle = '#7a4100';
+                } else {
+                    ctx.fillStyle = '#0d3f53';
+                }
+                ctx.fillText(person.id, x, y);
+
+                // 出列标记
+                if (!isAlive) {
+                    ctx.beginPath();
+                    ctx.strokeStyle = '#e07a7a';
+                    ctx.lineWidth = 3;
+                    ctx.moveTo(x - 14, y - 14);
+                    ctx.lineTo(x + 14, y + 14);
+                    ctx.moveTo(x + 14, y - 14);
+                    ctx.lineTo(x - 14, y + 14);
+                    ctx.stroke();
+                    // "出列"小字
+                    ctx.font = `${10 * fontScale}px "Segoe UI", system-ui, sans-serif`;
+                    ctx.fillStyle = '#b91c1c';
+                    ctx.fillText('出列', x, y + 36);
+                }
+
+                // ---- 子问题编号（蓝色小标签，圆外上方） ----
+                if (isAlive) {
+                    const subId = mapping[i];
+                    if (subId !== undefined) {
+                        // 标签背景
+                        const labelText = `子 ${subId}`;
+                        ctx.font = `bold ${12 * fontScale}px "Segoe UI", system-ui, sans-serif`;
+                        const textW = ctx.measureText(labelText).width;
+                        const padX = 7, padY = 3;
+                        const labelW = textW + padX * 2;
+                        const labelH = 18 * fontScale;
+                        const labelX = x - labelW / 2;
+                        const labelY = y - 30 - labelH - 6; // 圆上方
+
+                        // 背景圆角矩形
+                        const rx = 8;
+                        ctx.beginPath();
+                        ctx.moveTo(labelX + rx, labelY);
+                        ctx.lineTo(labelX + labelW - rx, labelY);
+                        ctx.quadraticCurveTo(labelX + labelW, labelY, labelX + labelW, labelY + rx);
+                        ctx.lineTo(labelX + labelW, labelY + labelH - rx);
+                        ctx.quadraticCurveTo(labelX + labelW, labelY + labelH, labelX + labelW - rx, labelY + labelH);
+                        ctx.lineTo(labelX + rx, labelY + labelH);
+                        ctx.quadraticCurveTo(labelX, labelY + labelH, labelX, labelY + labelH - rx);
+                        ctx.lineTo(labelX, labelY + rx);
+                        ctx.quadraticCurveTo(labelX, labelY, labelX + rx, labelY);
+                        ctx.closePath();
+
+                        // 当前指向的子0号标签高亮
+                        if (subId === 0) {
+                            ctx.fillStyle = '#ffe08a';
+                            ctx.strokeStyle = '#e0a800';
+                        } else {
+                            ctx.fillStyle = '#e8f4fd';
+                            ctx.strokeStyle = '#7cc3ed';
+                        }
+                        ctx.fill();
+                        ctx.strokeStyle = ctx.strokeStyle;
+                        ctx.lineWidth = 1.5;
+                        ctx.stroke();
+
+                        // 文字
+                        ctx.fillStyle = subId === 0 ? '#7a4100' : '#1e6e9c';
+                        ctx.font = `bold ${12 * fontScale}px "Segoe UI", system-ui, sans-serif`;
+                        ctx.textAlign = 'center';
+                        ctx.textBaseline = 'middle';
+                        ctx.fillText(labelText, x, labelY + labelH / 2 + 0.5);
+
+                        // 小连接线：从标签底部到圆顶部
+                        ctx.beginPath();
+                        ctx.moveTo(x, labelY + labelH);
+                        ctx.lineTo(x, y - 30);
+                        ctx.strokeStyle = subId === 0 ? '#e0a800' : '#7cc3ed';
+                        ctx.lineWidth = 1.5;
+                        ctx.stroke();
+                    }
+                }
+            }
+
+            // 中心信息
+            ctx.font = `bold ${22 * fontScale}px "Segoe UI", system-ui, sans-serif`;
+            ctx.fillStyle = '#0b2b3b';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText(`报数: ${count} / ${k}`, centerX, centerY - 20);
+            ctx.font = `${18 * fontScale}px "Segoe UI", system-ui, sans-serif`;
+            ctx.fillStyle = '#2c5a6e';
+            ctx.fillText(`剩余: ${aliveCount} 人`, centerX, centerY + 30);
+
+            if (aliveCount === 1) {
+                const survivor = people.find(p => p.alive);
+                ctx.font = `bold ${24 * fontScale}px "Segoe UI", system-ui, sans-serif`;
+                ctx.fillStyle = '#1a6e35';
+                ctx.fillText(`🏆 幸存者: ${survivor.id}`, centerX, centerY + 80);
+            }
+        }
+
+        // ---------- 统计与历史 ----------
+        function updateStatsAndHistory() {
+            const aliveCount = people.filter(p => p.alive).length;
+            currentCountDisplay.textContent = count;
+            aliveCountDisplay.textContent = aliveCount;
+
+            if (eliminationOrder.length === 0) {
+                historyList.innerHTML = '<span class="empty-hint">暂无</span>';
+            } else {
+                let html = '';
+                eliminationOrder.forEach((id, idx) => {
+                    html += `<span class="history-num">${id}</span>`;
+                    if (idx < eliminationOrder.length - 1) html += ' <span class="arrow">→</span> ';
+                });
+                if (aliveCount === 1) {
+                    const survivor = people.find(p => p.alive);
+                    if (survivor && !eliminationOrder.includes(survivor.id)) {
+                        html += ` <span class="arrow">→</span> <span class="history-num survivor">🏅 ${survivor.id}</span>`;
+                    }
+                }
+                historyList.innerHTML = html;
+            }
+        }
+
+        // ---------- 按钮状态 ----------
+        function updateButtons() {
+            const aliveCount = people.filter(p => p.alive).length;
+            const notLatest = currentStepIndex < stepHistory.length - 1;
+            if (notLatest) {
+                nextBtn.disabled = false;
+            } else {
+                nextBtn.disabled = (aliveCount <= 1);
+            }
+            prevBtn.disabled = (currentStepIndex <= 0);
+        }
+
+        // ---------- 更新右侧关系面板 ----------
+        function updateRelationPanel() {
+            const aliveCount = people.filter(p => p.alive).length;
+            const { subZeroIdx, subToOrig } = computeMapping();
+            if (lastReduction) {
+                const parentSize = lastReduction.parentOrder.length;
+                formulaDisplay.innerHTML = `f(${parentSize}, ${k}) = [ f(${parentSize - 1}, ${k}) + ${k} ] % ${parentSize}`;
+                formulaExplain.innerHTML = `上式中的编号属于<strong>上一层圆环的局部编号</strong>。当前环编号 x 对应上一层编号 (x + ${k}) % ${parentSize}；再用上一层编号表查找初始编号。`;
+            } else if (aliveCount === 1) {
+                formulaDisplay.textContent = `f(1, ${k}) = 0`;
+                formulaExplain.textContent = '只剩一个人，其局部编号为0，不需要执行淘汰。';
+            } else {
+                formulaDisplay.innerHTML = `f(${total}, ${k}) = [ f(${total - 1}, ${k}) + ${k} ] % ${total}`;
+                formulaExplain.innerHTML = '首次淘汰后，小环编号 x 对应初始编号 (x + k) % N。后续需要逐层恢复编号，不能直接对初始总人数取余。';
+            }
+
+            if (aliveCount === 1) {
+                const survivor = people.find(p => p.alive);
+                currentStateDisplay.innerHTML = `幸存者初始编号 = <span class="var">${survivor.id}</span>`;
+                currentStateExplain.innerHTML = `题目采用从1开始的编号，因此答案为 <strong>${survivor.id + 1}号</strong>。当前结果由逐步模拟得到，可用递推公式核对。`;
+            } else if (!lastReduction) {
+                currentStateDisplay.innerHTML = `初始圆环人数 <span class="var">N</span> = ${total}，报数 <span class="var">k</span> = ${k}`;
+                currentStateExplain.textContent = `尚未淘汰。本轮从初始编号0开始报1；已报${count}，下一位是初始编号${currentIndex}。`;
+            } else {
+                currentStateDisplay.innerHTML = `淘汰初始编号 <span class="var">${lastReduction.eliminatedId}</span> 后，当前环人数 = ${aliveCount}`;
+                currentStateExplain.innerHTML = `当前环0号对应初始编号 <strong>${subZeroIdx}</strong>，已报${count}，下一位是初始编号${currentIndex}。映射按仍在圈内的人员顺序建立，跳过所有出局者。`;
+            }
+
+            const rows = subToOrig.map((originalId, subId) => {
+                const notes = [];
+                if (originalId === currentIndex) notes.push(aliveCount === 1 ? '幸存者' : '← 下一位报数者');
+                if (subId === 0) notes.push('本轮起点');
+                if (lastReduction) {
+                    const parentId = (subId + k) % lastReduction.parentOrder.length;
+                    notes.push(`上一层编号 ${parentId}`);
+                }
+                return `<tr class="${originalId === currentIndex ? 'current-row' : ''}"><td class="old-id">${originalId}</td><td class="new-id">${subId}</td><td>${notes.join(' · ')}</td></tr>`;
+            });
+            mappingBody.innerHTML = rows.join('');
+        }
+
+        // ---------- 事件 ----------
+        nextBtn.addEventListener('click', () => {
+            if (currentStepIndex < stepHistory.length - 1) {
+                restoreFromSnapshot(currentStepIndex + 1);
+            } else {
+                const aliveCount = people.filter(p => p.alive).length;
+                if (aliveCount <= 1) return;
+                goToNextStep();
+            }
+        });
+
+        prevBtn.addEventListener('click', () => {
+            if (currentStepIndex > 0) {
+                restoreFromSnapshot(currentStepIndex - 1);
+            }
+        });
+
+        resetBtn.addEventListener('click', () => {
+            const n = Number(totalInput.value);
+            const step = Number(kInput.value);
+            if (!Number.isInteger(n) || n < 1 || n > 20 || !Number.isInteger(step) || step < 1 || step > 100) {
+                alert('请输入有效范围：人数为1~20的整数，报数为1~100的整数');
+                return;
+            }
+            initState(n, step);
+            updateUIFromSnapshot();
+        });
+
+        applyBtn.addEventListener('click', () => {
+            const n = Number(totalInput.value);
+            const step = Number(kInput.value);
+            if (!Number.isInteger(n) || n < 1 || n > 20 || !Number.isInteger(step) || step < 1 || step > 100) {
+                alert('请输入有效范围：人数为1~20的整数，报数为1~100的整数');
+                return;
+            }
+            initState(n, step);
+            updateUIFromSnapshot();
+        });
+
+        totalInput.addEventListener('change', () => {
+            let v = Number(totalInput.value);
+            if (!Number.isInteger(v) || v < 1) totalInput.value = 1;
+            if (v > 20) totalInput.value = 20;
+        });
+        kInput.addEventListener('change', () => {
+            let v = Number(kInput.value);
+            if (!Number.isInteger(v) || v < 1) kInput.value = 1;
+            if (v > 100) kInput.value = 100;
+        });
+
+        // ---------- 启动 ----------
+        function initPage() {
+            const n = Number(totalInput.value);
+            const step = Number(kInput.value);
+            initState(n, step);
+            updateUIFromSnapshot();
+        }
+        initPage();
+        const canvasObserver = new ResizeObserver(drawCanvas);
+        canvasObserver.observe(canvas);
+    })();
+</script>
+</body>
+</html>
