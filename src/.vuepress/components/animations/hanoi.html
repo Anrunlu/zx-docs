@@ -1,0 +1,1145 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>汉诺塔 · 递归与 2ⁿ 复杂度</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: system-ui, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+        }
+
+        body {
+            background: #f5f7fb;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 0;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            max-width: 1300px;
+            width: 100%;
+            padding: 30px;
+            border-radius: 36px;
+            box-shadow: 0 25px 40px -12px rgba(0, 20, 30, 0.25);
+        }
+
+        h1 {
+            font-size: 2rem;
+            font-weight: 600;
+            margin: 0 0 8px 0;
+            color: #0b2b3b;
+            letter-spacing: -0.01em;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .subtitle {
+            color: #2c5a6e;
+            margin-bottom: 24px;
+            font-size: 1rem;
+            font-weight: 400;
+            border-left: 4px solid #52b9e9;
+            padding-left: 16px;
+            background: #eef8fe;
+            border-radius: 0 12px 12px 0;
+            line-height: 1.5;
+            padding: 12px 20px;
+        }
+
+        .subtitle strong {
+            color: #0d3f53;
+        }
+
+        .main-area {
+            display: flex;
+            gap: 24px;
+            flex-wrap: wrap;
+            align-items: flex-start;
+        }
+
+        .left-panel {
+            flex: 0 0 620px;
+            max-width: 100%;
+        }
+
+        .mid-panel {
+            flex: 0 0 300px;
+            max-width: 100%;
+        }
+
+        .right-panel {
+            flex: 1;
+            min-width: 280px;
+            max-width: 100%;
+        }
+
+        canvas {
+            display: block;
+            width: 100%;
+            height: auto;
+            border-radius: 24px;
+            background: #ffffff;
+            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.02);
+            border: 1px solid #e9f0f7;
+        }
+
+        .controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            align-items: center;
+            margin-top: 14px;
+        }
+
+        button {
+            background: white;
+            border: none;
+            padding: 11px 20px;
+            font-size: 0.92rem;
+            font-weight: 500;
+            border-radius: 40px;
+            cursor: pointer;
+            color: #0f4055;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+            transition: all 0.15s;
+            border: 1px solid #cddbe7;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+
+        button.primary {
+            background: #0d3f53;
+            border: 1px solid #0d3f53;
+            color: white;
+            box-shadow: 0 6px 14px rgba(13, 63, 83, 0.2);
+        }
+
+        button.primary:hover {
+            background: #104f68;
+            border-color: #104f68;
+        }
+
+        button:hover {
+            background: #e3eef8;
+            border-color: #b1c9db;
+        }
+
+        button.primary:disabled, button:disabled {
+            opacity: 0.45;
+            cursor: not-allowed;
+            box-shadow: none;
+            background: #d9e2ec;
+            border-color: #b9c8d6;
+            color: #5e7b8c;
+        }
+
+        button.primary:disabled {
+            background: #b0c5d2;
+            border-color: #b0c5d2;
+            color: #f0f6fa;
+        }
+
+        .settings {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 14px;
+            background: #f1f7fd;
+            padding: 12px 18px;
+            border-radius: 50px;
+            margin-bottom: 14px;
+        }
+
+        .setting-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.92rem;
+            color: #1f4e62;
+            font-weight: 500;
+        }
+
+        .setting-item input {
+            width: 65px;
+            padding: 7px 10px;
+            border-radius: 30px;
+            border: 1px solid #c2d5e6;
+            font-weight: 600;
+            font-size: 0.92rem;
+            text-align: center;
+            background: white;
+            color: #0d3f53;
+        }
+
+        .setting-item input:focus {
+            outline: 2px solid #7cc3ed;
+            border-color: transparent;
+        }
+
+        /* 面板通用 */
+        .panel {
+            background: #f8fbfe;
+            border-radius: 22px;
+            padding: 18px 20px;
+            border: 1px solid #dceaf5;
+            margin-bottom: 16px;
+        }
+
+        .panel h2 {
+            font-size: 1rem;
+            font-weight: 600;
+            color: #0b2b3b;
+            margin: 0 0 12px 0;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding-bottom: 8px;
+            border-bottom: 2px dashed #cfe2f0;
+        }
+
+        .panel h2 .badge {
+            background: #52b9e9;
+            color: white;
+            border-radius: 20px;
+            padding: 2px 10px;
+            font-size: 0.72rem;
+            font-weight: 600;
+        }
+
+        /* 移动显示 */
+        .move-display {
+            font-size: 1.05rem;
+            font-weight: 600;
+            color: #0d3f53;
+            padding: 12px 14px;
+            background: white;
+            border-radius: 14px;
+            text-align: center;
+            border-left: 5px solid #52b9e9;
+            margin-bottom: 12px;
+            min-height: 56px;
+            display: block;
+            line-height: 1.4;
+        }
+
+        .move-display .highlight {
+            color: #a13030;
+            font-weight: 700;
+        }
+
+        .stats {
+            display: flex;
+            justify-content: space-around;
+            gap: 8px;
+            font-size: 0.9rem;
+            color: #1f4e62;
+        }
+
+        .stats .item {
+            background: white;
+            padding: 10px 12px;
+            border-radius: 14px;
+            text-align: center;
+            flex: 1;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.02);
+        }
+
+        .stats .item .value {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #0d3f53;
+            margin-top: 4px;
+        }
+
+        .stats .item .label {
+            font-size: 0.72rem;
+            color: #5b7e92;
+        }
+
+        /* 递归树 */
+        .tree-wrapper {
+            background: white;
+            border-radius: 16px;
+            padding: 8px 4px;
+            overflow-x: auto;
+            overflow-y: auto;
+            max-height: 360px;
+            border: 1px solid #e9f0f7;
+        }
+
+        #treeCanvas {
+            display: block;
+            width: 100%;
+            height: auto;
+            min-width: 0;
+        }
+
+        /* 复杂度对比 */
+        .complexity-box {
+            background: white;
+            border-radius: 14px;
+            padding: 12px 14px;
+            margin-bottom: 10px;
+            border-left: 5px solid #f5b342;
+        }
+
+        .complexity-box .formula {
+            font-size: 1.05rem;
+            font-weight: 700;
+            color: #0d3f53;
+            font-family: 'Cambria Math', 'Times New Roman', serif;
+            text-align: center;
+            margin-bottom: 6px;
+        }
+
+        .complexity-box .formula .var {
+            color: #a13030;
+            font-style: italic;
+        }
+
+        .complexity-box .explain {
+            font-size: 0.82rem;
+            color: #5b7e92;
+            line-height: 1.5;
+        }
+
+        /* 数据表格 */
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.82rem;
+        }
+
+        .data-table th {
+            background: #e3f0fa;
+            color: #0d3f53;
+            font-weight: 600;
+            padding: 7px 6px;
+            text-align: center;
+            border: 1px solid #cfe2f0;
+            font-size: 0.78rem;
+        }
+
+        .data-table td {
+            padding: 6px 6px;
+            text-align: center;
+            border: 1px solid #e0eef8;
+            color: #1f4e62;
+            font-weight: 500;
+        }
+
+        .data-table tr.current td {
+            background: #fff8e1 !important;
+            font-weight: 700;
+        }
+
+        .data-table .growth {
+            color: #a13030;
+            font-weight: 700;
+        }
+
+        .data-table .double-badge {
+            background: #ffe9e9;
+            color: #a13030;
+            border-radius: 20px;
+            padding: 1px 6px;
+            font-size: 0.7rem;
+            font-weight: 700;
+        }
+
+        .legend {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 14px;
+            font-size: 0.78rem;
+            color: #5b7e92;
+            margin-top: 10px;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .legend-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 3px;
+            display: inline-block;
+        }
+
+        .empty-hint {
+            color: #94a3b8;
+            font-size: 0.85rem;
+            font-style: italic;
+        }
+
+        /* 步骤列表 */
+        .steps-list {
+            max-height: 180px;
+            overflow-y: auto;
+            font-size: 0.82rem;
+            color: #1f4e62;
+            padding-right: 4px;
+        }
+
+        .steps-list .step-item {
+            padding: 5px 9px;
+            border-radius: 8px;
+            margin-bottom: 3px;
+            display: flex;
+            align-items: center;
+            gap: 7px;
+        }
+
+        .steps-list .step-item.active {
+            background: #fff8e1;
+            font-weight: 600;
+        }
+
+        .steps-list .step-item.done {
+            color: #94a3b8;
+        }
+
+        .steps-list .step-num {
+            background: #e3f0fa;
+            color: #0d3f53;
+            border-radius: 20px;
+            padding: 1px 7px;
+            font-size: 0.72rem;
+            font-weight: 600;
+            min-width: 28px;
+            text-align: center;
+            flex-shrink: 0;
+        }
+
+        .steps-list .step-item.active .step-num {
+            background: #f5b342;
+            color: white;
+        }
+
+        .steps-list .step-item.done .step-num {
+            background: #d9e2ec;
+            color: #5e7b8c;
+        }
+
+        .growth-highlight {
+            background: linear-gradient(135deg, #fff8e1, #ffe8b3);
+            border-radius: 12px;
+            padding: 10px 14px;
+            margin-top: 10px;
+            font-size: 0.85rem;
+            color: #7a4100;
+            line-height: 1.6;
+            border-left: 4px solid #f5b342;
+        }
+
+        .growth-highlight strong {
+            color: #a13030;
+        }
+
+        .scroll-x {
+            overflow-x: auto;
+        }
+        /* 嵌入文档时沿用原稿视觉，只让各面板适应可用宽度。 */
+        .left-panel, .mid-panel, .right-panel { min-width: 0; }
+        .left-panel { flex: 1 1 500px; }
+        .mid-panel { flex: 1 1 280px; }
+        .right-panel { flex: 1 1 280px; }
+        .steps-list { position: relative; }
+        .tree-wrapper { overscroll-behavior: contain; }
+        button:focus-visible, input:focus-visible { outline: 3px solid #a13030; outline-offset: 3px; }
+        @media (max-width: 600px) {
+            body { padding: 10px; }
+            .container { padding: 16px; border-radius: 20px; }
+            h1 { font-size: 1.45rem; line-height: 1.4; }
+            .main-area { gap: 16px; }
+            .settings { border-radius: 16px; padding: 12px; gap: 10px; }
+            .controls { gap: 8px; }
+            .controls button { flex: 1 1 40%; padding: 10px 12px; }
+            .panel { padding: 14px; }
+            .complexity-box { padding: 10px; }
+            .complexity-box .formula { font-size: 0.95rem; overflow-wrap: anywhere; }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>🗼 汉诺塔 · 递归与 2ⁿ 复杂度</h1>
+    <div class="subtitle">
+        <strong>每增加一个盘子，步数翻倍再加 1！</strong> 移动 n 个盘子需要 <strong>2ⁿ - 1</strong> 步。<br>
+        观察递归树：n > 1 时，每次调用分成两个子问题 → 节点数量指数增长 → 时间复杂度 <strong>O(2ⁿ)</strong>。
+    </div>
+
+    <div class="main-area">
+        <!-- 左侧：画布与操作 -->
+        <div class="left-panel">
+            <div class="settings">
+                <div class="setting-item">
+                    <label for="diskInput">🔢 圆盘数 n</label>
+                    <input type="number" id="diskInput" min="1" max="8" step="1" value="3">
+                </div>
+                <button id="applyBtn" style="padding: 7px 16px; font-size: 0.88rem;">应用</button>
+            </div>
+
+            <canvas id="hanoiCanvas" width="620" height="400" aria-label="汉诺塔三柱圆盘状态，详细移动见步骤列表">汉诺塔圆盘状态</canvas>
+
+            <div class="controls">
+                <button id="prevBtn">◀ 上一步</button>
+                <button id="nextBtn" class="primary">下一步 ▶</button>
+                <button id="playBtn" class="primary">▶ 自动</button>
+                <button id="resetBtn">⟲ 重置</button>
+            </div>
+
+            <div class="legend">
+                <div class="legend-item">
+                    <span class="legend-dot" style="background:#a13030;"></span> 本步移动圆盘（描边）
+                </div>
+                <div class="legend-item">
+                    <span class="legend-dot" style="background:#52b9e9;"></span> 颜色区分圆盘
+                </div>
+                <div class="legend-item">
+                    <span class="legend-dot" style="background:#0d3f53;"></span> A 柱
+                </div>
+                <div class="legend-item">
+                    <span class="legend-dot" style="background:#1e6e9c;"></span> B 柱
+                </div>
+                <div class="legend-item">
+                    <span class="legend-dot" style="background:#a13030;"></span> C 柱
+                </div>
+            </div>
+        </div>
+
+        <!-- 中间：递归树 -->
+        <div class="mid-panel">
+            <div class="panel" style="padding: 14px;">
+                <h2>🌳 递归树 <span class="badge" id="treeBadge">n=3</span></h2>
+                <div class="tree-wrapper">
+                    <canvas id="treeCanvas" width="280" height="320" aria-label="以 n 等于 1 为边界的递归调用树">递归调用树</canvas>
+                </div>
+                <div class="growth-highlight" id="treeHint">
+                    每个节点代表一次函数调用，黄色节点是 n=1 的终止调用。
+                </div>
+            </div>
+        </div>
+
+        <!-- 右侧：复杂度与数据 -->
+        <div class="right-panel">
+            <div class="panel">
+                <h2>📊 复杂度增长 <span class="badge">O(2ⁿ)</span></h2>
+
+                <div class="complexity-box">
+                    <div class="formula">
+                        T(<span class="var">n</span>) = 2·T(<span class="var">n-1</span>) + 1
+                    </div>
+                    <div class="explain">
+                        解递归方程得：T(n) = 2ⁿ - 1。每增加一个盘子，工作量翻倍再加 1。
+                    </div>
+                </div>
+
+                <div class="scroll-x">
+                    <table class="data-table" id="dataTable">
+                        <thead>
+                            <tr>
+                                <th>n</th>
+                                <th>步数</th>
+                                <th>增长</th>
+                            </tr>
+                        </thead>
+                        <tbody id="dataBody"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="panel">
+                <h2>📋 当前状态</h2>
+                <div class="move-display" id="moveDisplay">
+                    准备就绪
+                </div>
+                <div class="stats">
+                    <div class="item">
+                        <div class="label">当前步 / 总步数</div>
+                        <div class="value" id="stepCounter">0 / 0</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="panel">
+                <h2>📜 步骤列表</h2>
+                <div class="steps-list" id="stepsList">
+                    <div class="empty-hint">暂无步骤</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    (function() {
+        // ---------- 核心状态 ----------
+        let diskCount = 3;
+        let pegs = [[], [], []];     // A, B, C 三根柱子
+        let allMoves = [];           // 所有移动步骤
+        let currentStep = 0;         // 当前显示到第几步 (0 = 初始)
+        let isPlaying = false;
+        let playTimer = null;
+        let motion = null;
+        let motionFrame = null;
+        const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+
+        function cancelMotion() {
+            if (motionFrame !== null) cancelAnimationFrame(motionFrame);
+            motionFrame = null;
+            motion = null;
+        }
+
+        function animateMove(timestamp) {
+            if (!motion) return;
+            motion.progress = Math.min(1, (timestamp - motion.started) / 360);
+            if (motion.progress >= 1) {
+                motion = null;
+                motionFrame = null;
+                drawCanvas();
+                return;
+            }
+            drawCanvas();
+            motionFrame = requestAnimationFrame(animateMove);
+        }
+
+        // 递归树节点数据
+        let treeNodes = [];          // { id, n, x, y, parentId, from, to, aux, level, isLeaf }
+
+        // canvas - 汉诺塔
+        const canvas = document.getElementById('hanoiCanvas');
+        const ctx = canvas.getContext('2d');
+        let CW = 620, CH = 400;
+        canvas.width = CW;
+        canvas.height = CH;
+
+        // canvas - 递归树
+        const treeCanvas = document.getElementById('treeCanvas');
+        const tctx = treeCanvas.getContext('2d');
+        let TCW = 280, TCH = 320;
+        treeCanvas.width = TCW;
+        treeCanvas.height = TCH;
+
+        // DOM
+        const diskInput = document.getElementById('diskInput');
+        const applyBtn = document.getElementById('applyBtn');
+        const prevBtn = document.getElementById('prevBtn');
+        const nextBtn = document.getElementById('nextBtn');
+        const playBtn = document.getElementById('playBtn');
+        const resetBtn = document.getElementById('resetBtn');
+        const moveDisplay = document.getElementById('moveDisplay');
+        const stepCounter = document.getElementById('stepCounter');
+        const stepsList = document.getElementById('stepsList');
+        const dataBody = document.getElementById('dataBody');
+        const treeBadge = document.getElementById('treeBadge');
+        const treeHint = document.getElementById('treeHint');
+
+        // ---------- 几何参数 ----------
+        let pegX = [130, 310, 490];
+        let pegBaseY = 340;
+        const pegHeight = 230;
+        const pegWidth = 10;
+        const baseHeight = 16;
+        const diskHeight = 22;
+
+        function getDiskWidth(size) {
+            const maxW = CW < 620 ? 98 : 160;
+            const minW = 36;
+            if (diskCount <= 1) return maxW;
+            const step = (maxW - minW) / (diskCount - 1);
+            return minW + (size - 1) * step;
+        }
+
+        function getDiskColor(size) {
+            const colors = [
+                '#f5b342', '#52b9e9', '#1e6e9c', '#a13030',
+                '#7a4100', '#2e8b57', '#8a2be2', '#e07a7a'
+            ];
+            return colors[(size - 1) % colors.length];
+        }
+
+        // ---------- 生成移动步骤 (递归) ----------
+        function generateHanoiMoves(n, from, to, aux, moves) {
+            if (n === 1) {
+                moves.push({ disk: 1, from, to });
+                return;
+            }
+            generateHanoiMoves(n - 1, from, aux, to, moves);
+            moves.push({ disk: n, from: from, to: to });
+            generateHanoiMoves(n - 1, aux, to, from, moves);
+        }
+
+        // 一个节点对应文档 hanoi 的一次调用，n=1 时直接移动并返回。
+        // 中序遍历的移动编号与 allMoves 完全一致。
+        function buildTree(n, from, to, aux) {
+            const nodes = [];
+            let moveIndex = 0;
+            function build(size, source, target, auxiliary, parentId, level) {
+                const node = {
+                    id: nodes.length, n: size, from: source, to: target, aux: auxiliary,
+                    parentId, level, isLeaf: size === 1, x: 0, y: 0, moveIndex: 0
+                };
+                nodes.push(node);
+                if (size > 1) build(size - 1, source, auxiliary, target, node.id, level + 1);
+                node.moveIndex = ++moveIndex;
+                if (size > 1) build(size - 1, auxiliary, target, source, node.id, level + 1);
+            }
+            build(n, from, to, aux, -1, 0);
+            return nodes;
+        }
+
+        function layoutTree() {
+            // 保持叶节点间距；较大的树在面板内滚动，避免把文字挤在一起。
+            TCW = Math.max(280, 2 ** (diskCount - 1) * 48 + 32);
+            TCH = Math.max(220, diskCount * 64 + 20);
+            treeCanvas.width = TCW;
+            treeCanvas.height = TCH;
+            treeCanvas.style.width = `${TCW}px`;
+            treeCanvas.style.height = 'auto';
+            treeCanvas.style.maxWidth = diskCount <= 3 ? '100%' : 'none';
+            const children = new Map();
+            treeNodes.forEach(node => {
+                if (!children.has(node.parentId)) children.set(node.parentId, []);
+                children.get(node.parentId).push(node.id);
+                node.y = 36 + node.level * 64;
+            });
+            const widths = new Map();
+            function measure(id) {
+                const childIds = children.get(id) || [];
+                const width = childIds.length ? childIds.reduce((sum, child) => sum + measure(child), 0) : 1;
+                widths.set(id, width);
+                return width;
+            }
+            const unit = (TCW - 32) / measure(0);
+            function place(id, startX) {
+                const node = treeNodes[id];
+                node.x = startX + widths.get(id) * unit / 2;
+                let childX = startX;
+                for (const child of children.get(id) || []) {
+                    place(child, childX);
+                    childX += widths.get(child) * unit;
+                }
+            }
+            place(0, 16);
+            const wrapper = treeCanvas.parentElement;
+            wrapper.scrollLeft = Math.max(0, TCW / 2 - wrapper.clientWidth / 2);
+            wrapper.scrollTop = 0;
+        }
+
+        function drawTree() {
+            tctx.clearRect(0, 0, TCW, TCH);
+            treeNodes.forEach(node => {
+                if (node.parentId < 0) return;
+                const parent = treeNodes[node.parentId];
+                tctx.beginPath();
+                tctx.moveTo(parent.x, parent.y + 16);
+                tctx.lineTo(node.x, node.y - 16);
+                tctx.strokeStyle = '#c2d5e6';
+                tctx.lineWidth = 1.5;
+                tctx.stroke();
+            });
+            treeNodes.forEach(node => {
+                const active = node.moveIndex === currentStep;
+                tctx.beginPath();
+                tctx.arc(node.x, node.y, 16, 0, 2 * Math.PI);
+                const colors = ['#0d3f53', '#1e6e9c', '#52b9e9', '#7cc3ed'];
+                tctx.fillStyle = node.isLeaf ? '#f5b342' : colors[Math.min(node.level, 3)];
+                tctx.fill();
+                tctx.strokeStyle = active ? '#a13030' : (node.isLeaf ? '#d99a2a' : '#fff');
+                tctx.lineWidth = active ? 4 : 1.5;
+                tctx.stroke();
+                tctx.font = 'bold 13px system-ui, sans-serif';
+                tctx.fillStyle = node.isLeaf ? '#7a4100' : 'white';
+                tctx.textAlign = 'center';
+                tctx.textBaseline = 'middle';
+                tctx.fillText(node.n, node.x, node.y);
+            });
+        }
+
+        function revealTreeNode() {
+            const active = treeNodes.find(node => node.moveIndex === currentStep);
+            if (!active) return;
+            const wrapper = treeCanvas.parentElement;
+            if (active.x - 24 < wrapper.scrollLeft || active.x + 24 > wrapper.scrollLeft + wrapper.clientWidth) {
+                wrapper.scrollLeft = Math.max(0, active.x - wrapper.clientWidth / 2);
+            }
+            if (active.y - 24 < wrapper.scrollTop || active.y + 24 > wrapper.scrollTop + wrapper.clientHeight) {
+                wrapper.scrollTop = Math.max(0, active.y - wrapper.clientHeight / 2);
+            }
+        }
+
+        // ---------- 重置状态 ----------
+        function resetState(n) {
+            cancelMotion();
+            diskCount = n;
+            pegs = [[], [], []];
+            for (let i = n; i >= 1; i--) {
+                pegs[0].push(i);
+            }
+
+            allMoves = [];
+            generateHanoiMoves(n, 0, 2, 1, allMoves);
+
+            currentStep = 0;
+            stopPlaying();
+
+            // 生成递归树
+            treeNodes = buildTree(n, 0, 2, 1);
+            layoutTree();
+
+            updateUI();
+        }
+
+        // ---------- 执行到指定步骤 ----------
+        function goToStep(step) {
+            if (step < 0) step = 0;
+            if (step > allMoves.length) step = allMoves.length;
+
+            const previousStep = currentStep;
+            const previousPegs = pegs;
+            cancelMotion();
+            pegs = [[], [], []];
+            for (let i = diskCount; i >= 1; i--) {
+                pegs[0].push(i);
+            }
+
+            for (let i = 0; i < step; i++) {
+                const move = allMoves[i];
+                const disk = pegs[move.from].pop();
+                pegs[move.to].push(disk);
+            }
+
+            currentStep = step;
+            if (step === previousStep + 1 && !reducedMotion.matches) {
+                const move = allMoves[step - 1];
+                motion = {
+                    move, progress: 0, started: performance.now(),
+                    fromY: pegBaseY - previousPegs[move.from].length * diskHeight - 2,
+                    toY: pegBaseY - pegs[move.to].length * diskHeight - 2
+                };
+                motionFrame = requestAnimationFrame(animateMove);
+            }
+            updateUI();
+            revealTreeNode();
+        }
+
+        function nextStep() {
+            if (currentStep >= allMoves.length) return;
+            goToStep(currentStep + 1);
+        }
+
+        function prevStep() {
+            if (currentStep <= 0) return;
+            goToStep(currentStep - 1);
+        }
+
+        // ---------- 自动播放 ----------
+        function startPlaying() {
+            if (isPlaying) return;
+            if (currentStep >= allMoves.length) {
+                goToStep(0);
+            }
+            isPlaying = true;
+            playBtn.textContent = '⏸ 暂停';
+            playBtn.classList.remove('primary');
+
+            function tick() {
+                if (!isPlaying) return;
+                if (currentStep >= allMoves.length) {
+                    stopPlaying();
+                    return;
+                }
+                nextStep();
+                if (currentStep >= allMoves.length) stopPlaying();
+                else playTimer = setTimeout(tick, 600);
+            }
+            playTimer = setTimeout(tick, 100);
+        }
+
+        function stopPlaying() {
+            isPlaying = false;
+            if (playTimer) {
+                clearTimeout(playTimer);
+                playTimer = null;
+            }
+            playBtn.textContent = '▶ 自动';
+            playBtn.classList.add('primary');
+        }
+
+        // ---------- 更新界面 ----------
+        function updateUI() {
+            drawCanvas();
+            drawTree();
+            updateMoveDisplay();
+            updateStats();
+            updateStepsList();
+            updateDataTable();
+            updateButtons();
+            treeBadge.textContent = `n=${diskCount}`;
+            treeHint.innerHTML = `共 <strong>${treeNodes.length}</strong> 次函数调用，与移动次数相同：<strong>2ⁿ − 1</strong>。<br>
+                蓝色表示递归调用，黄色表示 n=1 的终止调用；红色描边对应本步移动。<br>
+                节点中的数字是本次调用的 n；大树可在面板内横向、纵向滚动。`;
+        }
+
+        function updateMoveDisplay() {
+            if (currentStep === 0) {
+                moveDisplay.innerHTML = '准备就绪，点击"下一步"开始';
+            } else {
+                const move = allMoves[currentStep - 1];
+                const fromName = ['A', 'B', 'C'][move.from];
+                const toName = ['A', 'B', 'C'][move.to];
+                const completed = currentStep === allMoves.length ? '<br>🎉 已完成所有移动！' : '';
+                moveDisplay.innerHTML = `第 <span class="highlight">${currentStep}</span> 步：将盘 <span class="highlight">${move.disk}</span> 从 <span class="highlight">${fromName}</span> 移到 <span class="highlight">${toName}</span>${completed}`;
+            }
+        }
+
+        function updateStats() {
+            stepCounter.textContent = `${currentStep} / ${allMoves.length}`;
+        }
+
+        function updateStepsList() {
+            if (allMoves.length === 0) {
+                stepsList.innerHTML = '<div class="empty-hint">暂无步骤</div>';
+                return;
+            }
+
+            let html = '';
+            allMoves.forEach((move, idx) => {
+                const stepNum = idx + 1;
+                const fromName = ['A', 'B', 'C'][move.from];
+                const toName = ['A', 'B', 'C'][move.to];
+                let cls = 'step-item';
+                if (idx + 1 === currentStep) cls += ' active';
+                else if (idx + 1 < currentStep) cls += ' done';
+                html += `<div class="${cls}">
+                    <span class="step-num">${stepNum}</span>
+                    <span>盘 ${move.disk}: ${fromName} → ${toName}</span>
+                </div>`;
+            });
+            stepsList.innerHTML = html;
+
+            const activeItem = stepsList.querySelector('.step-item.active');
+            if (activeItem) {
+                const top = activeItem.offsetTop;
+                if (top < stepsList.scrollTop || top + activeItem.offsetHeight > stepsList.scrollTop + stepsList.clientHeight) {
+                    stepsList.scrollTop = Math.max(0, top - stepsList.clientHeight / 2);
+                }
+            }
+        }
+
+        // ---------- 数据表格 (复杂度对比) ----------
+        function updateDataTable() {
+            const maxN = 10;
+            let html = '';
+            let prevSteps = 0;
+            for (let n = 1; n <= maxN; n++) {
+                const steps = Math.pow(2, n) - 1;
+                const growth = prevSteps > 0 ? (steps - prevSteps) : 0;
+                const isCurrent = (n === diskCount);
+                const cls = isCurrent ? 'current' : '';
+                let growthDisplay = '';
+                if (n > 1) {
+                    growthDisplay = `<span class="double-badge">+${growth}</span>`;
+                } else {
+                    growthDisplay = '—';
+                }
+                html += `<tr class="${cls}">
+                    <td><strong>${n}</strong></td>
+                    <td>${steps}</td>
+                    <td>${growthDisplay}</td>
+                </tr>`;
+                prevSteps = steps;
+            }
+            dataBody.innerHTML = html;
+
+        }
+
+        function updateButtons() {
+            const total = allMoves.length;
+            prevBtn.disabled = (currentStep <= 0);
+            nextBtn.disabled = (currentStep >= total);
+        }
+
+        // ---------- 绘制汉诺塔画布 ----------
+        function drawCanvas() {
+            // 小屏采用更紧凑的坐标系，让圆盘和编号保持可辨认的尺寸。
+            const compact = canvas.clientWidth < 420;
+            const width = compact ? 360 : 620;
+            if (canvas.width !== width) {
+                cancelMotion();
+                CW = width;
+                CH = compact ? 360 : 400;
+                canvas.width = CW;
+                canvas.height = CH;
+                pegX = compact ? [70, 180, 290] : [130, 310, 490];
+                pegBaseY = compact ? 300 : 340;
+            }
+            const textScale = Math.min(2.2, CW / Math.max(1, canvas.clientWidth));
+            ctx.clearRect(0, 0, CW, CH);
+            ctx.fillStyle = '#fcfdff';
+            ctx.fillRect(0, 0, CW, CH);
+
+            // 底座
+            ctx.fillStyle = '#dceaf5';
+            ctx.beginPath();
+            ctx.roundRect(20, pegBaseY, CW - 40, baseHeight, 8);
+            ctx.fill();
+            ctx.strokeStyle = '#c2d5e6';
+            ctx.lineWidth = 1.5;
+            ctx.stroke();
+
+            // 柱子
+            for (let i = 0; i < 3; i++) {
+                const x = pegX[i] - pegWidth / 2;
+                const y = pegBaseY - pegHeight;
+                ctx.fillStyle = i === 0 ? '#0d3f53' : (i === 1 ? '#1e6e9c' : '#a13030');
+                ctx.beginPath();
+                ctx.roundRect(x, y, pegWidth, pegHeight, 4);
+                ctx.fill();
+            }
+
+            // 柱名
+            ctx.font = `bold ${18 * textScale}px system-ui, sans-serif`;
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'top';
+            ctx.fillStyle = '#0d3f53';
+            ctx.fillText('A', pegX[0], pegBaseY + 24);
+            ctx.fillStyle = '#1e6e9c';
+            ctx.fillText('B', pegX[1], pegBaseY + 24);
+            ctx.fillStyle = '#a13030';
+            ctx.fillText('C', pegX[2], pegBaseY + 24);
+
+            function paintDisk(size, baseX, y, highlighted) {
+                const diskW = getDiskWidth(size);
+                ctx.beginPath();
+                ctx.roundRect(baseX - diskW / 2, y, diskW, diskHeight, 6);
+                ctx.fillStyle = getDiskColor(size);
+                ctx.fill();
+                ctx.strokeStyle = highlighted ? '#a13030' : 'rgba(255,255,255,0.5)';
+                ctx.lineWidth = highlighted ? 3.5 : 1.5;
+                ctx.stroke();
+                ctx.font = `bold ${11 * textScale}px system-ui, sans-serif`;
+                ctx.fillStyle = size === 1 ? '#563100' : '#fff';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText(size, baseX, y + diskHeight / 2);
+            }
+            const lastMove = allMoves[currentStep - 1];
+            for (let p = 0; p < 3; p++) {
+                pegs[p].forEach((size, index) => {
+                    if (motion && p === motion.move.to && size === motion.move.disk) return;
+                    paintDisk(size, pegX[p], pegBaseY - (index + 1) * diskHeight - 2,
+                        !!lastMove && size === lastMove.disk && p === lastMove.to);
+                });
+            }
+            if (motion) {
+                const { move, progress, fromY, toY } = motion;
+                const liftY = pegBaseY - pegHeight - diskHeight - 16;
+                let x = pegX[move.from], y = fromY;
+                const ease = t => t * t * (3 - 2 * t);
+                if (progress < 0.25) y = fromY + (liftY - fromY) * ease(progress / 0.25);
+                else if (progress < 0.75) {
+                    x += (pegX[move.to] - x) * ease((progress - 0.25) / 0.5);
+                    y = liftY;
+                } else {
+                    x = pegX[move.to];
+                    y = liftY + (toY - liftY) * ease((progress - 0.75) / 0.25);
+                }
+                paintDisk(move.disk, x, y, true);
+            }
+
+            // 信息
+            ctx.font = `${14 * textScale}px system-ui, sans-serif`;
+            ctx.fillStyle = '#5b7e92';
+            ctx.textAlign = 'left';
+            ctx.textBaseline = 'top';
+            ctx.fillText(`圆盘数: ${diskCount}  |  最少步数: ${Math.pow(2, diskCount) - 1}`, 20, 16);
+        }
+
+        // roundRect 辅助
+        if (!CanvasRenderingContext2D.prototype.roundRect) CanvasRenderingContext2D.prototype.roundRect = function(x, y, w, h, r) {
+            if (w < 2 * r) r = w / 2;
+            if (h < 2 * r) r = h / 2;
+            this.moveTo(x + r, y);
+            this.lineTo(x + w - r, y);
+            this.quadraticCurveTo(x + w, y, x + w, y + r);
+            this.lineTo(x + w, y + h - r);
+            this.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+            this.lineTo(x + r, y + h);
+            this.quadraticCurveTo(x, y + h, x, y + h - r);
+            this.lineTo(x, y + r);
+            this.quadraticCurveTo(x, y, x + r, y);
+            return this;
+        };
+
+        // ---------- 事件绑定 ----------
+        nextBtn.addEventListener('click', () => { stopPlaying(); nextStep(); });
+        prevBtn.addEventListener('click', () => { stopPlaying(); prevStep(); });
+
+        playBtn.addEventListener('click', () => {
+            if (isPlaying) stopPlaying();
+            else startPlaying();
+        });
+
+        resetBtn.addEventListener('click', () => {
+            stopPlaying();
+            const n = Number(diskInput.value);
+            if (!Number.isInteger(n) || n < 1 || n > 8) {
+                diskInput.setCustomValidity('请输入 1~8 之间的整数圆盘数');
+                diskInput.reportValidity();
+                return;
+            }
+            resetState(n);
+        });
+
+        applyBtn.addEventListener('click', () => {
+            stopPlaying();
+            const n = Number(diskInput.value);
+            if (!Number.isInteger(n) || n < 1 || n > 8) {
+                diskInput.setCustomValidity('请输入 1~8 之间的整数圆盘数');
+                diskInput.reportValidity();
+                return;
+            }
+            resetState(n);
+        });
+
+        diskInput.addEventListener('input', () => diskInput.setCustomValidity(''));
+
+        diskInput.addEventListener('change', () => {
+            let v = Number(diskInput.value);
+            if (isNaN(v) || v < 1) diskInput.value = 1;
+            if (v > 8) diskInput.value = 8;
+        });
+
+        document.addEventListener('keydown', (e) => {
+            if (e.target.closest('input, textarea, select, button')) return;
+            if (e.key === 'ArrowRight') { e.preventDefault(); stopPlaying(); nextStep(); }
+            else if (e.key === 'ArrowLeft') { e.preventDefault(); stopPlaying(); prevStep(); }
+            else if (e.key === ' ') { e.preventDefault(); if (isPlaying) stopPlaying(); else startPlaying(); }
+        });
+
+        // ---------- 启动 ----------
+        function initPage() {
+            const n = Number(diskInput.value);
+            resetState(n);
+        }
+        initPage();
+        new ResizeObserver(drawCanvas).observe(canvas);
+        window.addEventListener('pagehide', () => { stopPlaying(); cancelMotion(); });
+    })();
+</script>
+</body>
+</html>
