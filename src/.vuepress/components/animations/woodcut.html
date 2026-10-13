@@ -1,0 +1,1130 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>木材加工 · 二分答案动画演示</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: system-ui, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #eef8fe 0%, #f5f7fb 100%);
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 0;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            max-width: 1340px;
+            width: 100%;
+            padding: 28px;
+            border-radius: 36px;
+            box-shadow: 0 25px 40px -12px rgba(0, 20, 30, 0.25);
+        }
+
+        h1 {
+            font-size: 1.9rem;
+            font-weight: 600;
+            margin: 0 0 8px 0;
+            color: #0b2b3b;
+            letter-spacing: -0.01em;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .subtitle {
+            color: #2c5a6e;
+            margin-bottom: 22px;
+            font-size: 0.96rem;
+            font-weight: 400;
+            border-left: 4px solid #52b9e9;
+            padding-left: 16px;
+            background: #eef8fe;
+            border-radius: 0 12px 12px 0;
+            line-height: 1.6;
+            padding: 12px 20px;
+        }
+
+        .subtitle strong {
+            color: #0d3f53;
+        }
+
+        .subtitle .formula-inline {
+            font-family: 'Cambria Math', 'Times New Roman', serif;
+            font-weight: 700;
+            color: #a13030;
+            background: #fff8e1;
+            padding: 2px 10px;
+            border-radius: 6px;
+            display: inline-block;
+        }
+
+        .main-area {
+            display: flex;
+            gap: 22px;
+            flex-wrap: wrap;
+            align-items: flex-start;
+        }
+
+        .left-panel {
+            flex: 0 0 720px;
+            max-width: 100%;
+        }
+
+        .right-panel {
+            flex: 1;
+            min-width: 300px;
+            max-width: 100%;
+        }
+
+        canvas {
+            display: block;
+            width: 100%;
+            height: auto;
+            border-radius: 24px;
+            background: #fdfcf9;
+            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.04);
+            border: 1px solid #f0e6d6;
+        }
+
+        .controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            align-items: center;
+            margin-top: 14px;
+        }
+
+        button {
+            background: white;
+            border: none;
+            padding: 11px 20px;
+            font-size: 0.92rem;
+            font-weight: 500;
+            border-radius: 40px;
+            cursor: pointer;
+            color: #0f4055;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+            transition: all 0.15s;
+            border: 1px solid #cddbe7;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+
+        button.primary {
+            background: #0d3f53;
+            border: 1px solid #0d3f53;
+            color: white;
+            box-shadow: 0 6px 14px rgba(13, 63, 83, 0.2);
+        }
+
+        button.primary:hover {
+            background: #104f68;
+            border-color: #104f68;
+        }
+
+        button:hover {
+            background: #e3eef8;
+            border-color: #b1c9db;
+        }
+
+        button.primary:disabled, button:disabled {
+            opacity: 0.45;
+            cursor: not-allowed;
+            box-shadow: none;
+            background: #d9e2ec;
+            border-color: #b9c8d6;
+            color: #5e7b8c;
+        }
+
+        button.primary:disabled {
+            background: #b0c5d2;
+            border-color: #b0c5d2;
+            color: #f0f6fa;
+        }
+
+        .settings {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 14px;
+            background: #f1f7fd;
+            padding: 12px 20px;
+            border-radius: 50px;
+            margin-bottom: 14px;
+        }
+
+        .setting-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.92rem;
+            color: #1f4e62;
+            font-weight: 500;
+        }
+
+        .setting-item input {
+            padding: 7px 10px;
+            border-radius: 30px;
+            border: 1px solid #c2d5e6;
+            font-weight: 600;
+            font-size: 0.92rem;
+            text-align: center;
+            background: white;
+            color: #0d3f53;
+            width: 80px;
+        }
+
+        .setting-item input.wide {
+            width: 140px;
+        }
+
+        .setting-item input:focus {
+            outline: 2px solid #7cc3ed;
+            border-color: transparent;
+        }
+
+        /* 面板 */
+        .panel {
+            background: #f8fbfe;
+            border-radius: 22px;
+            padding: 18px 20px;
+            border: 1px solid #dceaf5;
+            margin-bottom: 16px;
+        }
+
+        .panel h2 {
+            font-size: 1rem;
+            font-weight: 600;
+            color: #0b2b3b;
+            margin: 0 0 12px 0;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding-bottom: 8px;
+            border-bottom: 2px dashed #cfe2f0;
+        }
+
+        .panel h2 .badge {
+            background: #52b9e9;
+            color: white;
+            border-radius: 20px;
+            padding: 2px 10px;
+            font-size: 0.72rem;
+            font-weight: 600;
+        }
+
+        /* 二分区间可视化 */
+        .range-visual {
+            background: white;
+            border-radius: 16px;
+            padding: 16px;
+            margin-bottom: 12px;
+        }
+
+        .range-bar {
+            display: flex;
+            height: 36px;
+            border-radius: 10px;
+            overflow: hidden;
+            position: relative;
+            background: #e0eef8;
+            margin-bottom: 8px;
+        }
+
+        .range-seg {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.72rem;
+            font-weight: 600;
+            color: white;
+            transition: all 0.3s;
+        }
+
+        .range-seg.excluded {
+            background: #e0eef8;
+            color: #94a3b8;
+        }
+
+        .range-seg.search {
+            background: linear-gradient(90deg, #52b9e9, #7cc3ed);
+        }
+
+        .range-seg.answer {
+            background: linear-gradient(90deg, #f5d77a, #f5b342);
+            color: #7a4100;
+        }
+
+        .range-labels {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.72rem;
+            color: #5b7e92;
+        }
+
+        /* 判定结果 */
+        .judge-box {
+            background: white;
+            border-radius: 16px;
+            padding: 14px 16px;
+            margin-bottom: 12px;
+            border-left: 5px solid #52b9e9;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.02);
+        }
+
+        .judge-box.feasible {
+            border-left-color: #2e8b57;
+            background: #f0faf4;
+        }
+
+        .judge-box.infeasible {
+            border-left-color: #a13030;
+            background: #fef6f6;
+        }
+
+        .judge-box .title {
+            font-size: 0.82rem;
+            font-weight: 600;
+            color: #5b7e92;
+            margin-bottom: 6px;
+        }
+
+        .judge-box .result {
+            font-size: 1.05rem;
+            font-weight: 700;
+            color: #0d3f53;
+            line-height: 1.5;
+            font-family: 'Cambria Math', 'Times New Roman', serif;
+        }
+
+        .judge-box .result .feasible-text {
+            color: #2e8b57;
+        }
+
+        .judge-box .result .infeasible-text {
+            color: #a13030;
+        }
+
+        /* 结果展示 */
+        .result-box {
+            background: linear-gradient(135deg, #fff8e1, #ffe8b3);
+            border-radius: 14px;
+            padding: 14px 16px;
+            text-align: center;
+            border: 1px solid #f5d77a;
+        }
+
+        .result-box .label {
+            font-size: 0.82rem;
+            color: #7a4100;
+            font-weight: 500;
+        }
+
+        .result-box .value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #a13030;
+            line-height: 1.3;
+            margin: 4px 0;
+            font-family: 'Cambria Math', 'Times New Roman', serif;
+        }
+
+        .result-box .sub {
+            font-size: 0.78rem;
+            color: #7a4100;
+        }
+
+        /* 步骤列表 */
+        .step-list {
+            max-height: 240px;
+            overflow-y: auto;
+            font-size: 0.82rem;
+            padding-right: 4px;
+        }
+
+        .step-list .step-item {
+            padding: 8px 12px;
+            border-radius: 10px;
+            margin-bottom: 5px;
+            background: white;
+            border-left: 3px solid #c2d5e6;
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+            transition: all 0.2s;
+        }
+
+        .step-list .step-item.active {
+            background: #fff8e1;
+            border-left-color: #f5b342;
+            box-shadow: 0 2px 8px rgba(245, 179, 66, 0.15);
+        }
+
+        .step-list .step-item.done {
+            border-left-color: #52b9e9;
+            color: #5b7e92;
+        }
+
+        .step-list .round-badge {
+            display: inline-block;
+            background: #e3f0fa;
+            color: #0d3f53;
+            border-radius: 20px;
+            padding: 1px 8px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            min-width: 32px;
+            text-align: center;
+            flex-shrink: 0;
+        }
+
+        .step-list .step-item.active .round-badge {
+            background: #f5b342;
+            color: white;
+        }
+
+        .step-list .step-content {
+            line-height: 1.5;
+        }
+
+        .step-list .step-content .hl {
+            color: #a13030;
+            font-weight: 700;
+        }
+
+        .empty-hint {
+            color: #94a3b8;
+            font-size: 0.85rem;
+            font-style: italic;
+        }
+
+        .progress-bar-wrapper {
+            margin-top: 8px;
+            background: #e3f0fa;
+            border-radius: 20px;
+            height: 8px;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #f5b342, #52b9e9);
+            border-radius: 20px;
+            transition: width 0.3s ease;
+        }
+
+        /* 公式卡片 */
+        .formula-box {
+            background: white;
+            border-radius: 16px;
+            padding: 14px 16px;
+            margin-bottom: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.02);
+            border-left: 5px solid #52b9e9;
+        }
+
+        .formula-box.highlight {
+            border-left-color: #f5b342;
+            background: #fffdf5;
+        }
+
+        .formula-box .label {
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: #5b7e92;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 6px;
+        }
+
+        .formula-box .formula {
+            font-size: 1rem;
+            font-weight: 700;
+            color: #0d3f53;
+            font-family: 'Cambria Math', 'Times New Roman', serif;
+            text-align: center;
+            line-height: 1.7;
+        }
+
+        .formula-box .formula .var {
+            color: #a13030;
+            font-style: italic;
+        }
+        /* 沿用原稿的木条、切割线和判断卡片，适应文档与手机宽度。 */
+        .left-panel { flex: 1 1 640px; min-width: 0; }
+        .right-panel { flex: 1 1 300px; min-width: 0; }
+        .setting-item { max-width: 100%; }
+        .setting-item label { flex-shrink: 0; }
+        .setting-item input { min-width: 0; max-width: 100%; }
+        .setting-item input.wide { width: 180px; flex: 1 1 100px; }
+        .canvas-note { font-size: 0.82rem; line-height: 1.6; color: #667785; }
+        .step-list { position: relative; overscroll-behavior: contain; }
+        .step-content { min-width: 0; overflow-wrap: anywhere; }
+        .range-labels { flex-wrap: wrap; gap: 6px; }
+        .range-seg { min-width: 0; overflow: hidden; white-space: nowrap; }
+        .formula-box .formula, .judge-box .result { overflow-wrap: anywhere; }
+        button:focus-visible, input:focus-visible { outline: 3px solid #a13030; outline-offset: 3px; }
+        @media (max-width: 600px) {
+            body { padding: 10px; }
+            .container { padding: 16px; border-radius: 20px; }
+            h1 { font-size: 1.4rem; line-height: 1.4; }
+            .main-area { gap: 16px; }
+            .settings { padding: 12px; gap: 10px; border-radius: 16px; }
+            .setting-item { flex: 1 1 100%; }
+            .controls { gap: 8px; }
+            .controls button { flex: 1 1 40%; padding: 10px 12px; }
+            .panel { padding: 14px; }
+            .range-visual, .formula-box, .judge-box { padding: 12px; }
+        }
+        @media (prefers-reduced-motion: reduce) { .progress-bar, .range-seg { transition: none; } }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>🪵 木材加工 · 二分答案动画演示</h1>
+    <div class="subtitle">
+        把 n 根原木切成 <strong>k 段等长</strong>的小木段，求每段长度的<strong>最大值</strong>。<br>
+        核心：候选长度增大，能切出的段数减少或保持不变——<strong>单调性</strong>让二分答案成为可能。<br>
+        可行性判定：<span class="formula-inline">C(x) = Σ ⌊Lᵢ / x⌋ ≥ k</span>
+    </div>
+
+    <div class="main-area">
+        <!-- 左侧：主画布 -->
+        <div class="left-panel">
+            <div class="settings">
+                <div class="setting-item">
+                    <label for="woodsInput">🪵 原木长度</label>
+                    <input type="text" id="woodsInput" class="wide" value="232, 124, 456">
+                </div>
+                <div class="setting-item">
+                    <label for="kInput">🎯 目标段数 k</label>
+                    <input type="number" id="kInput" min="1" max="100000000" step="1" value="7">
+                </div>
+                <button id="applyBtn" style="padding: 7px 16px; font-size: 0.88rem;">应用</button>
+            </div>
+
+            <canvas id="mainCanvas" width="720" height="460" aria-label="原木切割、余料和可切段数示意，精确数值见可行性判定面板">木材加工二分答案演示</canvas>
+            <p class="canvas-note">蓝色切割线表示完整木段，灰色虚线部分表示余料；段数过多时仅显示部分切割线，数量仍精确计算。</p>
+
+            <div class="controls">
+                <button id="prevBtn">◀ 上一步</button>
+                <button id="nextBtn" class="primary">下一步 ▶</button>
+                <button id="playBtn" class="primary">▶ 自动</button>
+                <button id="resetBtn">⟲ 重置</button>
+            </div>
+        </div>
+
+        <!-- 右侧：信息面板 -->
+        <div class="right-panel">
+            <div class="panel">
+                <h2>🎯 更新后的搜索区间</h2>
+                <div class="range-visual">
+                    <div class="range-bar" id="rangeBar">
+                        <div class="range-seg search" id="searchSeg" style="flex: 1;">搜索区间</div>
+                    </div>
+                    <div class="range-labels">
+                        <span id="leftLabel">left = 1</span>
+                        <span id="midLabel" style="color:#f5b342; font-weight:700;">mid = ?</span>
+                        <span id="rightLabel">right = 456</span>
+                    </div>
+                </div>
+                <div style="font-size:0.8rem; color:#5b7e92; text-align:center;">
+                    当前记录的答案（0表示尚未找到可行长度）：<strong id="answerDisplay" style="color:#a13030;">0</strong>
+                </div>
+            </div>
+
+            <div class="panel">
+                <h2>🧮 可行性判定</h2>
+                <div class="formula-box highlight" id="formulaBox">
+                    <div class="label">当前判定</div>
+                    <div class="formula" id="formulaDisplay">
+                        等待开始...
+                    </div>
+                </div>
+                <div class="judge-box" id="judgeBox">
+                    <div class="title">判定结果</div>
+                    <div class="result" id="judgeResult">点击"下一步"开始二分查找</div>
+                </div>
+            </div>
+
+            <div class="panel">
+                <h2>📋 二分步骤</h2>
+                <div class="step-list" id="stepList">
+                    <div class="empty-hint">暂无步骤</div>
+                </div>
+                <div class="progress-bar-wrapper" role="progressbar" aria-label="二分查找进度" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+                    <div class="progress-bar" id="progressBar" style="width: 0%;"></div>
+                </div>
+            </div>
+
+            <div class="panel" id="resultPanel" style="display: none;">
+                <h2>🎯 最终答案</h2>
+                <div class="result-box">
+                    <div class="label">最大可行长度</div>
+                    <div class="value" id="resultValue">0</div>
+                    <div class="sub" id="resultSub"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    (function() {
+        // ---------- 核心状态 ----------
+        let woods = [232, 124, 456];
+        let k = 7;
+
+        // 二分状态
+        let left = 1;
+        let right = 0;
+        let answer = 0;
+
+        // 步骤历史
+        let stepHistory = [];       // 每步的完整状态快照
+        let currentStepIndex = -1;
+
+        // 自动播放
+        let isPlaying = false;
+        let playTimer = null;
+        let animationFrame = null;
+        let totalRounds = 1;
+        const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+        function cancelAnimation() {
+            if (animationFrame !== null) cancelAnimationFrame(animationFrame);
+            animationFrame = null;
+            anim.active = false;
+        }
+
+        // 动画状态
+        let anim = {
+            active: false,
+            progress: 0,
+            type: 'idle',          // 'idle' | 'judge'
+            mid: 0,
+            feasible: false,
+            piecesPerWood: []
+        };
+
+        // canvas
+        const canvas = document.getElementById('mainCanvas');
+        const ctx = canvas.getContext('2d');
+        let CW = 720, CH = 460;
+        canvas.width = CW;
+        canvas.height = CH;
+
+        // DOM
+        const woodsInput = document.getElementById('woodsInput');
+        const kInput = document.getElementById('kInput');
+        const applyBtn = document.getElementById('applyBtn');
+        const prevBtn = document.getElementById('prevBtn');
+        const nextBtn = document.getElementById('nextBtn');
+        const playBtn = document.getElementById('playBtn');
+        const resetBtn = document.getElementById('resetBtn');
+        const stepList = document.getElementById('stepList');
+        const progressBar = document.getElementById('progressBar');
+        const resultPanel = document.getElementById('resultPanel');
+        const resultValue = document.getElementById('resultValue');
+        const resultSub = document.getElementById('resultSub');
+        const rangeBar = document.getElementById('rangeBar');
+        const leftLabel = document.getElementById('leftLabel');
+        const midLabel = document.getElementById('midLabel');
+        const rightLabel = document.getElementById('rightLabel');
+        const answerDisplay = document.getElementById('answerDisplay');
+        const formulaDisplay = document.getElementById('formulaDisplay');
+        const judgeBox = document.getElementById('judgeBox');
+        const judgeResult = document.getElementById('judgeResult');
+
+        // ---------- 初始化 ----------
+        function initState(woodsArr, targetK) {
+            stopPlaying();
+            cancelAnimation();
+            woods = [...woodsArr];
+            k = targetK;
+
+            left = 1;
+            right = Math.max(...woods);
+            answer = 0;
+
+            stepHistory = [];
+            currentStepIndex = -1;
+            anim.active = false;
+            stopPlaying();
+
+            // 保存初始快照
+            saveSnapshot();
+            // 仅预估本次输入的实际轮数，用于进度显示；展示状态仍从初始快照开始。
+            let lo = 1, hi = Math.max(...woods);
+            totalRounds = 0;
+            while (lo <= hi) {
+                const mid = Math.floor((lo + hi) / 2);
+                if (countPieces(mid).total >= k) lo = mid + 1;
+                else hi = mid - 1;
+                totalRounds++;
+            }
+            updateUI();
+        }
+
+        // ---------- 快照 ----------
+        function saveSnapshot() {
+            const snap = {
+                left: left,
+                right: right,
+                answer: answer,
+                stepIndex: stepHistory.length,
+                // 记录这一步做了什么（用于展示）
+                action: null
+            };
+            if (currentStepIndex < stepHistory.length - 1) {
+                stepHistory = stepHistory.slice(0, currentStepIndex + 1);
+            }
+            stepHistory.push(snap);
+            currentStepIndex = stepHistory.length - 1;
+        }
+
+        // ---------- 计算可切段数 ----------
+        function countPieces(mid) {
+            let total = 0;
+            const perWood = [];
+            for (let i = 0; i < woods.length; i++) {
+                const p = Math.floor(woods[i] / mid);
+                perWood.push(p);
+                total += p;
+            }
+            return { total, perWood };
+        }
+
+        // ---------- 执行一步二分 ----------
+        function doNextStep() {
+            if (anim.active || left > right) return;
+            // 回退后重算时，先丢弃旧的未来快照，再确定正确轮次。
+            stepHistory = stepHistory.slice(0, currentStepIndex + 1);
+
+            const mid = Math.floor((left + right) / 2);
+            const { total, perWood } = countPieces(mid);
+            const feasible = total >= k;
+
+            // 记录这一步
+            const stepInfo = {
+                round: currentStepIndex + 1,
+                left: left,
+                right: right,
+                mid: mid,
+                total: total,
+                feasible: feasible,
+                perWood: perWood,
+                k: k
+            };
+
+            // 更新状态
+            if (feasible) {
+                answer = mid;
+                left = mid + 1;
+            } else {
+                right = mid - 1;
+            }
+
+            // 保存快照（带步骤信息）
+            const snap = {
+                left: left,
+                right: right,
+                answer: answer,
+                stepInfo: stepInfo,
+                stepIndex: stepHistory.length
+            };
+            if (currentStepIndex < stepHistory.length - 1) {
+                stepHistory = stepHistory.slice(0, currentStepIndex + 1);
+            }
+            stepHistory.push(snap);
+            currentStepIndex = stepHistory.length - 1;
+
+            // 启动动画
+            anim.active = true;
+            anim.progress = 0;
+            anim.type = 'judge';
+            anim.mid = mid;
+            anim.feasible = feasible;
+            anim.perWood = perWood;
+
+            updateUI();
+            function finish() {
+                anim.active = false;
+                animationFrame = null;
+                if (left > right) stopPlaying();
+                updateUI();
+                if (isPlaying) playTimer = setTimeout(doNextStep, 350);
+            }
+            if (reducedMotion.matches) { finish(); return; }
+            const started = performance.now();
+            function animLoop(timestamp) {
+                if (!anim.active) return;
+                anim.progress = Math.min(1, (timestamp - started) / 800);
+                drawCanvas();
+                updateProgress();
+                if (anim.progress < 1) animationFrame = requestAnimationFrame(animLoop);
+                else finish();
+            }
+            animationFrame = requestAnimationFrame(animLoop);
+        }
+
+        // ---------- 上一步 ----------
+        function goPrevStep() {
+            if (anim.active || currentStepIndex <= 0) return;
+            currentStepIndex--;
+            const snap = stepHistory[currentStepIndex];
+            left = snap.left;
+            right = snap.right;
+            answer = snap.answer;
+            anim.active = false;
+            updateUI();
+        }
+
+        // ---------- 自动播放 ----------
+        function startPlaying() {
+            if (isPlaying) return;
+            if (left > right) initState(woods, k);
+            isPlaying = true;
+            playBtn.textContent = '⏸ 暂停';
+            playBtn.classList.remove('primary');
+            if (!anim.active) playTimer = setTimeout(doNextStep, 100);
+        }
+
+        function stopPlaying() {
+            isPlaying = false;
+            if (playTimer !== null) clearTimeout(playTimer);
+            playTimer = null;
+            playBtn.textContent = '▶ 自动';
+            playBtn.classList.add('primary');
+        }
+
+        // ---------- 重置 ----------
+        function resetState() {
+            stopPlaying();
+            const parts = woodsInput.value.trim().split(/[,，\s]+/).filter(Boolean);
+            const newWoods = parts.map(Number);
+            const newK = Number(kInput.value);
+            const validWoods = newWoods.length >= 1 && newWoods.length <= 6 &&
+                newWoods.every(value => Number.isInteger(value) && value >= 1 && value <= 100000000);
+            const validK = kInput.value.trim() !== '' && Number.isInteger(newK) && newK >= 1 && newK <= 100000000;
+            woodsInput.setCustomValidity(validWoods ? '' : '请输入1到6根原木的正整数长度，每根不超过100000000，用逗号或空格分隔');
+            kInput.setCustomValidity(validK ? '' : '请输入1到100000000之间的整数段数');
+            if (!validWoods) { woodsInput.reportValidity(); return; }
+            if (!validK) { kInput.reportValidity(); return; }
+            initState(newWoods, newK);
+        }
+
+        // ---------- 更新界面 ----------
+        function updateUI() {
+            drawCanvas();
+            updateRangeVisual();
+            updateJudgeDisplay();
+            updateStepList();
+            updateResult();
+            updateProgress();
+            updateButtons();
+            updateFormula();
+        }
+
+        function updateFormula() {
+            if (currentStepIndex > 0) {
+                const snap = stepHistory[currentStepIndex];
+                if (snap.stepInfo) {
+                    const si = snap.stepInfo;
+                    formulaDisplay.innerHTML = `C(${si.mid}) = Σ ⌊Lᵢ / ${si.mid}⌋ = ${si.total}`;
+                }
+            } else {
+                formulaDisplay.innerHTML = `C(x) = Σ ⌊Lᵢ / x⌋ ≥ k`;
+            }
+        }
+
+        function updateRangeVisual() {
+            const maxVal = Math.max(...woods);
+            let html = '';
+            const append = (length, cls, label) => {
+                if (length > 0) html += `<div class="range-seg ${cls}" style="flex:${length} 1 0;" title="${label}">${label}</div>`;
+            };
+            append(left - 1, 'answer', `可行 ≤${left - 1}`);
+            append(Math.max(0, right - left + 1), 'search', `待查 [${left}, ${right}]`);
+            append(maxVal - right, 'excluded', `不可行 ≥${right + 1}`);
+            rangeBar.innerHTML = html;
+            leftLabel.textContent = `left = ${left}`;
+            rightLabel.textContent = `right = ${right}`;
+            midLabel.textContent = currentStepIndex > 0 ? `mid = ${stepHistory[currentStepIndex].stepInfo.mid}` : 'mid = ?';
+            answerDisplay.textContent = answer;
+        }
+
+        function updateJudgeDisplay() {
+            if (currentStepIndex > 0) {
+                const snap = stepHistory[currentStepIndex];
+                if (snap.stepInfo) {
+                    const si = snap.stepInfo;
+                    const feasibility = si.feasible;
+                    judgeBox.className = 'judge-box ' + (feasibility ? 'feasible' : 'infeasible');
+
+                    // 显示每根原木的切割情况
+                    let detailHtml = `C(${si.mid}) = `;
+                    const parts = si.perWood.map((p, i) => `⌊${woods[i]}/${si.mid}⌋=${p}`);
+                    detailHtml += parts.join(' + ') + ` = ${si.total}`;
+                    detailHtml += feasibility
+                        ? ` ≥ k=${si.k} <span class="feasible-text">✓ 可行</span>`
+                        : ` < k=${si.k} <span class="infeasible-text">✗ 不可行</span>`;
+
+                    judgeResult.innerHTML = detailHtml;
+                } else {
+                    judgeBox.className = 'judge-box';
+                    judgeResult.textContent = '等待判定...';
+                }
+            } else {
+                judgeBox.className = 'judge-box';
+                judgeResult.textContent = '点击"下一步"开始二分查找';
+            }
+        }
+
+        function updateStepList() {
+            if (stepHistory.length <= 1) {
+                stepList.innerHTML = '<div class="empty-hint">暂无步骤</div>';
+                return;
+            }
+
+            let html = '';
+            // 从第1个快照（索引1）开始，因为索引0是初始状态
+            for (let i = 1; i < stepHistory.length; i++) {
+                const snap = stepHistory[i];
+                const si = snap.stepInfo;
+                if (!si) continue;
+
+                let cls = 'step-item';
+                if (i === currentStepIndex) cls += ' active';
+                else if (i < currentStepIndex) cls += ' done';
+
+                const feasibleText = si.feasible ? '✓' : '✗';
+                const feasibleClass = si.feasible ? 'feasible-text' : 'infeasible-text';
+
+                html += `<div class="${cls}">
+                    <span class="round-badge">第${si.round}轮</span>
+                    <span class="step-content">
+                        mid=<span class="hl">${si.mid}</span>，C=${si.total} ${feasibleText}
+                        <br><span style="font-size:0.75rem; color:#94a3b8;">[${si.left}, ${si.right}] → ${si.feasible ? 'left=' + (si.mid+1) : 'right=' + (si.mid-1)}</span>
+                    </span>
+                </div>`;
+            }
+            stepList.innerHTML = html;
+
+            const active = stepList.querySelector('.step-item.active');
+            if (active) {
+                const top = active.offsetTop;
+                if (top < stepList.scrollTop || top + active.offsetHeight > stepList.scrollTop + stepList.clientHeight) {
+                    stepList.scrollTop = Math.max(0, top - stepList.clientHeight / 2);
+                }
+            }
+        }
+
+        function updateProgress() {
+            const done = currentStepIndex - (anim.active ? 1 - anim.progress : 0);
+            const percent = Math.max(0, Math.min(100, done / totalRounds * 100));
+            progressBar.style.width = `${percent}%`;
+            progressBar.parentElement.setAttribute('aria-valuenow', String(Math.round(percent)));
+        }
+
+        function updateResult() {
+            if (left > right && !anim.active) {
+                resultPanel.style.display = 'block';
+                resultValue.textContent = answer;
+                resultSub.textContent = answer === 0
+                    ? '没有可行的正整数长度：长度1时也切不出目标段数。'
+                    : `经过 ${currentStepIndex} 轮，搜索区间已清空，最大可行长度为 ${answer} cm。`;
+            } else {
+                resultPanel.style.display = 'none';
+            }
+        }
+
+        function updateButtons() {
+            prevBtn.disabled = anim.active || currentStepIndex <= 0;
+            nextBtn.disabled = anim.active || left > right;
+        }
+
+        // ---------- 绘制主画布 ----------
+        function metrics() {
+            const compact = canvas.clientWidth < 420;
+            const width = compact ? 360 : 720;
+            const startY = compact ? 75 : 65;
+            const rowH = compact ? 85 : 52;
+            const statsY = startY + woods.length * rowH + 15;
+            const cardY = statsY + (compact ? 60 : 35);
+            const cardH = compact ? 180 : 150;
+            const height = cardY + cardH + 24;
+            if (canvas.width !== width || canvas.height !== height) {
+                CW = width; CH = height;
+                canvas.width = CW; canvas.height = CH;
+            }
+            return { compact, startY, rowH, statsY, cardY, cardH };
+        }
+
+        function font(size, bold = false) {
+            ctx.font = `${bold ? 'bold ' : ''}${size * (CW < 720 ? 1.35 : 1)}px system-ui, sans-serif`;
+        }
+
+        function drawCanvas() {
+            const layout = metrics();
+            ctx.clearRect(0, 0, CW, CH);
+            const bg = ctx.createLinearGradient(0, 0, 0, CH);
+            bg.addColorStop(0, '#fdfcf9'); bg.addColorStop(1, '#f7f2ea');
+            ctx.fillStyle = bg; ctx.fillRect(0, 0, CW, CH);
+            font(17, true); ctx.fillStyle = '#0b2b3b'; ctx.textAlign = 'left'; ctx.textBaseline = 'top';
+            ctx.fillText(`🪵 ${woods.length} 根原木 · 目标 ${k} 段`, 20, 16, CW - 40);
+            drawWoodCutting(layout);
+            if (currentStepIndex > 0) {
+                const si = stepHistory[currentStepIndex].stepInfo;
+                drawJudgeCard(si, layout);
+                if (anim.active) {
+                    const width = CW - 80;
+                    roundRect(ctx, 40, layout.cardY + layout.cardH - 18, width, 5, 2);
+                    ctx.fillStyle = '#e0eef8'; ctx.fill();
+                    if (anim.progress > 0) {
+                        roundRect(ctx, 40, layout.cardY + layout.cardH - 18, width * anim.progress, 5, 2);
+                        ctx.fillStyle = si.feasible ? '#2e8b57' : '#a13030'; ctx.fill();
+                    }
+                }
+            } else {
+                font(16, true); ctx.fillStyle = '#5b7e92'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+                ctx.fillText('点击“下一步”检查候选长度', CW / 2, layout.cardY + 45, CW - 40);
+                font(13); ctx.fillText('找到可行值后，继续向更长处搜索', CW / 2, layout.cardY + 80, CW - 40);
+            }
+        }
+
+        function drawWoodCutting(layout) {
+            const { compact, startY, rowH, statsY } = layout;
+            const maxWoodLen = Math.max(...woods);
+            const barX = compact ? 20 : 160;
+            const maxBarW = compact ? CW - 40 : CW - barX - 115;
+            const displayMid = currentStepIndex > 0 ? stepHistory[currentStepIndex].stepInfo.mid : null;
+            woods.forEach((wood, index) => {
+                const y = startY + index * rowH;
+                const barY = compact ? y + 24 : y;
+                const barW = wood / maxWoodLen * maxBarW;
+                const barH = 26;
+                font(13, true); ctx.fillStyle = '#1f4e62'; ctx.textBaseline = compact ? 'top' : 'middle';
+                ctx.textAlign = compact ? 'left' : 'right';
+                ctx.fillText(`原木${index + 1}：${wood} cm`, compact ? 20 : 150, compact ? y : y + 13, compact ? CW - 40 : 140);
+                roundRect(ctx, barX, barY, maxBarW, barH, 6);
+                ctx.fillStyle = '#f0e6d6'; ctx.fill();
+                roundRect(ctx, barX, barY, barW, barH, Math.min(6, barW / 2));
+                const gradient = ctx.createLinearGradient(barX, barY, barX + barW, barY);
+                gradient.addColorStop(0, '#c9a87c'); gradient.addColorStop(1, '#a8845a');
+                ctx.fillStyle = gradient; ctx.fill();
+                ctx.strokeStyle = '#8a6a44'; ctx.lineWidth = 1.5; ctx.stroke();
+                if (!displayMid) return;
+                const pieceCount = Math.floor(wood / displayMid);
+                const pieceW = displayMid / maxWoodLen * maxBarW;
+                const usedWidth = pieceCount * pieceW;
+                const remaining = wood % displayMid;
+                const remainderW = remaining / maxWoodLen * maxBarW;
+                // 保持真实比例，只抽取最多40个实际切割位置，避免逐段循环拖慢页面。
+                const shown = Math.min(pieceCount, 40);
+                const visible = anim.active ? Math.floor(shown * anim.progress) : shown;
+                for (let i = 1; i <= visible; i++) {
+                    const pieceIndex = Math.floor(i * pieceCount / shown);
+                    const x = barX + pieceIndex * pieceW;
+                    ctx.beginPath(); ctx.moveTo(x, barY); ctx.lineTo(x, barY + barH);
+                    ctx.strokeStyle = anim.active ? '#f5b342' : '#52b9e9'; ctx.lineWidth = 2; ctx.stroke();
+                }
+                if (pieceCount <= 40 && pieceW >= (compact ? 28 : 24)) {
+                    for (let p = 0; p < visible; p++) {
+                        font(11, true); ctx.fillStyle = '#fff'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+                        ctx.fillText(String(p + 1), barX + (p + 0.5) * pieceW, barY + barH / 2);
+                    }
+                }
+                if (remainderW > 0.5) {
+                    ctx.fillStyle = 'rgba(210, 220, 226, 0.65)'; ctx.fillRect(barX + usedWidth, barY, remainderW, barH);
+                    ctx.strokeStyle = '#667785'; ctx.setLineDash([3, 3]); ctx.lineWidth = 1;
+                    ctx.strokeRect(barX + usedWidth, barY, remainderW, barH); ctx.setLineDash([]);
+                }
+                font(12, true); ctx.fillStyle = '#a13030'; ctx.textAlign = 'left'; ctx.textBaseline = compact ? 'top' : 'middle';
+                const label = compact ? `${pieceCount} 段 · 余 ${remaining} cm` : `→ ${pieceCount} 段`;
+                ctx.fillText(label, compact ? 20 : barX + maxBarW + 10, compact ? y + 58 : barY + 13, compact ? CW - 40 : 100);
+            });
+            if (displayMid) {
+                const { total } = countPieces(displayMid);
+                const feasible = total >= k;
+                ctx.fillStyle = feasible ? '#2e8b57' : '#a13030'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+                font(15, true);
+                ctx.fillText(`mid = ${displayMid} cm · 总段数 ${total}`, CW / 2, statsY, CW - 40);
+                font(13, true);
+                ctx.fillText(`${total} ${feasible ? '≥' : '<'} k=${k}：${feasible ? '可行，向右搜索' : '不可行，向左搜索'}`, CW / 2, statsY + 25, CW - 40);
+            }
+        }
+
+        function drawJudgeCard(si, layout) {
+            const { compact, cardY, cardH } = layout;
+            roundRect(ctx, 20, cardY, CW - 40, cardH, 18);
+            ctx.fillStyle = si.feasible ? '#f0faf4' : '#fef6f6'; ctx.fill();
+            ctx.strokeStyle = si.feasible ? '#2e8b57' : '#a13030'; ctx.lineWidth = 2.5; ctx.stroke();
+            font(13, true); ctx.fillStyle = '#5b7e92'; ctx.textAlign = 'left'; ctx.textBaseline = 'top';
+            ctx.fillText(`第 ${si.round} 轮 · 检查前 [${si.left}, ${si.right}]`, 35, cardY + 15, CW - 70);
+            font(16, true); ctx.fillStyle = '#0d3f53'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+            ctx.fillText(`C(${si.mid}) = ${si.perWood.join(' + ')} = ${si.total}`, CW / 2, cardY + 60, CW - 70);
+            font(16, true); ctx.fillStyle = si.feasible ? '#2e8b57' : '#a13030';
+            ctx.fillText(si.feasible ? `✓ 可行，记录 ${si.mid}` : '✗ 不可行', CW / 2, cardY + 95, CW - 70);
+            font(13, true);
+            ctx.fillText(si.feasible ? `left = ${si.mid + 1}，继续向右` : `right = ${si.mid - 1}，继续向左`, CW / 2, cardY + (compact ? 130 : 120), CW - 70);
+        }
+
+        function roundRect(ctx, x, y, w, h, r) {
+            if (w < 2 * r) r = w / 2;
+            if (h < 2 * r) r = h / 2;
+            ctx.beginPath();
+            ctx.moveTo(x + r, y);
+            ctx.lineTo(x + w - r, y);
+            ctx.quadraticCurveTo(x + w, y, x + w, y + r);
+            ctx.lineTo(x + w, y + h - r);
+            ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+            ctx.lineTo(x + r, y + h);
+            ctx.quadraticCurveTo(x, y + h, x, y + h - r);
+            ctx.lineTo(x, y + r);
+            ctx.quadraticCurveTo(x, y, x + r, y);
+            ctx.closePath();
+        }
+
+        // ---------- 事件 ----------
+        nextBtn.addEventListener('click', () => { stopPlaying(); doNextStep(); });
+        prevBtn.addEventListener('click', () => { stopPlaying(); goPrevStep(); });
+
+        playBtn.addEventListener('click', () => {
+            if (isPlaying) stopPlaying();
+            else startPlaying();
+        });
+
+        resetBtn.addEventListener('click', resetState);
+        applyBtn.addEventListener('click', resetState);
+
+        woodsInput.addEventListener('input', () => woodsInput.setCustomValidity(''));
+        kInput.addEventListener('input', () => kInput.setCustomValidity(''));
+        document.addEventListener('keydown', (e) => {
+            if (e.target.closest('input, textarea, select, button')) return;
+            if (e.key === 'ArrowRight') { e.preventDefault(); stopPlaying(); doNextStep(); }
+            else if (e.key === 'ArrowLeft') { e.preventDefault(); stopPlaying(); goPrevStep(); }
+            else if (e.key === ' ') { e.preventDefault(); if (isPlaying) stopPlaying(); else startPlaying(); }
+        });
+
+        // ---------- 启动 ----------
+        function initPage() {
+            resetState();
+        }
+        initPage();
+        new ResizeObserver(drawCanvas).observe(canvas);
+        window.addEventListener('pagehide', () => { stopPlaying(); cancelAnimation(); });
+    })();
+</script>
+</body>
+</html>

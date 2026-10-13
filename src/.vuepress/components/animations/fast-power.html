@@ -1,0 +1,1118 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>二分法求 aⁿ · 直观演示</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: system-ui, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #eef8fe 0%, #f5f7fb 100%);
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 0;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            max-width: 1340px;
+            width: 100%;
+            padding: 28px;
+            border-radius: 36px;
+            box-shadow: 0 25px 40px -12px rgba(0, 20, 30, 0.25);
+        }
+
+        h1 {
+            font-size: 1.9rem;
+            font-weight: 600;
+            margin: 0 0 8px 0;
+            color: #0b2b3b;
+            letter-spacing: -0.01em;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .subtitle {
+            color: #2c5a6e;
+            margin-bottom: 22px;
+            font-size: 0.96rem;
+            font-weight: 400;
+            border-left: 4px solid #52b9e9;
+            padding-left: 16px;
+            background: #eef8fe;
+            border-radius: 0 12px 12px 0;
+            line-height: 1.6;
+            padding: 12px 20px;
+        }
+
+        .subtitle strong {
+            color: #0d3f53;
+        }
+
+        .subtitle .formula-inline {
+            font-family: 'Cambria Math', 'Times New Roman', serif;
+            font-weight: 700;
+            color: #a13030;
+            background: #fff8e1;
+            padding: 2px 10px;
+            border-radius: 6px;
+            display: inline-block;
+        }
+
+        .main-area {
+            display: flex;
+            gap: 22px;
+            flex-wrap: wrap;
+            align-items: flex-start;
+        }
+
+        .left-panel {
+            flex: 0 0 720px;
+            max-width: 100%;
+        }
+
+        .right-panel {
+            flex: 1;
+            min-width: 300px;
+            max-width: 100%;
+        }
+
+        canvas {
+            display: block;
+            width: 100%;
+            height: auto;
+            border-radius: 24px;
+            background: #fdfcf9;
+            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.04);
+            border: 1px solid #f0e6d6;
+        }
+
+        .controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            align-items: center;
+            margin-top: 14px;
+        }
+
+        button {
+            background: white;
+            border: none;
+            padding: 11px 20px;
+            font-size: 0.92rem;
+            font-weight: 500;
+            border-radius: 40px;
+            cursor: pointer;
+            color: #0f4055;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+            transition: all 0.15s;
+            border: 1px solid #cddbe7;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+
+        button.primary {
+            background: #0d3f53;
+            border: 1px solid #0d3f53;
+            color: white;
+            box-shadow: 0 6px 14px rgba(13, 63, 83, 0.2);
+        }
+
+        button.primary:hover {
+            background: #104f68;
+            border-color: #104f68;
+        }
+
+        button:hover {
+            background: #e3eef8;
+            border-color: #b1c9db;
+        }
+
+        button.primary:disabled, button:disabled {
+            opacity: 0.45;
+            cursor: not-allowed;
+            box-shadow: none;
+            background: #d9e2ec;
+            border-color: #b9c8d6;
+            color: #5e7b8c;
+        }
+
+        button.primary:disabled {
+            background: #b0c5d2;
+            border-color: #b0c5d2;
+            color: #f0f6fa;
+        }
+
+        .settings {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 16px;
+            background: #f1f7fd;
+            padding: 12px 20px;
+            border-radius: 50px;
+            margin-bottom: 14px;
+        }
+
+        .setting-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.92rem;
+            color: #1f4e62;
+            font-weight: 500;
+        }
+
+        .setting-item input {
+            width: 70px;
+            padding: 7px 10px;
+            border-radius: 30px;
+            border: 1px solid #c2d5e6;
+            font-weight: 600;
+            font-size: 0.92rem;
+            text-align: center;
+            background: white;
+            color: #0d3f53;
+        }
+
+        .setting-item input:focus {
+            outline: 2px solid #7cc3ed;
+            border-color: transparent;
+        }
+
+        /* 面板 */
+        .panel {
+            background: #f8fbfe;
+            border-radius: 22px;
+            padding: 18px 20px;
+            border: 1px solid #dceaf5;
+            margin-bottom: 16px;
+        }
+
+        .panel h2 {
+            font-size: 1rem;
+            font-weight: 600;
+            color: #0b2b3b;
+            margin: 0 0 12px 0;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding-bottom: 8px;
+            border-bottom: 2px dashed #cfe2f0;
+        }
+
+        .panel h2 .badge {
+            background: #52b9e9;
+            color: white;
+            border-radius: 20px;
+            padding: 2px 10px;
+            font-size: 0.72rem;
+            font-weight: 600;
+        }
+
+        /* 对比条 */
+        .compare-bar {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+            font-size: 0.85rem;
+        }
+
+        .compare-bar .label {
+            min-width: 88px;
+            font-weight: 600;
+            color: #1f4e62;
+        }
+
+        .compare-bar .bar-wrapper {
+            flex: 1;
+            background: #e3f0fa;
+            border-radius: 20px;
+            height: 22px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .compare-bar .bar-fill {
+            height: 100%;
+            border-radius: 20px;
+            transition: width 0.4s ease;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            padding-right: 8px;
+            font-size: 0.72rem;
+            font-weight: 700;
+            color: white;
+        }
+
+        .compare-bar .bar-fill.naive {
+            background: linear-gradient(90deg, #e0a0a0, #a13030);
+        }
+
+        .compare-bar .bar-fill.fast {
+            background: linear-gradient(90deg, #f5d77a, #f5b342);
+        }
+
+        /* 递推公式 */
+        .formula-box {
+            background: white;
+            border-radius: 16px;
+            padding: 14px 16px;
+            margin-bottom: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.02);
+            border-left: 5px solid #52b9e9;
+        }
+
+        .formula-box.highlight {
+            border-left-color: #f5b342;
+            background: #fffdf5;
+        }
+
+        .formula-box .label {
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: #5b7e92;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 6px;
+        }
+
+        .formula-box .formula {
+            font-size: 1rem;
+            font-weight: 700;
+            color: #0d3f53;
+            font-family: 'Cambria Math', 'Times New Roman', serif;
+            text-align: center;
+            line-height: 1.7;
+        }
+
+        .formula-box .formula .var {
+            color: #a13030;
+            font-style: italic;
+        }
+
+        /* 结果展示 */
+        .result-box {
+            background: linear-gradient(135deg, #fff8e1, #ffe8b3);
+            border-radius: 14px;
+            padding: 14px 16px;
+            text-align: center;
+            border: 1px solid #f5d77a;
+        }
+
+        .result-box .label {
+            font-size: 0.82rem;
+            color: #7a4100;
+            font-weight: 500;
+        }
+
+        .result-box .value {
+            font-size: 1.35rem;
+            font-weight: 700;
+            color: #a13030;
+            line-height: 1.3;
+            margin: 4px 0;
+            font-family: 'Cambria Math', 'Times New Roman', serif;
+            word-break: break-all;
+        }
+
+        .result-box .sub {
+            font-size: 0.75rem;
+            color: #7a4100;
+        }
+
+        .progress-bar-wrapper {
+            margin-top: 8px;
+            background: #e3f0fa;
+            border-radius: 20px;
+            height: 8px;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #f5b342, #52b9e9);
+            border-radius: 20px;
+            transition: width 0.3s ease;
+        }
+
+        .step-list {
+            max-height: 200px;
+            overflow-y: auto;
+            font-size: 0.82rem;
+            padding-right: 4px;
+        }
+
+        .step-list .step-item {
+            padding: 7px 11px;
+            border-radius: 10px;
+            margin-bottom: 4px;
+            background: white;
+            border-left: 3px solid #c2d5e6;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s;
+        }
+
+        .step-list .step-item.active {
+            background: #fff8e1;
+            border-left-color: #f5b342;
+            font-weight: 600;
+            box-shadow: 0 2px 8px rgba(245, 179, 66, 0.15);
+        }
+
+        .step-list .step-item.done {
+            border-left-color: #52b9e9;
+            color: #5b7e92;
+        }
+
+        .step-list .depth-badge {
+            display: inline-block;
+            background: #e3f0fa;
+            color: #0d3f53;
+            border-radius: 20px;
+            padding: 1px 8px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            min-width: 38px;
+            text-align: center;
+            flex-shrink: 0;
+        }
+
+        .step-list .step-item.active .depth-badge {
+            background: #f5b342;
+            color: white;
+        }
+
+        .empty-hint {
+            color: #94a3b8;
+            font-size: 0.85rem;
+            font-style: italic;
+        }
+        /* 保留原稿风格和盒子合并动画，使文档内和手机上的布局可读。 */
+        .left-panel { flex: 1 1 640px; min-width: 0; }
+        .right-panel { flex: 1 1 300px; min-width: 0; }
+        .step-list { position: relative; overscroll-behavior: contain; }
+        .step-list .step-item { overflow-wrap: anywhere; }
+        .step-list .step-item > span:last-child { min-width: 0; }
+        .formula-box .formula { overflow-wrap: anywhere; }
+        .compare-bar .label { min-width: 65px; }
+        .count-label { min-width: 36px; font-weight: 700; color: #a13030; }
+        .compare-bar .bar-wrapper { min-width: 0; }
+        button:focus-visible, input:focus-visible { outline: 3px solid #a13030; outline-offset: 3px; }
+        @media (max-width: 600px) {
+            body { padding: 10px; }
+            .container { padding: 16px; border-radius: 20px; }
+            h1 { font-size: 1.4rem; line-height: 1.4; }
+            .main-area { gap: 16px; }
+            .settings { padding: 12px; gap: 10px; border-radius: 16px; }
+            .controls { gap: 8px; }
+            .controls button { flex: 1 1 40%; padding: 10px 12px; }
+            .panel { padding: 14px; }
+            .formula-box { padding: 12px; }
+        }
+        @media (prefers-reduced-motion: reduce) { .progress-bar, .bar-fill { transition: none; } }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>⚡ 二分法（快速幂）求 aⁿ · 直观演示</h1>
+    <div class="subtitle">
+        <strong>看！指数每次减半，乘法盒子数量也大幅减少。</strong><br>
+        核心：<span class="formula-inline">a<sup>n</sup> = (a<sup>n/2</sup>)<sup>2</sup></span>（n 为偶数），<span class="formula-inline">a<sup>n</sup> = (a<sup>(n−1)/2</sup>)<sup>2</sup> · a</span>（n 为奇数）<br>
+        下方按递归返回顺序展示“结果平方”，奇数指数再补乘 a；两个蓝色盒子复用同一次子调用的结果。
+    </div>
+
+    <div class="main-area">
+        <!-- 左侧：主画布 -->
+        <div class="left-panel">
+            <div class="settings">
+                <div class="setting-item">
+                    <label for="baseInput">🔢 底数 a</label>
+                    <input type="number" id="baseInput" min="-9" max="9" step="1" value="2">
+                </div>
+                <div class="setting-item">
+                    <label for="expInput">🔝 指数 n</label>
+                    <input type="number" id="expInput" min="0" max="20" step="1" value="13">
+                </div>
+                <button id="applyBtn" style="padding: 7px 16px; font-size: 0.88rem;">应用</button>
+            </div>
+
+            <canvas id="mainCanvas" width="720" height="440" aria-label="快速幂调用链、半次幂复用和平方合并动画，详细数字见计算步骤">快速幂递归返回过程</canvas>
+
+            <div class="controls">
+                <button id="prevBtn">◀ 上一步</button>
+                <button id="nextBtn" class="primary">下一步 ▶</button>
+                <button id="playBtn" class="primary">▶ 自动</button>
+                <button id="resetBtn">⟲ 重置</button>
+            </div>
+        </div>
+
+        <!-- 右侧：信息面板 -->
+        <div class="right-panel">
+            <div class="panel">
+                <h2>📊 乘法次数对比 <span class="badge">直观</span></h2>
+                <div class="compare-bar">
+                    <span class="label">朴素算法</span><span class="count-label" id="naiveBarLabel">0 次</span>
+                    <div class="bar-wrapper">
+                        <div class="bar-fill naive" id="naiveBar" style="width: 50%;">
+                            
+                        </div>
+                    </div>
+                </div>
+                <div class="compare-bar">
+                    <span class="label">二分法</span><span class="count-label" id="fastBarLabel">0 次</span>
+                    <div class="bar-wrapper">
+                        <div class="bar-fill fast" id="fastBar" style="width: 10%;">
+                            
+                        </div>
+                    </div>
+                </div>
+                <div style="font-size:0.78rem; color:#5b7e92; text-align:center; margin-top:6px;" id="compareText">
+                    —
+                </div>
+            </div>
+
+            <div class="panel">
+                <h2>🧮 递推关系</h2>
+                <div class="formula-box highlight" id="formulaBox">
+                    <div class="label">当前递推</div>
+                    <div class="formula" id="formulaDisplay">
+                        a<sup><span class="var">n</span></sup> = (a<sup><span class="var">n/2</span></sup>)<sup>2</sup>
+                    </div>
+                </div>
+                <div class="formula-box" style="border-left-color: #a13030;">
+                    <div class="label">基准</div>
+                    <div class="formula">a<sup>0</sup> = 1，a<sup>1</sup> = a</div>
+                </div>
+            </div>
+
+            <div class="panel">
+                <h2>📋 计算步骤</h2>
+                <div class="step-list" id="stepList">
+                    <div class="empty-hint">暂无步骤</div>
+                </div>
+                <div class="progress-bar-wrapper" role="progressbar" aria-label="递归返回演示进度" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+                    <div class="progress-bar" id="progressBar" style="width: 0%;"></div>
+                </div>
+            </div>
+
+            <div class="panel" id="resultPanel" style="display: none;">
+                <h2>🎯 最终结果</h2>
+                <div class="result-box">
+                    <div class="label" id="resultLabel">aⁿ =</div>
+                    <div class="value" id="resultValue">0</div>
+                    <div class="sub" id="resultSub"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    (function() {
+        // ---------- 核心状态 ----------
+        let base = 2;
+        let exponent = 13;
+
+        let calcSteps = [];       // 步骤列表
+        let currentStep = 0;
+        let isPlaying = false;
+        let playTimer = null;
+        let animationFrame = null;
+        let fastCount = 0;
+        let naiveCount = 0;
+        const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+        function cancelAnimation() {
+            if (animationFrame !== null) cancelAnimationFrame(animationFrame);
+            animationFrame = null;
+            anim.active = false;
+        }
+        function baseLabel(a) { return a < 0 ? `(${a})` : String(a); }
+        function powerLabel(a, n) { return `${baseLabel(a)}^${n}`; }
+
+        // 动画状态
+        let anim = {
+            active: false,
+            type: 'idle',      // 'idle' | 'halve' | 'square'
+            progress: 0,
+            node: null,
+            child: null
+        };
+
+        // canvas
+        const canvas = document.getElementById('mainCanvas');
+        const ctx = canvas.getContext('2d');
+        let CW = 720, CH = 440;
+        canvas.width = CW;
+        canvas.height = CH;
+
+        // DOM
+        const baseInput = document.getElementById('baseInput');
+        const expInput = document.getElementById('expInput');
+        const applyBtn = document.getElementById('applyBtn');
+        const prevBtn = document.getElementById('prevBtn');
+        const nextBtn = document.getElementById('nextBtn');
+        const playBtn = document.getElementById('playBtn');
+        const resetBtn = document.getElementById('resetBtn');
+        const stepList = document.getElementById('stepList');
+        const progressBar = document.getElementById('progressBar');
+        const resultPanel = document.getElementById('resultPanel');
+        const resultValue = document.getElementById('resultValue');
+        const resultLabel = document.getElementById('resultLabel');
+        const resultSub = document.getElementById('resultSub');
+        const naiveBar = document.getElementById('naiveBar');
+        const fastBar = document.getElementById('fastBar');
+        const naiveBarLabel = document.getElementById('naiveBarLabel');
+        const fastBarLabel = document.getElementById('fastBarLabel');
+        const compareText = document.getElementById('compareText');
+        const formulaDisplay = document.getElementById('formulaDisplay');
+        const formulaBox = document.getElementById('formulaBox');
+
+        // ---------- 生成步骤 ----------
+        let nodeIdCounter = 0;
+
+        // 与正文 fast_power 一致：正指数在 n=1 处停止，n=0 单独处理。
+        function buildSteps(a, n, depth, parentId) {
+            const nodeId = nodeIdCounter++;
+            if (n <= 1) {
+                const result = n === 0 ? 1n : BigInt(a);
+                const node = {
+                    id: nodeId, a, n, depth, parentId, type: 'base', result,
+                    children: [], expr: `${powerLabel(a, n)} = ${result}`, multiplications: 0
+                };
+                calcSteps.push(node);
+                return node;
+            }
+            const childN = Math.floor(n / 2);
+            const child = buildSteps(a, childN, depth + 1, nodeId);
+            const odd = n % 2 === 1;
+            const node = {
+                id: nodeId, a, n, depth, parentId, type: odd ? 'odd' : 'even', result: null,
+                children: [child.id], multiplications: odd ? 2 : 1,
+                expr: `${powerLabel(a, n)} = (${powerLabel(a, childN)})²${odd ? ` × ${baseLabel(a)}` : ''}`
+            };
+            calcSteps.push(node);
+            return node;
+        }
+
+        function computeResults() {
+            for (const node of calcSteps) {
+                if (node.type === 'base') continue;
+                const child = calcSteps.find(step => step.id === node.children[0]);
+                const squared = child.result * child.result;
+                node.result = node.type === 'odd' ? squared * BigInt(node.a) : squared;
+            }
+        }
+
+        function resetState(a, n) {
+            stopPlaying();
+            cancelAnimation();
+            base = a;
+            exponent = n;
+            calcSteps = [];
+            nodeIdCounter = 0;
+            buildSteps(a, n, 0, -1);
+            computeResults();
+            currentStep = 0;
+            fastCount = calcSteps.reduce((count, node) => count + node.multiplications, 0);
+            naiveCount = Math.max(n - 1, 0);
+            const maximum = Math.max(naiveCount, fastCount, 1);
+            naiveBar.style.width = `${naiveCount / maximum * 100}%`;
+            fastBar.style.width = `${fastCount / maximum * 100}%`;
+            naiveBarLabel.textContent = `${naiveCount} 次`;
+            fastBarLabel.textContent = `${fastCount} 次`;
+            compareText.textContent = naiveCount === 0
+                ? '两种算法都无需乘法，直接返回终止条件的值。'
+                : `二分法节省 ${naiveCount - fastCount} 次乘法，乘法次数约为朴素算法的 ${Math.round(fastCount / naiveCount * 100)}%。`;
+            updateUI();
+        }
+
+        function finishStep() {
+            anim.active = false;
+            animationFrame = null;
+            currentStep++;
+            if (currentStep >= calcSteps.length) stopPlaying();
+            updateUI();
+            if (isPlaying) playTimer = setTimeout(nextStep, 350);
+        }
+
+        function nextStep() {
+            if (anim.active || currentStep >= calcSteps.length) return;
+            const node = calcSteps[currentStep];
+            anim = {
+                active: true, progress: 0, type: node.type === 'base' ? 'halve' : 'square', node,
+                child: calcSteps.find(step => step.id === node.children[0]) || null
+            };
+            updateUI();
+            if (reducedMotion.matches) { finishStep(); return; }
+            const started = performance.now();
+            function animLoop(timestamp) {
+                if (!anim.active) return;
+                anim.progress = Math.min(1, (timestamp - started) / 800);
+                drawCanvas();
+                if (anim.progress < 1) animationFrame = requestAnimationFrame(animLoop);
+                else finishStep();
+            }
+            animationFrame = requestAnimationFrame(animLoop);
+        }
+
+        function prevStep() {
+            if (anim.active || currentStep <= 0) return;
+            currentStep--;
+            updateUI();
+        }
+
+        function startPlaying() {
+            if (isPlaying) return;
+            if (currentStep >= calcSteps.length) resetState(base, exponent);
+            isPlaying = true;
+            playBtn.textContent = '⏸ 暂停';
+            playBtn.classList.remove('primary');
+            if (!anim.active) playTimer = setTimeout(nextStep, 100);
+        }
+
+        function stopPlaying() {
+            isPlaying = false;
+            if (playTimer !== null) clearTimeout(playTimer);
+            playTimer = null;
+            playBtn.textContent = '▶ 自动';
+            playBtn.classList.add('primary');
+        }
+
+        // ---------- UI 更新 ----------
+        function updateUI() {
+            drawCanvas();
+            updateStepList();
+            updateProgress();
+            updateResult();
+            updateButtons();
+            updateFormula();
+        }
+
+        function updateFormula() {
+            const node = anim.active ? anim.node : currentStep > 0 ? calcSteps[currentStep - 1] : calcSteps[calcSteps.length - 1];
+            const a = baseLabel(node.a);
+            if (node.type === 'base') {
+                formulaDisplay.innerHTML = `${a}<sup>${node.n}</sup> = ${node.result}`;
+            } else {
+                formulaDisplay.innerHTML = `${a}<sup>${node.n}</sup> = (${a}<sup>${Math.floor(node.n / 2)}</sup>)<sup>2</sup>${node.type === 'odd' ? ` · ${a}` : ''}`;
+            }
+            formulaBox.classList.add('highlight');
+        }
+
+        function updateStepList() {
+            if (calcSteps.length === 0) {
+                stepList.innerHTML = '<div class="empty-hint">暂无步骤</div>';
+                return;
+            }
+            let html = '';
+            calcSteps.forEach((node, idx) => {
+                let cls = 'step-item';
+                if (idx + 1 === currentStep) cls += ' active';
+                else if (idx + 1 < currentStep) cls += ' done';
+
+                let resultStr = '';
+                if (node.type !== 'base' && node.result !== null && idx + 1 <= currentStep) {
+                    resultStr = ` = ${formatResult(node.result)}`;
+                }
+                html += `<div class="${cls}">
+                    <span class="depth-badge">深度${node.depth}</span>
+                    <span>${node.expr}${resultStr}</span>
+                </div>`;
+            });
+            stepList.innerHTML = html;
+            const active = stepList.querySelector('.step-item.active');
+            if (active) {
+                const top = active.offsetTop;
+                if (top < stepList.scrollTop || top + active.offsetHeight > stepList.scrollTop + stepList.clientHeight) {
+                    stepList.scrollTop = Math.max(0, top - stepList.clientHeight / 2);
+                }
+            }
+        }
+
+        function updateProgress() {
+            const progress = currentStep / calcSteps.length * 100;
+            progressBar.style.width = `${progress}%`;
+            progressBar.parentElement.setAttribute('aria-valuenow', String(Math.round(progress)));
+        }
+
+        function updateResult() {
+            if (currentStep >= calcSteps.length) {
+                const root = calcSteps.find(s => s.parentId === -1);
+                if (root && root.result !== null) {
+                    resultPanel.style.display = 'block';
+                    resultLabel.textContent = `${powerLabel(base, exponent)} =`;
+                    resultValue.textContent = formatResult(root.result);
+                    resultSub.textContent = `共 ${calcSteps.length} 次调用返回，实际乘法 ${fastCount} 次；朴素算法乘法 ${naiveCount} 次。`;
+                }
+            } else {
+                resultPanel.style.display = 'none';
+            }
+        }
+
+        function updateButtons() {
+            prevBtn.disabled = anim.active || currentStep <= 0;
+            nextBtn.disabled = anim.active || currentStep >= calcSteps.length;
+        }
+
+        function formatResult(v) {
+            if (v === null || v === undefined) return '?';
+            return v.toString();
+        }
+
+        // ---------- 绘制主画布 ----------
+        function drawCanvas() {
+            const compact = canvas.clientWidth < 420;
+            const width = compact ? 360 : 720;
+            if (canvas.width !== width) {
+                CW = width;
+                CH = compact ? 520 : 440;
+                canvas.width = CW;
+                canvas.height = CH;
+            }
+            ctx.clearRect(0, 0, CW, CH);
+
+            // 背景
+            const bg = ctx.createLinearGradient(0, 0, 0, CH);
+            bg.addColorStop(0, '#fdfcf9');
+            bg.addColorStop(1, '#f7f2ea');
+            ctx.fillStyle = bg;
+            ctx.fillRect(0, 0, CW, CH);
+
+            // 标题
+            ctx.font = `bold ${17 * (CW < 720 ? 1.5 : 1)}px "Segoe UI", system-ui, sans-serif`;
+            ctx.fillStyle = '#0b2b3b';
+            ctx.textAlign = 'left';
+            ctx.textBaseline = 'top';
+            ctx.fillText(`⚡ 计算 ${powerLabel(base, exponent)}`, 22, 16);
+
+            // 绘制"指数减半"流水线示意
+            drawPipeline();
+
+            // 绘制当前步骤动画
+            if (anim.active && anim.node) {
+                drawAnimation();
+            } else if (currentStep > 0 && currentStep <= calcSteps.length) {
+                // 静态显示当前步骤
+                const node = calcSteps[currentStep - 1];
+                drawCurrentStepCard(node);
+            } else if (currentStep === 0) {
+                ctx.font = `${15 * (CW < 720 ? 1.5 : 1)}px "Segoe UI", system-ui, sans-serif`;
+                ctx.fillStyle = '#94a3b8';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText('调用链已展开，点击“下一步”', CW / 2, CH / 2 - 12, CW - 40);
+                ctx.fillText('从终止条件开始逐层返回', CW / 2, CH / 2 + 16, CW - 40);
+            }
+
+            // 完成后显示结果
+            if (currentStep >= calcSteps.length) {
+                const root = calcSteps.find(s => s.parentId === -1);
+                if (root && root.result !== null) {
+                    ctx.font = `bold ${22 * (CW < 720 ? 1.5 : 1)}px "Segoe UI", system-ui, sans-serif`;
+                    ctx.fillStyle = '#a13030';
+                    ctx.textAlign = 'center';
+                    ctx.textBaseline = 'middle';
+                    ctx.fillText(`🎉 ${powerLabel(base, exponent)} = ${formatResult(root.result)}`, CW / 2, CH - 40, CW - 40);
+                }
+            }
+        }
+
+        // 绘制指数减半流水线
+        function drawPipeline() {
+            const pipelineY = 120;
+            const startX = 60;
+            const endX = CW - 60;
+
+            // 标题
+            ctx.font = `bold ${12 * (CW < 720 ? 1.5 : 1)}px "Segoe UI", system-ui, sans-serif`;
+            ctx.fillStyle = '#5b7e92';
+            ctx.textAlign = 'left';
+            ctx.textBaseline = 'bottom';
+            ctx.fillText('指数变化（减半）', startX, pipelineY - 55);
+
+            // 主干线
+            ctx.beginPath();
+            ctx.moveTo(startX, pipelineY);
+            ctx.lineTo(endX, pipelineY);
+            ctx.strokeStyle = '#e0d6c6';
+            ctx.lineWidth = 4;
+            ctx.stroke();
+
+            // 调用链从根到终止条件；返回动画按相反顺序播放。
+            const nodes = [...calcSteps].reverse();
+            const levels = nodes.map(node => node.n);
+            const selected = anim.active ? anim.node : currentStep > 0 ? calcSteps[currentStep - 1] : null;
+            const completedIds = new Set(calcSteps.slice(0, currentStep).map(node => node.id));
+
+
+            const spacing = (endX - startX) / Math.max(1, levels.length - 1);
+
+            levels.forEach((val, idx) => {
+                const x = startX + idx * spacing;
+
+                // 节点
+                const isDone = completedIds.has(nodes[idx].id);
+                const isCurrent = selected && selected.id === nodes[idx].id;
+
+                ctx.beginPath();
+                ctx.arc(x, pipelineY, 22, 0, 2 * Math.PI);
+                if (isCurrent) {
+                    ctx.fillStyle = '#f5b342';
+                    ctx.fill();
+                    ctx.strokeStyle = '#d99a2a';
+                    ctx.lineWidth = 3;
+                } else if (isDone) {
+                    ctx.fillStyle = '#52b9e9';
+                    ctx.fill();
+                    ctx.strokeStyle = '#2c9bcc';
+                    ctx.lineWidth = 2;
+                } else {
+                    ctx.fillStyle = '#f0f4f8';
+                    ctx.fill();
+                    ctx.strokeStyle = '#c2d5e6';
+                    ctx.lineWidth = 2;
+                }
+                ctx.stroke();
+
+                // 光晕
+                if (isCurrent) {
+                    ctx.beginPath();
+                    ctx.arc(x, pipelineY, 28, 0, 2 * Math.PI);
+                    ctx.strokeStyle = 'rgba(245, 179, 66, 0.4)';
+                    ctx.lineWidth = 3;
+                    ctx.setLineDash([4, 4]);
+                    ctx.stroke();
+                    ctx.setLineDash([]);
+                }
+
+                // 指数值
+                ctx.font = `bold ${13 * (CW < 720 ? 1.5 : 1)}px "Segoe UI", system-ui, sans-serif`;
+                ctx.fillStyle = isCurrent ? '#7a4100' : (isDone ? 'white' : '#5b7e92');
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText(val, x, pipelineY + 1);
+
+                // 标签
+                ctx.font = `${10 * (CW < 720 ? 1.5 : 1)}px "Segoe UI", system-ui, sans-serif`;
+                ctx.fillStyle = '#94a3b8';
+                ctx.textBaseline = 'bottom';
+                ctx.fillText(`第${idx}层`, x, pipelineY - 30);
+
+                // 减半箭头
+                if (idx < levels.length - 1) {
+                    const nextX = startX + (idx + 1) * spacing;
+                    const midX = (x + nextX) / 2;
+
+                    ctx.beginPath();
+                    ctx.moveTo(x + 24, pipelineY);
+                    ctx.lineTo(nextX - 24, pipelineY);
+                    ctx.strokeStyle = isDone ? '#52b9e9' : '#e0d6c6';
+                    ctx.lineWidth = 2;
+                    ctx.stroke();
+
+                    // 箭头
+                    ctx.beginPath();
+                    ctx.moveTo(nextX - 24, pipelineY);
+                    ctx.lineTo(nextX - 32, pipelineY - 6);
+                    ctx.lineTo(nextX - 32, pipelineY + 6);
+                    ctx.closePath();
+                    ctx.fillStyle = isDone ? '#52b9e9' : '#e0d6c6';
+                    ctx.fill();
+
+                    // "÷2" 标签
+                    ctx.font = `bold ${11 * (CW < 720 ? 1.5 : 1)}px "Segoe UI", system-ui, sans-serif`;
+                    ctx.fillStyle = isDone ? '#52b9e9' : '#b0bec5';
+                    ctx.textAlign = 'center';
+                    ctx.textBaseline = 'top';
+                    ctx.fillText('//2', midX, pipelineY + 28);
+                }
+            });
+        }
+
+        // 绘制当前步骤的"乘法盒子"
+        function cardMetrics() {
+            const compact = CW < 720;
+            return {
+                compact, y: 200, height: compact ? 240 : 180,
+                left: compact ? 20 : 50, width: CW - (compact ? 40 : 100),
+                boxWidth: compact ? 76 : 100, gap: compact ? 12 : 20,
+                resultY: compact ? 414 : 365
+            };
+        }
+
+        function drawCardBackground(label) {
+            const card = cardMetrics();
+            roundRect(ctx, card.left, card.y, card.width, card.height, 20);
+            ctx.fillStyle = 'white'; ctx.fill();
+            ctx.strokeStyle = '#f5b342'; ctx.lineWidth = 2.5; ctx.stroke();
+            ctx.font = `bold ${13 * (CW < 720 ? 1.5 : 1)}px system-ui, sans-serif`;
+            ctx.fillStyle = '#5b7e92'; ctx.textAlign = 'left'; ctx.textBaseline = 'top';
+            ctx.fillText(label, card.left + 16, card.y + 14, card.width - 32);
+            return card;
+        }
+
+        function drawExtraBase(node, card) {
+            if (node.type !== 'odd') return;
+            const x = card.compact ? CW / 2 - 30 : CW / 2 - card.boxWidth - card.gap - 90;
+            const y = card.compact ? 354 : 300;
+            drawBox(x, y, 60, 30, `a=${node.a}`, '#b87705');
+            ctx.font = `bold ${18 * (CW < 720 ? 1.5 : 1)}px system-ui, sans-serif`;
+            ctx.fillStyle = '#a13030'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+            ctx.fillText('×', card.compact ? x - 18 : x + 75, y + 15);
+        }
+
+        function drawCurrentStepCard(node) {
+            const card = drawCardBackground(`第 ${currentStep} 步 · 深度 ${node.depth} · 本层乘法 ${node.multiplications} 次`);
+            ctx.font = `bold ${22 * (CW < 720 ? 1.5 : 1)}px "Cambria Math", serif`;
+            ctx.fillStyle = '#0d3f53'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+            ctx.fillText(node.expr, CW / 2, 255, card.width - 20);
+            if (node.type === 'base') {
+                ctx.font = `bold ${18 * (CW < 720 ? 1.5 : 1)}px system-ui, sans-serif`; ctx.fillStyle = '#1e6e9c';
+                ctx.fillText('终止条件：直接返回', CW / 2, 305);
+                ctx.fillText(String(node.result), CW / 2, 338);
+            } else {
+                const halfN = Math.floor(node.n / 2);
+                const label = `a^${halfN}`;
+                drawBox(CW / 2 - card.boxWidth - card.gap, 290, card.boxWidth, 50, label, '#1e6e9c');
+                drawBox(CW / 2 + card.gap, 290, card.boxWidth, 50, label, '#1e6e9c');
+                ctx.font = `bold ${24 * (CW < 720 ? 1.5 : 1)}px system-ui, sans-serif`; ctx.fillStyle = '#a13030';
+                ctx.textAlign = 'center'; ctx.fillText('×', CW / 2, 315);
+                drawExtraBase(node, card);
+                ctx.font = `bold ${15 * (CW < 720 ? 1.5 : 1)}px system-ui, sans-serif`;
+                ctx.fillText(`= ${formatResult(node.result)}`, CW / 2, card.resultY, card.width - 20);
+            }
+        }
+
+        function drawBox(x, y, w, h, label, color) {
+            ctx.save();
+            roundRect(ctx, x, y, w, h, 10);
+            const alpha = ctx.globalAlpha;
+            ctx.fillStyle = color; ctx.globalAlpha = alpha * 0.15; ctx.fill();
+            ctx.globalAlpha = alpha; ctx.strokeStyle = color; ctx.lineWidth = 2; ctx.stroke();
+            ctx.font = `bold ${14 * (CW < 720 ? 1.5 : 1)}px "Consolas", monospace`; ctx.fillStyle = color;
+            ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+            // 完整精确数值在步骤和结果面板保留，盒子内长整数使用省略号。
+            const text = String(label);
+            const limit = CW < 720 ? 6 : 10;
+            const short = text.length > limit ? `${text.slice(0, limit - 2)}…` : text;
+            ctx.fillText(short, x + w / 2, y + h / 2, w - 10);
+            ctx.restore();
+        }
+
+        function drawAnimation() {
+            const node = anim.node, progress = anim.progress;
+            const card = drawCardBackground(`正在计算 · 深度 ${node.depth}`);
+            ctx.font = `bold ${20 * (CW < 720 ? 1.5 : 1)}px "Cambria Math", serif`; ctx.fillStyle = '#0d3f53';
+            ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+            ctx.fillText(node.expr, CW / 2, 255, card.width - 20);
+            if (node.type === 'base') {
+                ctx.font = `bold ${46 * (CW < 720 ? 1.5 : 1)}px system-ui, sans-serif`;
+                ctx.fillStyle = `rgba(30, 110, 156, ${progress})`;
+                ctx.fillText(String(node.result), CW / 2, 325);
+                return;
+            }
+            const half = anim.child.result;
+            const squared = half * half;
+            const target = CW / 2 - card.boxWidth / 2;
+            const travel = Math.min(1, progress / 0.6);
+            const left = CW / 2 - card.boxWidth - card.gap;
+            const right = CW / 2 + card.gap;
+            const mergedValue = progress < 0.6 ? half : progress < 0.85 ? squared : node.result;
+            drawBox(left + (target - left) * travel, 290, card.boxWidth, 50, mergedValue, '#1e6e9c');
+            if (progress < 0.6) {
+                ctx.save(); ctx.globalAlpha = 1 - travel;
+                drawBox(right + (target - right) * travel, 290, card.boxWidth, 50, half, '#1e6e9c');
+                ctx.restore();
+            }
+            if (progress < 0.5) {
+                ctx.font = `bold ${24 * (CW < 720 ? 1.5 : 1)}px system-ui, sans-serif`;
+                ctx.fillStyle = `rgba(161, 48, 48, ${1 - progress * 2})`;
+                ctx.textAlign = 'center'; ctx.fillText('×', CW / 2, 315);
+            }
+            ctx.save();
+            ctx.globalAlpha = progress > 0.85 ? (1 - progress) / 0.15 : 1;
+            drawExtraBase(node, card);
+            ctx.restore();
+            if (progress > 0.85) {
+                ctx.font = `bold ${18 * (CW < 720 ? 1.5 : 1)}px system-ui, sans-serif`;
+                ctx.fillStyle = `rgba(161, 48, 48, ${(progress - 0.85) / 0.15})`;
+                ctx.textAlign = 'center';
+                ctx.fillText(`= ${formatResult(node.result)}`, CW / 2, card.resultY, card.width - 20);
+            }
+        }
+
+        function roundRect(ctx, x, y, w, h, r) {
+            if (w < 2 * r) r = w / 2;
+            if (h < 2 * r) r = h / 2;
+            ctx.beginPath();
+            ctx.moveTo(x + r, y);
+            ctx.lineTo(x + w - r, y);
+            ctx.quadraticCurveTo(x + w, y, x + w, y + r);
+            ctx.lineTo(x + w, y + h - r);
+            ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+            ctx.lineTo(x + r, y + h);
+            ctx.quadraticCurveTo(x, y + h, x, y + h - r);
+            ctx.lineTo(x, y + r);
+            ctx.quadraticCurveTo(x, y, x + r, y);
+            ctx.closePath();
+        }
+
+        // ---------- 事件 ----------
+        nextBtn.addEventListener('click', () => { stopPlaying(); nextStep(); });
+        prevBtn.addEventListener('click', () => { stopPlaying(); prevStep(); });
+
+        playBtn.addEventListener('click', () => {
+            if (isPlaying) stopPlaying();
+            else startPlaying();
+        });
+
+        function applyParameters() {
+            stopPlaying();
+            const a = Number(baseInput.value), n = Number(expInput.value);
+            const validBase = baseInput.value.trim() !== '' && Number.isInteger(a) && a >= -9 && a <= 9;
+            const validExponent = expInput.value.trim() !== '' && Number.isInteger(n) && n >= 0 && n <= 20;
+            baseInput.setCustomValidity(validBase ? '' : '请输入-9到9之间的整数底数');
+            expInput.setCustomValidity(validExponent ? '' : '请输入0到20之间的整数指数');
+            if (!validBase) { baseInput.reportValidity(); return; }
+            if (!validExponent) { expInput.reportValidity(); return; }
+            resetState(a, n);
+        }
+        resetBtn.addEventListener('click', applyParameters);
+        applyBtn.addEventListener('click', applyParameters);
+        baseInput.addEventListener('input', () => baseInput.setCustomValidity(''));
+        expInput.addEventListener('input', () => expInput.setCustomValidity(''));
+        document.addEventListener('keydown', event => {
+            if (event.target.closest('input, textarea, select, button')) return;
+            if (event.key === 'ArrowRight') { event.preventDefault(); stopPlaying(); nextStep(); }
+            else if (event.key === 'ArrowLeft') { event.preventDefault(); stopPlaying(); prevStep(); }
+            else if (event.key === ' ') { event.preventDefault(); if (isPlaying) stopPlaying(); else startPlaying(); }
+        });
+
+        // ---------- 启动 ----------
+        function initPage() {
+            const a = Number(baseInput.value);
+            const n = Number(expInput.value);
+            resetState(a, n);
+        }
+        initPage();
+        new ResizeObserver(drawCanvas).observe(canvas);
+        window.addEventListener('pagehide', () => { stopPlaying(); cancelAnimation(); });
+    })();
+</script>
+</body>
+</html>

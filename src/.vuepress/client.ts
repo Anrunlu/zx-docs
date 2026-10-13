@@ -9,5 +9,7 @@ export default defineClientConfig({
     app.component("JosephusAnimation", JosephusAnimation);
     app.component("HanoiAnimation", defineAsyncComponent(() => import("./components/HanoiAnimation.vue")));
     app.component("MonkeyPeachesAnimation", defineAsyncComponent(() => import("./components/MonkeyPeachesAnimation.vue")));
+    app.component("FastPowerAnimation", defineAsyncComponent(() => import("./components/FastPowerAnimation.vue")));
+    app.component("WoodcutAnimation", defineAsyncComponent(() => import("./components/WoodcutAnimation.vue")));
   },
 });
