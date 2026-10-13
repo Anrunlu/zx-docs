@@ -1,0 +1,948 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>合并排序 - 拆分与合并分屏演示</title>
+<style>
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f3460 100%);
+    color: #e2e8f0;
+    font-family: 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+    padding: 20px 14px 60px;
+  }
+  h1 {
+    text-align: center;
+    font-size: 24px; letter-spacing: 4px; margin: 6px 0 4px;
+    background: linear-gradient(90deg, #38bdf8, #818cf8, #f472b6);
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+    font-weight: 800;
+  }
+  .subtitle {
+    text-align: center; color: #94a3b8; font-size: 12.5px;
+    margin-bottom: 16px; letter-spacing: 1px;
+  }
+
+  .wrap { max-width: 1320px; margin: 0 auto; }
+
+  .panel {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 16px;
+    padding: 16px 18px;
+    backdrop-filter: blur(8px);
+    box-shadow: 0 10px 34px rgba(0,0,0,0.45);
+    margin-bottom: 14px;
+  }
+
+  /* 顶部输入栏 */
+  .topbar {
+    display: flex; flex-wrap: wrap; gap: 10px;
+    align-items: center; justify-content: center;
+  }
+  .topbar label {
+    font-size: 13px; color: #94a3b8;
+    display: flex; align-items: center; gap: 6px;
+  }
+  input[type=text] {
+    background: rgba(0,0,0,0.35);
+    border: 1px solid rgba(255,255,255,0.12);
+    color: #e2e8f0;
+    padding: 8px 12px; border-radius: 8px;
+    font-family: 'Consolas', monospace; font-size: 14px;
+    width: 220px; outline: none;
+    transition: border-color 0.2s;
+  }
+  input[type=text]:focus { border-color: #38bdf8; }
+
+  button {
+    background: linear-gradient(180deg, #334155, #1e293b);
+    color: #e2e8f0;
+    border: 1px solid rgba(255,255,255,0.12);
+    padding: 7px 14px; border-radius: 9px;
+    font-size: 13px; letter-spacing: 0.5px;
+    cursor: pointer; transition: all 0.2s;
+    font-family: inherit;
+  }
+  button:hover:not(:disabled) {
+    background: linear-gradient(180deg, #475569, #334155);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+  }
+  button:disabled { opacity: 0.35; cursor: not-allowed; }
+  button.primary {
+    background: linear-gradient(180deg, #38bdf8, #0ea5e9);
+    color: #06283a; font-weight: 700; border: none;
+  }
+  button.primary:hover:not(:disabled) {
+    background: linear-gradient(180deg, #7dd3fc, #38bdf8);
+  }
+  button.pink {
+    background: linear-gradient(180deg, #f472b6, #db2777);
+    color: #2a0616; font-weight: 700; border: none;
+  }
+  button.pink:hover:not(:disabled) {
+    background: linear-gradient(180deg, #f9a8d4, #ec4899);
+  }
+  button.all {
+    background: linear-gradient(180deg, #a78bfa, #7c3aed);
+    color: #f5f3ff; font-weight: 700; border: none;
+  }
+  button.all:hover:not(:disabled) {
+    background: linear-gradient(180deg, #c4b5fd, #8b5cf6);
+  }
+
+  .examples {
+    display: flex; gap: 6px; flex-wrap: wrap; justify-content: center;
+    margin-top: 10px;
+  }
+  .examples button { padding: 5px 11px; font-size: 12px; }
+
+  /* 两个主面板：左右并排 */
+  .duo {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 14px;
+    margin-bottom: 14px;
+  }
+  @media (max-width: 980px) {
+    .duo { grid-template-columns: 1fr; }
+  }
+
+  .half {
+    background: rgba(255,255,255,0.035);
+    border-radius: 16px;
+    padding: 16px;
+    border: 1px solid rgba(255,255,255,0.08);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+    display: flex;
+    flex-direction: column;
+    min-height: 500px;
+    min-width: 0;
+  }
+  .half.split { border-top: 3px solid #38bdf8; }
+  .half.merge { border-top: 3px solid #f472b6; }
+
+  .half-header {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 12px;
+    flex-wrap: wrap; gap: 8px;
+  }
+  .half-title {
+    font-size: 15px; font-weight: 800; letter-spacing: 2px;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .half.split .half-title { color: #38bdf8; }
+  .half.merge .half-title { color: #f472b6; }
+  .half-title .badge {
+    font-size: 10.5px; font-weight: 700;
+    padding: 2px 8px; border-radius: 6px;
+    letter-spacing: 0.5px;
+  }
+  .half.split .badge { background: rgba(56,189,248,0.18); color: #7dd3fc; }
+  .half.merge .badge { background: rgba(244,114,182,0.18); color: #f9a8d4; }
+
+  .half-controls {
+    display: flex; gap: 6px; align-items: center; flex-wrap: wrap;
+  }
+  .half-controls button { padding: 5px 11px; font-size: 12px; }
+  .half-controls .prog {
+    font-family: 'Consolas', monospace;
+    font-size: 12px; color: #94a3b8;
+    padding: 4px 8px; background: rgba(0,0,0,0.3);
+    border-radius: 6px;
+  }
+
+  /* 拆分/合并的画布 */
+  .canvas {
+    flex: 1;
+    overflow: auto;
+    max-height: 420px;
+    padding: 6px 4px;
+  }
+  .canvas::-webkit-scrollbar { width: 6px; }
+  .canvas::-webkit-scrollbar-thumb {
+    background: rgba(255,255,255,0.15); border-radius: 3px;
+  }
+
+  /* 方向箭头提示 */
+  .arrow-hint {
+    text-align: center;
+    font-size: 11px;
+    letter-spacing: 2px;
+    color: #64748b;
+    margin: 4px 0 6px;
+    font-family: 'Consolas', monospace;
+  }
+  .arrow-hint.split-arrow { color: #38bdf8; }
+  .arrow-hint.merge-arrow { color: #f472b6; }
+
+  .layer {
+    padding: 4px 0;
+    display: flex;
+    justify-content: center;
+    gap: 6px;
+    flex-wrap: wrap;
+    transition: opacity 0.3s;
+  }
+  .layer.dim { opacity: 0.3; }
+
+  .layer-label {
+    font-size: 10.5px;
+    color: #64748b;
+    text-align: center;
+    letter-spacing: 1px;
+    margin: 2px 0 4px;
+    font-family: 'Consolas', monospace;
+  }
+
+  /* 数组段 */
+  .seg {
+    display: flex; gap: 2px;
+    flex-shrink: 0;
+    padding: 4px 5px;
+    border-radius: 9px;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.06);
+    transition: all 0.35s cubic-bezier(.4,.2,.2,1);
+    position: relative;
+  }
+  .seg.hi-split {
+    background: rgba(56,189,248,0.16);
+    border-color: #38bdf8;
+    box-shadow: 0 0 14px rgba(56,189,248,0.45);
+    transform: scale(1.06);
+  }
+  .seg.hi-split-child {
+    background: rgba(56,189,248,0.08);
+    border-color: rgba(56,189,248,0.5);
+  }
+  .seg.hi-merge {
+    background: rgba(244,114,182,0.16);
+    border-color: #f472b6;
+    box-shadow: 0 0 18px rgba(244,114,182,0.5);
+    transform: scale(1.06);
+  }
+  .seg.hi-done {
+    background: rgba(74,222,128,0.14);
+    border-color: #4ade80;
+    box-shadow: 0 0 12px rgba(74,222,128,0.35);
+  }
+  .seg.empty {
+    opacity: 0.4;
+    border-style: dashed;
+  }
+
+  .cell {
+    min-width: 30px; height: 30px;
+    flex-shrink: 0; padding: 0 3px;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Consolas', monospace;
+    font-size: 14px; font-weight: 700;
+    border-radius: 7px;
+    background: radial-gradient(circle at 35% 30%, #475569, #1e293b);
+    color: #cbd5e1;
+    transition: all 0.25s;
+    border: 2px solid transparent;
+  }
+  .cell.blue {
+    background: radial-gradient(circle at 35% 30%, #93c5fd, #3b82f6);
+    color: #06283a;
+    box-shadow: 0 0 12px rgba(59,130,246,0.8);
+    transform: translateY(-3px);
+  }
+  .cell.pink {
+    background: radial-gradient(circle at 35% 30%, #fbcfe8, #ec4899);
+    color: #4a0524;
+    box-shadow: 0 0 12px rgba(236,72,153,0.8);
+    transform: translateY(-3px);
+  }
+  .cell.green {
+    background: radial-gradient(circle at 35% 30%, #bbf7d0, #22c55e);
+    color: #052e16;
+    box-shadow: 0 0 10px rgba(34,197,94,0.7);
+  }
+  .cell.compare {
+    border-color: #facc15;
+    box-shadow: 0 0 12px rgba(250,204,21,0.7);
+  }
+  .cell.single {
+    background: radial-gradient(circle at 35% 30%, #bbf7d0, #22c55e);
+    color: #052e16;
+  }
+
+  /* 状态栏 */
+  .status {
+    margin-top: 10px;
+    min-height: 54px;
+    background: rgba(0,0,0,0.35);
+    border-radius: 10px;
+    padding: 11px 14px;
+    font-family: 'Consolas', monospace;
+    font-size: 12.5px; line-height: 1.65;
+    color: #b9d4e8;
+    border-left: 3px solid #38bdf8;
+  }
+  .half.merge .status { border-left-color: #f472b6; }
+  .status .hl { color: #facc15; font-weight: 700; }
+  .status .ok { color: #6bffa8; font-weight: 700; }
+  .status .pink { color: #f472b6; font-weight: 700; }
+  .status .blue { color: #38bdf8; font-weight: 700; }
+  input[type=text] { max-width: 100%; }
+  .status { overflow-wrap: anywhere; }
+  .layer { width: max-content; min-width: 100%; }
+  button:focus-visible, input:focus-visible { outline: 2px solid #facc15; outline-offset: 3px; }
+  .input-feedback { margin: 10px 0 0; text-align: center; color: #fda4af; font-size: 13px; }
+  @media (max-width: 520px) {
+    body { padding: 14px 8px 24px; }
+    h1 { font-size: 20px; letter-spacing: 1px; }
+    .panel, .half { padding: 12px; }
+    .half { min-height: 400px; }
+    .topbar { gap: 8px; }
+    .half-controls { gap: 4px; }
+    .half-controls button { padding: 6px 8px; }
+    .canvas { max-height: 340px; }
+    .status { padding: 10px; }
+  }
+</style>
+</head>
+<body>
+
+<h1>合并排序 · 拆分与合并分屏演示</h1>
+<div class="subtitle">左：自顶向下拆分 · 右：自底向上合并（数据在顶部，逐层向下合并）</div>
+
+<div class="wrap">
+
+  <!-- 输入栏 -->
+  <div class="panel">
+    <div class="topbar">
+      <label for="inputArr">输入数组</label>
+      <input type="text" id="inputArr" value="5,2,3,1" spellcheck="false" aria-describedby="inputHint">
+      <button onclick="applyInput()">应用</button>
+      <button class="all" onclick="startAll()">▶▶ 一键完整演示</button>
+      <label>速度 <input type="range" id="speed" min="80" max="1000" value="420" style="width:110px;"></label>
+    </div>
+    <p id="inputHint" class="subtitle" style="margin:10px 0 0;">使用逗号分隔，最多16个整数；留空表示空列表。修改后点击“应用”。</p>
+    <p id="inputFeedback" class="input-feedback" role="status" hidden></p>
+    <div class="examples">
+      <button onclick="loadExample('5,2,3,1')">示例 [5,2,3,1]</button>
+      <button onclick="loadExample('5,1,1,2,0,0')">示例 [5,1,1,2,0,0]</button>
+      <button onclick="loadExample('8,3,6,2')">练习 [8,3,6,2]</button>
+      <button onclick="loadExample('4,2,2,1')">稳定性 [4,2,2,1]</button>
+      <button onclick="loadExample('3,-1,2,-1,0')">奇数长度与负数</button>
+      <button onclick="loadExample('')">空列表</button>
+      <button onclick="loadExample('7')">单元素</button>
+      <button onclick="loadExample('7,6,5,4,3,2,1')">逆序 [7..1]</button>
+      <button onclick="loadExample('1,2,3,4,5')">已序 [1,2,3,4,5]</button>
+    </div>
+  </div>
+
+  <!-- 双面板 -->
+  <div class="duo">
+
+    <!-- ===== 左：拆分 ===== -->
+    <div class="half split">
+      <div class="half-header">
+        <div class="half-title">
+          <span>🔻 拆 分 阶 段</span>
+          <span class="badge">SPLIT</span>
+        </div>
+        <div class="half-controls">
+          <span class="prog" id="splitProg">0 / 0</span>
+          <button class="primary" id="btnSplitPlay" onclick="splitPlay()">▶ 播放</button>
+          <button id="btnSplitPause" onclick="splitPause()" aria-label="暂停或继续拆分演示" disabled>⏸</button>
+          <button id="btnSplitStep" onclick="splitStep()" aria-label="拆分下一步">⏭</button>
+          <button id="btnSplitReset" onclick="splitReset()" aria-label="重置拆分演示">↺</button>
+        </div>
+      </div>
+      <div class="arrow-hint split-arrow">▼ 原数组（顶部） ▼ &nbsp;→&nbsp; 逐步拆成单元素（底部）</div>
+      <div class="canvas" id="splitCanvas"></div>
+      <div class="status" id="splitStatus">点击「▶ 播放」查看自顶向下的拆分过程。</div>
+    </div>
+
+    <!-- ===== 右：合并 ===== -->
+    <div class="half merge">
+      <div class="half-header">
+        <div class="half-title">
+          <span>🔺 合 并 阶 段</span>
+          <span class="badge">MERGE</span>
+        </div>
+        <div class="half-controls">
+          <span class="prog" id="mergeProg">0 / 0</span>
+          <button class="pink" id="btnMergePlay" onclick="mergePlay()">▶ 播放</button>
+          <button id="btnMergePause" onclick="mergePause()" aria-label="暂停或继续合并演示" disabled>⏸</button>
+          <button id="btnMergeStep" onclick="mergeStep()" aria-label="合并下一步">⏭</button>
+          <button id="btnMergeReset" onclick="mergeReset()" aria-label="重置合并演示">↺</button>
+        </div>
+      </div>
+      <div class="arrow-hint merge-arrow">▼ 单元素（顶部，天然有序） ▼ &nbsp;→&nbsp; 逐层向下合并 &nbsp;→&nbsp; 完整有序数组（底部）</div>
+      <div class="canvas" id="mergeCanvas"></div>
+      <div class="status" id="mergeStatus">点击「▶ 播放」查看自底向上的合并过程。</div>
+    </div>
+
+  </div>
+
+</div>
+
+<script>
+/* ================= 状态 ================= */
+let arr = [];
+let autoMergePending = false;
+let nextPhaseTimer = null;
+
+function cancelAutoSequence() {
+  autoMergePending = false;
+  if (nextPhaseTimer !== null) clearTimeout(nextPhaseTimer);
+  nextPhaseTimer = null;
+}
+let nodeId = 0;
+let treeRoot = null;
+let allNodes = [];
+
+let splitSteps = [], splitIdx = 0, splitTimer = null, splitPlaying = false, splitPaused = false;
+let mergeSteps = [], mergeIdx = 0, mergeTimer = null, mergePlaying = false, mergePaused = false;
+
+const splitCanvas = document.getElementById('splitCanvas');
+const mergeCanvas = document.getElementById('mergeCanvas');
+const splitStatus = document.getElementById('splitStatus');
+const mergeStatus = document.getElementById('mergeStatus');
+const splitProg = document.getElementById('splitProg');
+const mergeProg = document.getElementById('mergeProg');
+const speedEl = document.getElementById('speed');
+
+function getSpeed() { return parseInt(speedEl.value, 10); }
+
+/* ================= 建树 ================= */
+function buildTree(nums, depth = 0) {
+  const node = {
+    id: nodeId++,
+    nums: nums.slice(),
+    depth,
+    left: null, right: null,
+    mid: null,
+    sortedVal: null,
+    mergeResult: [],
+    leftPtr: 0, rightPtr: 0,
+    merged: false
+  };
+  if (nums.length > 1) {
+    node.mid = Math.floor(nums.length / 2);
+    node.left = buildTree(nums.slice(0, node.mid), depth + 1);
+    node.right = buildTree(nums.slice(node.mid), depth + 1);
+  } else {
+    node.sortedVal = nums.slice();
+  }
+  return node;
+}
+
+function collect(node, list = []) {
+  list.push(node);
+  if (node.left) collect(node.left, list);
+  if (node.right) collect(node.right, list);
+  return list;
+}
+
+function byId(id) { return allNodes.find(n => n.id === id); }
+
+/* ================= 生成拆分步骤 ================= */
+function generateSplitSteps(root) {
+  const steps = [];
+  function rec(node) {
+    steps.push({ type: 'visit', id: node.id });
+    if (node.nums.length <= 1) {
+      steps.push({ type: 'base', id: node.id });
+      return;
+    }
+    steps.push({ type: 'split', id: node.id, mid: node.mid });
+    rec(node.left);
+    rec(node.right);
+  }
+  rec(root);
+  steps.push({ type: 'done' });
+  return steps;
+}
+
+/* ================= 生成合并步骤 ================= */
+function generateMergeSteps(root) {
+  const steps = [];
+  function rec(node) {
+    if (node.left) rec(node.left);
+    if (node.right) rec(node.right);
+    if (node.nums.length <= 1) {
+      steps.push({ type: 'leaf', id: node.id });
+      return;
+    }
+    steps.push({ type: 'merge-start', id: node.id });
+    const left = node.left.sortedVal;
+    const right = node.right.sortedVal;
+    let i = 0, j = 0;
+    const res = [];
+    while (i < left.length && j < right.length) {
+      steps.push({
+        type: 'compare', id: node.id,
+        i, j, lv: left[i], rv: right[j],
+        pick: left[i] <= right[j] ? 'L' : 'R'
+      });
+      if (left[i] <= right[j]) {
+        res.push(left[i]);
+        steps.push({ type: 'append', id: node.id, side: 'L', val: left[i], i: i + 1, j, partial: res.slice() });
+        i++;
+      } else {
+        res.push(right[j]);
+        steps.push({ type: 'append', id: node.id, side: 'R', val: right[j], i, j: j + 1, partial: res.slice() });
+        j++;
+      }
+    }
+    while (i < left.length) {
+      res.push(left[i]);
+      steps.push({ type: 'append', id: node.id, side: 'restL', val: left[i], i: i + 1, j, partial: res.slice() });
+      i++;
+    }
+    while (j < right.length) {
+      res.push(right[j]);
+      steps.push({ type: 'append', id: node.id, side: 'restR', val: right[j], i, j: j + 1, partial: res.slice() });
+      j++;
+    }
+    node.sortedVal = res.slice();
+    steps.push({ type: 'merge-end', id: node.id, result: res.slice() });
+  }
+  rec(root);
+  steps.push({ type: 'done' });
+  return steps;
+}
+
+/* ================= 拆分渲染（顶部原数组 → 底部单元素） ================= */
+function renderSplit(activeId = null, splitId = null) {
+  const byDepth = {};
+  allNodes.forEach(n => {
+    if (!byDepth[n.depth]) byDepth[n.depth] = [];
+    byDepth[n.depth].push(n);
+  });
+  const maxDepth = Math.max(...Object.keys(byDepth).map(Number));
+
+  let html = '';
+  for (let d = 0; d <= maxDepth; d++) {
+    html += `<div class="layer-label">深度 ${d}（段长约 ${Math.max(1, Math.ceil(arr.length / Math.pow(2, d)))}）</div>`;
+    html += `<div class="layer" data-depth="${d}">`;
+    byDepth[d].forEach(n => {
+      const cls = ['seg'];
+      if (n.id === activeId) cls.push('hi-split');
+      else if (n.id === splitId) cls.push('hi-split-child');
+      if (n.nums.length === 1) cls.push('empty');
+      html += `<div class="${cls.join(' ')}">`;
+      n.nums.forEach(v => {
+        html += `<div class="cell${n.nums.length === 1 ? ' single' : ''}">${v}</div>`;
+      });
+      if (n.nums.length === 0) html += `<div class="cell">[]</div>`;
+      html += `</div>`;
+    });
+    html += `</div>`;
+  }
+  splitCanvas.innerHTML = html;
+}
+
+function renderSplitWithChildren(n) {
+  const byDepth = {};
+  allNodes.forEach(x => {
+    if (!byDepth[x.depth]) byDepth[x.depth] = [];
+    byDepth[x.depth].push(x);
+  });
+  const maxDepth = Math.max(...Object.keys(byDepth).map(Number));
+  let html = '';
+  for (let d = 0; d <= maxDepth; d++) {
+    html += `<div class="layer-label">深度 ${d}</div>`;
+    html += `<div class="layer">`;
+    byDepth[d].forEach(x => {
+      const cls = ['seg'];
+      if (x.id === n.id) cls.push('hi-split');
+      else if (n.left && x.id === n.left.id) cls.push('hi-split-child');
+      else if (n.right && x.id === n.right.id) cls.push('hi-split-child');
+      if (x.nums.length === 1) cls.push('empty');
+      html += `<div class="${cls.join(' ')}">`;
+      x.nums.forEach(v => {
+        html += `<div class="cell${x.nums.length === 1 ? ' single' : ''}">${v}</div>`;
+      });
+      html += `</div>`;
+    });
+    html += `</div>`;
+  }
+  splitCanvas.innerHTML = html;
+}
+
+function applySplitStep(st) {
+  if (st.type === 'visit') {
+    const n = byId(st.id);
+    renderSplit(st.id, null);
+    splitStatus.innerHTML =
+      `<span class="blue">merge_sort([${n.nums.join(', ')}])</span> ` +
+      `—— 进入函数，长度 = ${n.nums.length}`;
+  } else if (st.type === 'base') {
+    const n = byId(st.id);
+    renderSplit(st.id, null);
+    splitStatus.innerHTML =
+      `<span class="ok">边界触发：len = ${n.nums.length} ≤ 1</span>` +
+      `<br>直接返回 <span class="ok">[${n.nums.join(', ')}]</span>，不再拆分。`;
+  } else if (st.type === 'split') {
+    const n = byId(st.id);
+    renderSplitWithChildren(n);
+    splitStatus.innerHTML =
+      `拆分 [${n.nums.join(', ')}]：mid = ${n.nums.length} // 2 = <span class="hl">${n.mid}</span>` +
+      `<br>左 = [${n.nums.slice(0, n.mid).join(', ')}] ` +
+      `&nbsp; 右 = [${n.nums.slice(n.mid).join(', ')}]`;
+  } else if (st.type === 'done') {
+    finishSplit();
+  }
+}
+
+/* ================= 合并渲染（关键：自下而上视觉顺序） ================= */
+/* 深度最大（单元素）在最上面，深度 0（完整数组）在最下面 */
+function renderMerge(activeId = null, partial = null, leftPtr = 0, rightPtr = 0) {
+  const byDepth = {};
+  allNodes.forEach(n => {
+    if (!byDepth[n.depth]) byDepth[n.depth] = [];
+    byDepth[n.depth].push(n);
+  });
+  const maxDepth = Math.max(...Object.keys(byDepth).map(Number));
+
+  let html = '';
+  for (let d = maxDepth; d >= 0; d--) {
+    const isLeafLayer = (d === maxDepth);
+    const layerTag = arr.length <= 1
+      ? `深度 ${d} · 边界列表（长度 ≤ 1，直接返回）`
+      : isLeafLayer
+        ? `深度 ${d} · 最深层单元素（天然有序）`
+        : `深度 ${d} · 子段（绿色表示已合并，段长约 ${Math.max(1, Math.ceil(arr.length / Math.pow(2, d)))}）`;
+    html += `<div class="layer-label" style="${isLeafLayer ? 'color:#4ade80;' : ''}">${layerTag}</div>`;
+    html += `<div class="layer">`;
+    byDepth[d].forEach(n => {
+      const isLeaf = n.nums.length === 1;
+      const isMerged = n.merged;
+      const cls = ['seg'];
+      if (n.id === activeId) cls.push('hi-merge');
+      else if (isMerged) cls.push('hi-done');
+      html += `<div class="${cls.join(' ')}">`;
+
+      if (n.id === activeId && partial) {
+        const left = n.left.sortedVal;
+        const right = n.right.sortedVal;
+        left.forEach((v, idx) => {
+          let c = 'cell blue';
+          if (idx === leftPtr) c += ' compare';
+          html += `<div class="${c}">${v}</div>`;
+        });
+        right.forEach((v, idx) => {
+          let c = 'cell pink';
+          if (idx === rightPtr) c += ' compare';
+          html += `<div class="${c}">${v}</div>`;
+        });
+      } else if (isMerged) {
+        n.sortedVal.forEach(v => {
+          html += `<div class="cell green">${v}</div>`;
+        });
+      } else {
+        n.nums.forEach(v => {
+          html += `<div class="cell${isLeaf ? ' single' : ''}">${v}</div>`;
+        });
+      }
+      if (n.nums.length === 0) html += `<div class="cell">[]</div>`;
+      html += `</div>`;
+    });
+    html += `</div>`;
+
+    /* 在深度 0 之后插入"当前正在生成的结果"提示 */
+    if (d === 0 && activeId !== null && partial) {
+      html += `<div class="layer-label" style="color:#f472b6; margin-top:8px;">⬇ 当前正在生成的结果 ⬇</div>`;
+      html += `<div class="layer">`;
+      html += `<div class="seg hi-merge">`;
+      partial.forEach(v => {
+        html += `<div class="cell green">${v}</div>`;
+      });
+      if (partial.length === 0) {
+        html += `<div class="cell" style="opacity:0.4; font-size:11px;">空</div>`;
+      }
+      html += `</div></div>`;
+    }
+  }
+
+  mergeCanvas.innerHTML = html;
+}
+
+function applyMergeStep(st) {
+  if (st.type === 'leaf') {
+    const n = byId(st.id);
+    renderMerge(null);
+    mergeStatus.innerHTML =
+      `<span class="ok">边界列表 [${n.nums.join(', ')}] 已有序</span>，直接返回副本。`;
+  } else if (st.type === 'merge-start') {
+    const n = byId(st.id);
+    n.mergeResult = [];
+    n.leftPtr = n.rightPtr = 0;
+    renderMerge(n.id, []);
+    mergeStatus.innerHTML =
+      `<span class="pink">开始合并</span>：` +
+      `左 = [${n.left.sortedVal.join(', ')}] ` +
+      `右 = [${n.right.sortedVal.join(', ')}] ` +
+      `（对应深度 ${n.depth}）`;
+  } else if (st.type === 'compare') {
+    const n = byId(st.id);
+    n.leftPtr = st.i;
+    n.rightPtr = st.j;
+    renderMerge(n.id, n.mergeResult, st.i, st.j);
+    const pickTxt = st.pick === 'L'
+      ? `<span class="blue">left[${st.i}]=${st.lv} ≤ right[${st.j}]=${st.rv}</span> → 取左`
+      : `<span class="pink">right[${st.j}]=${st.rv} < left[${st.i}]=${st.lv}</span> → 取右`;
+    mergeStatus.innerHTML =
+      `比较 <span class="hl">${st.lv}</span> vs <span class="hl">${st.rv}</span>：${pickTxt}` +
+      (st.lv === st.rv
+        ? `<br><span class="ok">相等时用 ≤ 先取左边 → 稳定排序</span>` : '');
+  } else if (st.type === 'append') {
+    const n = byId(st.id);
+    n.mergeResult = st.partial.slice();
+    n.leftPtr = st.i;
+    n.rightPtr = st.j;
+    renderMerge(n.id, n.mergeResult, n.leftPtr, n.rightPtr);
+    const sideTxt = st.side === 'L' ? '左段'
+                  : st.side === 'R' ? '右段'
+                  : st.side === 'restL' ? '左段剩余' : '右段剩余';
+    mergeStatus.innerHTML =
+      `取出 <span class="ok">${st.val}</span>（${sideTxt}）→ 结果 ` +
+      `[${n.mergeResult.join(', ')}]`;
+  } else if (st.type === 'merge-end') {
+    const n = byId(st.id);
+    n.sortedVal = st.result.slice();
+    n.merged = true;
+    renderMerge(n.id);
+    mergeStatus.innerHTML =
+      `<span class="ok">合并完成：</span>` +
+      `[${n.left.sortedVal.join(', ')}] + [${n.right.sortedVal.join(', ')}] ` +
+      `→ <span class="ok">[${st.result.join(', ')}]</span>`;
+  } else if (st.type === 'done') {
+    finishMerge();
+  }
+}
+
+/* ================= 播放：拆分 ================= */
+function splitPlay() {
+  if (splitPlaying && !splitPaused) return;
+  if (splitIdx >= splitSteps.length) splitReset();
+  splitPlaying = true; splitPaused = false;
+  document.getElementById('btnSplitPlay').disabled = true;
+  document.getElementById('btnSplitPause').disabled = false;
+  document.getElementById('btnSplitStep').disabled = true;
+  document.getElementById('btnSplitPause').textContent = '⏸';
+  splitLoop();
+}
+function splitPause() {
+  if (!splitPlaying) return;
+  splitPaused = !splitPaused;
+  document.getElementById('btnSplitPause').textContent = splitPaused ? '▶' : '⏸';
+  document.getElementById('btnSplitStep').disabled = !splitPaused;
+  if (!splitPaused) splitLoop();
+  else if (splitTimer) { clearTimeout(splitTimer); splitTimer = null; }
+}
+function splitStep() {
+  if (splitPlaying && !splitPaused) return;
+  if (splitIdx >= splitSteps.length) splitReset();
+  splitPlaying = true; splitPaused = true;
+  document.getElementById('btnSplitPause').disabled = false;
+  document.getElementById('btnSplitPause').textContent = '▶';
+  if (splitTimer) { clearTimeout(splitTimer); splitTimer = null; }
+  splitTick();
+}
+function splitLoop() {
+  if (!splitPlaying || splitPaused) return;
+  splitTimer = setTimeout(splitTick, getSpeed());
+}
+function splitTick() {
+  if (splitTimer) { clearTimeout(splitTimer); splitTimer = null; }
+  if (splitIdx >= splitSteps.length) { finishSplit(); return; }
+  const st = splitSteps[splitIdx++];
+  splitProg.textContent = `${splitIdx} / ${splitSteps.length}`;
+  applySplitStep(st);
+  splitLoop();
+}
+function finishSplit() {
+  splitPlaying = false; splitPaused = false;
+  if (splitTimer) { clearTimeout(splitTimer); splitTimer = null; }
+  document.getElementById('btnSplitPlay').disabled = false;
+  document.getElementById('btnSplitPause').disabled = true;
+  document.getElementById('btnSplitStep').disabled = true;
+  splitProg.textContent = `${splitSteps.length} / ${splitSteps.length}`;
+  renderSplit(null, null);
+  splitStatus.innerHTML =
+    `<span class="ok">✓ 拆分完成！</span>所有子段长度都 ≤ 1，天然有序，可以开始合并。`;
+  if (autoMergePending) {
+    autoMergePending = false;
+    nextPhaseTimer = setTimeout(() => {
+      nextPhaseTimer = null;
+      if (!mergePlaying) mergePlay();
+    }, 600);
+  }
+}
+function splitReset() {
+  cancelAutoSequence();
+  splitPlaying = false; splitPaused = false;
+  if (splitTimer) { clearTimeout(splitTimer); splitTimer = null; }
+  splitIdx = 0;
+  splitSteps = treeRoot ? generateSplitSteps(treeRoot) : [];
+  splitProg.textContent = `0 / ${splitSteps.length}`;
+  document.getElementById('btnSplitPlay').disabled = false;
+  document.getElementById('btnSplitPause').disabled = true;
+  document.getElementById('btnSplitStep').disabled = false;
+  document.getElementById('btnSplitPause').textContent = '⏸';
+  if (treeRoot) renderSplit(null, null);
+  else splitCanvas.innerHTML = '';
+  splitStatus.innerHTML = '点击「▶ 播放」查看自顶向下的拆分过程。';
+}
+
+/* ================= 播放：合并 ================= */
+function mergePlay() {
+  if (mergePlaying && !mergePaused) return;
+  if (mergeIdx >= mergeSteps.length) mergeReset();
+  mergePlaying = true; mergePaused = false;
+  document.getElementById('btnMergePlay').disabled = true;
+  document.getElementById('btnMergePause').disabled = false;
+  document.getElementById('btnMergeStep').disabled = true;
+  document.getElementById('btnMergePause').textContent = '⏸';
+  mergeLoop();
+}
+function mergePause() {
+  if (!mergePlaying) return;
+  mergePaused = !mergePaused;
+  document.getElementById('btnMergePause').textContent = mergePaused ? '▶' : '⏸';
+  document.getElementById('btnMergeStep').disabled = !mergePaused;
+  if (!mergePaused) mergeLoop();
+  else if (mergeTimer) { clearTimeout(mergeTimer); mergeTimer = null; }
+}
+function mergeStep() {
+  if (mergePlaying && !mergePaused) return;
+  if (mergeIdx >= mergeSteps.length) mergeReset();
+  mergePlaying = true; mergePaused = true;
+  document.getElementById('btnMergePause').disabled = false;
+  document.getElementById('btnMergePause').textContent = '▶';
+  if (mergeTimer) { clearTimeout(mergeTimer); mergeTimer = null; }
+  mergeTick();
+}
+function mergeLoop() {
+  if (!mergePlaying || mergePaused) return;
+  mergeTimer = setTimeout(mergeTick, getSpeed());
+}
+function mergeTick() {
+  if (mergeTimer) { clearTimeout(mergeTimer); mergeTimer = null; }
+  if (mergeIdx >= mergeSteps.length) { finishMerge(); return; }
+  const st = mergeSteps[mergeIdx++];
+  mergeProg.textContent = `${mergeIdx} / ${mergeSteps.length}`;
+  applyMergeStep(st);
+  mergeLoop();
+}
+function finishMerge() {
+  mergePlaying = false; mergePaused = false;
+  if (mergeTimer) { clearTimeout(mergeTimer); mergeTimer = null; }
+  document.getElementById('btnMergePlay').disabled = false;
+  document.getElementById('btnMergePause').disabled = true;
+  document.getElementById('btnMergeStep').disabled = true;
+  mergeProg.textContent = `${mergeSteps.length} / ${mergeSteps.length}`;
+  renderMerge(null);
+  mergeStatus.innerHTML =
+    `<span class="ok">✓ 合并完成！排序结果：[${treeRoot.sortedVal.join(', ')}]</span>` +
+    (arr.length <= 1
+      ? `<br>长度不超过1，直接返回列表副本，无需合并。`
+      : `<br>数据从顶部（单元素）逐层向下合并，最终在底部得到完整有序数组。`);
+}
+function mergeReset() {
+  cancelAutoSequence();
+  mergePlaying = false; mergePaused = false;
+  if (mergeTimer) { clearTimeout(mergeTimer); mergeTimer = null; }
+  mergeIdx = 0;
+  if (treeRoot) {
+    allNodes.forEach(n => {
+      n.mergeResult = [];
+      n.leftPtr = 0; n.rightPtr = 0;
+      n.merged = false;
+      if (n.nums.length > 1) n.sortedVal = null;
+      else n.sortedVal = n.nums.slice();
+    });
+    // 预先生成步骤只用于排程，不提前暴露合并结果。
+    mergeSteps = generateMergeSteps(treeRoot);
+    allNodes.forEach(n => {
+      n.sortedVal = n.nums.length <= 1 ? n.nums.slice() : null;
+    });
+  } else {
+    mergeSteps = [];
+  }
+  mergeProg.textContent = `0 / ${mergeSteps.length}`;
+  document.getElementById('btnMergePlay').disabled = false;
+  document.getElementById('btnMergePause').disabled = true;
+  document.getElementById('btnMergeStep').disabled = false;
+  document.getElementById('btnMergePause').textContent = '⏸';
+  if (treeRoot) renderMerge(null);
+  else mergeCanvas.innerHTML = '';
+  mergeStatus.innerHTML = '点击「▶ 播放」查看合并过程：数据从顶部逐层向下合并。';
+}
+
+/* ================= 初始化 / 一键演示 ================= */
+function prepare() {
+  const raw = document.getElementById('inputArr').value.trim();
+  const feedback = document.getElementById('inputFeedback');
+  function fail(message) {
+    feedback.textContent = message;
+    feedback.hidden = false;
+    return false;
+  }
+  const tokens = raw ? raw.split(/[,，]/).map(s => s.trim()) : [];
+  if (tokens.some(s => !/^[+-]?\d+$/.test(s))) return fail('请使用逗号分隔完整整数，例如 3,-1,2,-1,0。');
+  const newArr = tokens.map(Number);
+  if (newArr.some(v => !Number.isSafeInteger(v))) return fail('演示仅接受 JavaScript 安全整数范围内的整数。');
+  if (newArr.length > 16) return fail('为了清晰展示，最多输入16个整数。');
+  feedback.textContent = '';
+  feedback.hidden = true;
+  cancelAutoSequence();
+  arr = newArr;
+  nodeId = 0;
+  treeRoot = buildTree(arr);
+  allNodes = collect(treeRoot);
+  return true;
+}
+
+function applyInput() {
+  if (!prepare()) return;
+  splitReset();
+  mergeReset();
+}
+
+function startAll() {
+  if (!prepare()) return;
+  splitReset();
+  mergeReset();
+  autoMergePending = true;
+  splitPlay();
+}
+
+function loadExample(str) {
+  document.getElementById('inputArr').value = str;
+  if (!prepare()) return;
+  splitReset();
+  mergeReset();
+  splitStatus.innerHTML = '点击「▶ 播放」查看自顶向下的拆分过程。';
+  mergeStatus.innerHTML = '点击「▶ 播放」查看合并过程：数据从顶部逐层向下合并。';
+}
+
+document.addEventListener('keydown', (e) => {
+  if (e.target instanceof HTMLElement && e.target.closest('input, button, textarea, select')) return;
+  if (e.code === 'Space') { e.preventDefault(); startAll(); }
+  if (e.code === 'KeyR') { splitReset(); mergeReset(); }
+});
+
+window.addEventListener('pagehide', () => {
+  cancelAutoSequence();
+  if (splitTimer !== null) clearTimeout(splitTimer);
+  if (mergeTimer !== null) clearTimeout(mergeTimer);
+});
+
+prepare();
+splitReset();
+mergeReset();
+</script>
+</body>
+</html>

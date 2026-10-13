@@ -11,5 +11,8 @@ export default defineClientConfig({
     app.component("MonkeyPeachesAnimation", defineAsyncComponent(() => import("./components/MonkeyPeachesAnimation.vue")));
     app.component("FastPowerAnimation", defineAsyncComponent(() => import("./components/FastPowerAnimation.vue")));
     app.component("WoodcutAnimation", defineAsyncComponent(() => import("./components/WoodcutAnimation.vue")));
+    app.component("LightsOutAnimation", defineAsyncComponent(() => import("./components/LightsOutAnimation.vue")));
+    app.component("MergeSortAnimation", defineAsyncComponent(() => import("./components/MergeSortAnimation.vue")));
+    app.component("InversionsAnimation", defineAsyncComponent(() => import("./components/InversionsAnimation.vue")));
   },
 });

@@ -1,0 +1,870 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>费解的开关 - 动画演示（含最优解回放）</title>
+<style>
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+    color: #eaeaea;
+    font-family: 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+    display: flex; flex-direction: column; align-items: center;
+    padding: 24px 16px 60px;
+  }
+  h1 {
+    font-size: 26px; letter-spacing: 4px; margin: 8px 0 4px;
+    background: linear-gradient(90deg, #f9c846, #ff7e5f, #f9c846);
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+    font-weight: 800;
+  }
+  .subtitle { color: #8aa0b6; font-size: 13px; margin-bottom: 18px; letter-spacing: 1px; }
+
+  .layout {
+    display: flex; gap: 22px; align-items: flex-start; flex-wrap: wrap;
+    justify-content: center; width: 100%; max-width: 1220px;
+  }
+
+  .panel {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 18px; padding: 22px;
+    backdrop-filter: blur(8px);
+    box-shadow: 0 12px 40px rgba(0,0,0,0.45);
+  }
+
+  /* 左栏 */
+  .side { width: 340px; flex-shrink: 0; max-height: 90vh; overflow-y: auto; }
+  .side::-webkit-scrollbar { width: 6px; }
+  .side::-webkit-scrollbar-thumb { background: rgba(249,200,70,0.3); border-radius: 3px; }
+  .side h2 {
+    font-size: 14px; letter-spacing: 2px; color: #9fb4c9;
+    margin: 0 0 14px; font-weight: 600;
+  }
+  .ex-item {
+    border: 1px solid rgba(255,255,255,0.08);
+    background: rgba(255,255,255,0.02);
+    border-radius: 12px; padding: 12px 14px; margin-bottom: 10px;
+    cursor: pointer; transition: all 0.2s;
+  }
+  .ex-item:hover {
+    background: rgba(249,200,70,0.08);
+    border-color: rgba(249,200,70,0.4);
+    transform: translateX(4px);
+  }
+  .ex-item.active {
+    background: rgba(249,200,70,0.14);
+    border-color: #f9c846;
+    box-shadow: 0 0 18px rgba(249,200,70,0.25);
+  }
+  .ex-item:focus-visible, .cell:focus-visible, .op-chip:focus-visible {
+    outline: 3px solid #4dd0e1; outline-offset: 3px;
+  }
+  .ex-item .name { font-size: 14px; font-weight: 700; color: #ffd75e; margin-bottom: 4px; }
+  .ex-item .desc { font-size: 12px; color: #9fb4c9; line-height: 1.5; }
+  .ex-item .answer {
+    display: inline-block; margin-top: 6px;
+    font-size: 11px; padding: 2px 8px; border-radius: 6px;
+    background: rgba(107,255,168,0.15); color: #6bffa8;
+  }
+  .ex-item .answer.bad { background: rgba(255,107,122,0.15); color: #ff6b7a; }
+  .ex-item .answer.computed {
+    background: rgba(77,208,225,0.15); color: #4dd0e1;
+    border: 1px dashed rgba(77,208,225,0.4);
+  }
+
+  /* 右栏 */
+  .stage { flex: 1; min-width: 440px; }
+  .boards { display: flex; gap: 32px; justify-content: center; flex-wrap: wrap; }
+  .board-wrap { text-align: center; }
+  .board-title {
+    font-size: 13px; color: #9fb4c9; margin-bottom: 10px; letter-spacing: 2px;
+  }
+  .board {
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    grid-template-rows: repeat(5, minmax(0, 1fr));
+    gap: clamp(4px, 1.3vw, 8px);
+    width: min(100%, 322px);
+    aspect-ratio: 1 / 1;
+  }
+  .cell {
+    border-radius: 12px; display: flex; align-items: center; justify-content: center;
+    font-size: 20px; font-weight: 700; cursor: pointer; user-select: none;
+    transition: all 0.28s cubic-bezier(.4,.2,.2,1);
+    position: relative; border: 2px solid transparent;
+  }
+  .cell.off {
+    background: radial-gradient(circle at 35% 30%, #3a4553, #1c232c);
+    color: #55606d;
+    box-shadow: inset 0 0 12px rgba(0,0,0,0.8), 0 2px 6px rgba(0,0,0,0.5);
+  }
+  .cell.on {
+    background: radial-gradient(circle at 35% 30%, #fff6c8, #f9c846 60%, #e08a1e);
+    color: #6b4a00;
+    box-shadow: 0 0 18px rgba(249,200,70,0.85), 0 0 40px rgba(249,200,70,0.35),
+                inset 0 0 10px rgba(255,255,255,0.6);
+  }
+  .cell.pressing {
+    transform: scale(0.86); border-color: #ff5f6d;
+    box-shadow: 0 0 22px rgba(255,95,109,0.9);
+  }
+  .cell.replay {
+    border-color: #6bffa8;
+    box-shadow: 0 0 22px rgba(107,255,168,0.95);
+  }
+  .cell .idx {
+    position: absolute; top: 3px; left: 6px;
+    font-size: 10px; color: rgba(255,255,255,0.25); font-weight: 400;
+  }
+  .cell .order {
+    position: absolute; bottom: 3px; right: 6px;
+    font-size: 11px; font-weight: 800; color: #ff5f6d;
+    text-shadow: 0 0 6px rgba(255,95,109,0.9);
+  }
+
+  .controls {
+    margin-top: 22px; display: flex; flex-wrap: wrap; gap: 10px;
+    justify-content: center; align-items: center;
+  }
+  button {
+    background: linear-gradient(180deg, #2e4a6b, #1d3349);
+    color: #d7e6f5; border: 1px solid rgba(255,255,255,0.12);
+    padding: 9px 18px; border-radius: 10px; font-size: 13.5px;
+    letter-spacing: 1px; cursor: pointer; transition: all 0.2s;
+    font-family: inherit;
+  }
+  button:hover:not(:disabled) {
+    background: linear-gradient(180deg, #3d6491, #26466a);
+    transform: translateY(-2px); box-shadow: 0 6px 18px rgba(0,0,0,0.4);
+  }
+  button:disabled { opacity: 0.35; cursor: not-allowed; }
+  button.primary {
+    background: linear-gradient(180deg, #f9c846, #e08a1e);
+    color: #3a2600; font-weight: 700; border: none;
+  }
+  button.primary:hover:not(:disabled) {
+    background: linear-gradient(180deg, #ffd75e, #f09a2e);
+  }
+  button.green {
+    background: linear-gradient(180deg, #3ddc84, #1f9e5c);
+    color: #062814; font-weight: 700; border: none;
+  }
+  button.green:hover:not(:disabled) {
+    background: linear-gradient(180deg, #55f09c, #2ab86c);
+  }
+
+  .status {
+    margin-top: 18px; min-height: 66px;
+    background: rgba(0,0,0,0.35); border-radius: 12px;
+    padding: 13px 17px; font-family: 'Consolas', 'Courier New', monospace;
+    font-size: 13px; line-height: 1.7; color: #b9d4e8;
+    border-left: 3px solid #f9c846;
+  }
+  .status .hl { color: #ffd75e; font-weight: 700; }
+  .status .ok { color: #6bffa8; font-weight: 700; }
+  .status .bad { color: #ff6b7a; font-weight: 700; }
+  .status .note { color: #4dd0e1; font-weight: 700; }
+
+  .stats {
+    display: flex; gap: 24px; margin-top: 14px; font-size: 13.5px;
+    color: #9fb4c9; flex-wrap: wrap; justify-content: center;
+  }
+  .stats b { color: #f9c846; font-size: 17px; }
+
+  /* 最优解方案框 */
+  .bestsol {
+    margin-top: 16px; padding: 14px 16px;
+    background: rgba(61,220,132,0.08);
+    border: 1px solid rgba(61,220,132,0.3);
+    border-radius: 12px; display: none;
+  }
+  .bestsol.show { display: block; }
+  .bestsol .title {
+    font-size: 13px; color: #6bffa8; font-weight: 700;
+    margin-bottom: 10px; letter-spacing: 1px;
+  }
+  .bestsol .ops {
+    display: flex; flex-wrap: wrap; gap: 8px;
+  }
+  .bestsol .op-chip {
+    background: rgba(61,220,132,0.18);
+    border: 1px solid rgba(61,220,132,0.45);
+    color: #a8ffcc; padding: 5px 11px; border-radius: 8px;
+    font-size: 12.5px; font-family: 'Consolas', monospace;
+    cursor: pointer; transition: all 0.15s;
+  }
+  .bestsol .op-chip:hover {
+    background: rgba(61,220,132,0.32);
+    transform: translateY(-2px);
+  }
+  .bestsol .op-chip.hi {
+    background: #3ddc84; color: #062814; font-weight: 700;
+  }
+  .bestsol .firstop {
+    font-family: 'Consolas', monospace; font-size: 13px;
+    color: #ffd75e; margin-bottom: 10px;
+  }
+
+  .hint {
+    margin-top: 10px; font-size: 12px; color: #8aa0b6;
+    text-align: center; line-height: 1.6;
+  }
+  .hint code {
+    background: rgba(255,255,255,0.08); padding: 1px 5px;
+    border-radius: 4px; color: #ffd75e;
+  }
+
+  @media (max-width: 940px) {
+    .side { width: 100%; max-height: min(55vh, 460px); overflow-y: auto; }
+    .stage { min-width: 0; }
+  }
+  @media (max-width: 480px) {
+    body { padding: 16px 10px 28px; }
+    h1 { font-size: 22px; letter-spacing: 2px; }
+    .panel { padding: 15px; border-radius: 14px; }
+    .layout { gap: 14px; }
+    .controls { gap: 8px; margin-top: 16px; }
+    button { padding: 8px 11px; font-size: 12px; }
+    .stats { gap: 12px; font-size: 12px; }
+  }
+</style>
+</head>
+<body>
+
+<h1>费解的开关</h1>
+<div class="subtitle">按一个灯，它和上下左右都翻转 · 目标：6 步内全部变亮 · 附最优解回放</div>
+
+<div class="layout">
+
+  <!-- 左栏：例题目录 -->
+  <div class="panel side">
+    <h2>📚 例 题 目 录</h2>
+    <div id="exList"></div>
+    <div class="hint">
+      标 <span style="color:#4dd0e1;">◇ 待计算</span> 的例题会在你首次载入时由程序自动算出答案。
+    </div>
+  </div>
+
+  <!-- 右栏：演示区 -->
+  <div class="panel stage">
+    <div class="boards">
+      <div class="board-wrap">
+        <div class="board-title" id="boardTitle">当 前 棋 盘（可点击试玩）</div>
+        <div class="board" id="board"></div>
+      </div>
+    </div>
+
+    <div class="controls">
+      <button class="primary" id="btnSolve" onclick="startSolve()">▶ 自动求解演示</button>
+      <button class="green" id="btnReplay" onclick="startReplay()" disabled>🔁 回放最优解</button>
+      <button id="btnPause" onclick="togglePause()" disabled>⏸ 暂停</button>
+      <button id="btnReset" onclick="resetBoard()">↺ 重置</button>
+      <button id="btnStep" onclick="stepOnce()" disabled>⏭ 单步</button>
+      <label style="font-size:13px;color:#9fb4c9;display:flex;align-items:center;gap:6px;">
+        速度 <input type="range" id="speed" min="60" max="900" value="360" style="width:100px;">
+      </label>
+    </div>
+
+    <div class="stats">
+      <span>当前步数：<b id="statStep">0</b></span>
+      <span>最优解：<b id="statBest">-</b></span>
+      <span>枚举进度：<b id="statEnum">-</b></span>
+    </div>
+
+    <!-- 最优解方案展示 -->
+    <div class="bestsol" id="bestsol">
+      <div class="title">🏆 最优解方案（点击任意按键可跳到该步回放）</div>
+      <div class="firstop" id="bestFirstOp"></div>
+      <div class="ops" id="bestOps"></div>
+    </div>
+
+    <div class="status" id="status">从左侧选择一个例题，或直接点击棋盘上的灯手动试玩。</div>
+  </div>
+
+</div>
+
+<script>
+/* ================= 例题库 ================= */
+/* known 字段说明：
+   - 数字：已知正确答案（由人工/程序预先核实）
+   - null：待计算，载入时程序自动计算并更新标签
+   为避免"手填答案标错"的问题，这里只保留经过核实的数字，
+   其余一律用 null 让程序算。 */
+const EXAMPLES = [
+  { name: "样例 1", desc: "题目样例之一，适合观察完整求解流程。",
+    rows: ["00111","01011","10001","11010","11100"], known: 3 },
+  { name: "样例 2", desc: "题目样例之一，步数较少。可以用来对比不同初始态的难度。",
+    rows: ["11101","11101","11110","11111","11111"], known: 2 },
+  { name: "样例 3（无解）", desc: "题目样例之一，6 步内无解。演示会枚举完全部 32 种方案后判定失败。",
+    rows: ["01111","11111","11111","11111","11111"], known: -1 },
+  { name: "全亮棋盘", desc: "已经全部变亮，不需要任何操作。边界情况。",
+    rows: ["11111","11111","11111","11111","11111"], known: 0 },
+  { name: "全灭棋盘", desc: "所有灯都灭。经典对称情形，可观察最优解的步数。",
+    rows: ["00000","00000","00000","00000","00000"], known: null },
+  { name: "只亮中央一盏", desc: "只有正中央 (2,2) 亮，其余全灭。最对称的情形之一。",
+    rows: ["00000","00000","00100","00000","00000"], known: null },
+  { name: "只灭中央一盏", desc: "除正中央 (2,2) 灭外其余全亮。与上一个互补。",
+    rows: ["11111","11111","11011","11111","11111"], known: null },
+  { name: "对角亮两盏", desc: "左上与右下两盏亮，其余灭。测试算法的对称处理。",
+    rows: ["10000","00000","00000","00000","00001"], known: null },
+  { name: "棋盘式", desc: "0/1 交替的棋盘花纹，规律性强，值得观察最优第一行 op 值。",
+    rows: ["10101","01010","10101","01010","10101"], known: null },
+  { name: "密集灭灯", desc: "灭灯较多的一种布局，可能需要较多步数甚至无解。",
+    rows: ["00100","01010","10001","01010","00100"], known: null },
+  { name: "四个角亮", desc: "只有四个角亮，其余全灭。",
+    rows: ["10001","00000","00000","00000","10001"], known: null },
+  { name: "随机棋盘", desc: "点击会重新随机生成一个 5×5 棋盘，每次不同，可多试几次。",
+    rows: null, known: null }
+];
+
+/* ================= 状态 ================= */
+let board = [];
+let initialBoard = [];
+let currentStep = 0;
+let animating = false, paused = false, timer = null;
+let bestSteps = 1e9, bestOp = -1, bestFinalBoard = null;
+let bestPressSequence = null;
+let currentExampleIndex = 0;
+
+/* 回放相关 */
+let replaying = false;
+let replayIndex = 0;
+let replayBoard = null;
+
+const statusEl = document.getElementById('status');
+const boardEl = document.getElementById('board');
+const boardTitle = document.getElementById('boardTitle');
+const statStep = document.getElementById('statStep');
+const statBest = document.getElementById('statBest');
+const statEnum = document.getElementById('statEnum');
+const btnSolve = document.getElementById('btnSolve');
+const btnReplay = document.getElementById('btnReplay');
+const btnPause = document.getElementById('btnPause');
+const btnStep = document.getElementById('btnStep');
+const exListEl = document.getElementById('exList');
+const bestsolEl = document.getElementById('bestsol');
+const bestOpsEl = document.getElementById('bestOps');
+const bestFirstOpEl = document.getElementById('bestFirstOp');
+
+/* ================= 快速求解器（用于自动计算例题答案） ================= */
+function applyTurn(b, x, y) {
+  const dx = [0, -1, 0, 1, 0];
+  const dy = [0, 0, 1, 0, -1];
+  for (let i = 0; i < 5; i++) {
+    const nx = x + dx[i], ny = y + dy[i];
+    if (nx >= 0 && nx < 5 && ny >= 0 && ny < 5) b[nx][ny] ^= 1;
+  }
+}
+
+/* 同步快速求解，返回 {best, bestOp, bestPresses, bestFinal} */
+function quickSolve(startBoard) {
+  let best = 1e9, bestOpLocal = -1, bestPresses = null, bestFinal = null;
+  for (let op = 0; op < 32; op++) {
+    const g = startBoard.map(r => r.slice());
+    let step = 0;
+    const presses = [];
+    for (let j = 0; j < 5; j++) {
+      if ((op >> j) & 1) { step++; presses.push([0, j]); applyTurn(g, 0, j); }
+    }
+    for (let i = 0; i < 4; i++) {
+      for (let j = 0; j < 5; j++) {
+        if (g[i][j] === 0) {
+          step++; presses.push([i + 1, j]); applyTurn(g, i + 1, j);
+        }
+      }
+    }
+    let ok = true;
+    for (let j = 0; j < 5; j++) if (g[4][j] === 0) { ok = false; break; }
+    if (ok && step < best) {
+      best = step; bestOpLocal = op;
+      bestPresses = presses.map(p => p.slice());
+      bestFinal = g.map(r => r.slice());
+    }
+  }
+  return {
+    best: best <= 6 ? best : -1,
+    bestOp: bestOpLocal,
+    bestPresses,
+    bestFinal
+  };
+}
+
+/* ================= 侧栏 ================= */
+function renderExampleList() {
+  exListEl.innerHTML = '';
+  EXAMPLES.forEach((ex, i) => {
+    const div = document.createElement('div');
+    div.className = 'ex-item' + (i === currentExampleIndex ? ' active' : '');
+    div.setAttribute('role', 'button');
+    div.tabIndex = 0;
+    div.setAttribute('aria-pressed', String(i === currentExampleIndex));
+    let ansHtml = '';
+    if (ex.known === -1) {
+      ansHtml = '<span class="answer bad">答案 -1</span>';
+    } else if (ex.known !== null && ex.known !== undefined) {
+      ansHtml = `<span class="answer">答案 ${ex.known}</span>`;
+    } else {
+      ansHtml = '<span class="answer computed">◇ 待计算</span>';
+    }
+    div.innerHTML = `
+      <div class="name">${i + 1}. ${ex.name}</div>
+      <div class="desc">${ex.desc}</div>
+      ${ansHtml}
+    `;
+    div.onclick = () => selectExample(i);
+    div.onkeydown = (event) => {
+      if (event.key === 'Enter' || event.key === ' ') {
+        event.preventDefault();
+        selectExample(i);
+      }
+    };
+    exListEl.appendChild(div);
+  });
+}
+
+/* 对某个例题求解并把答案写回 known 字段 */
+function ensureExampleAnswer(i) {
+  const ex = EXAMPLES[i];
+  if (ex.known !== null && ex.known !== undefined) return;
+  if (!ex.rows) return; // 随机例题，不缓存
+  const mat = ex.rows.map(r => r.split('').map(Number));
+  const res = quickSolve(mat);
+  ex.known = res.best;
+  renderExampleList();
+}
+
+/* ================= 选择例题 ================= */
+function selectExample(i) {
+  stopAnim();
+  stopReplay();
+  opSeq = null; opSeqIdx = 0;
+  currentExampleIndex = i;
+
+  // 如果是随机例题，生成新棋盘
+  let rows = EXAMPLES[i].rows;
+  if (rows === null) {
+    rows = randomBoard();
+  } else {
+    // 顺便计算并缓存答案标签
+    ensureExampleAnswer(i);
+  }
+
+  initialBoard = rows.map(r => r.split('').map(Number));
+  board = initialBoard.map(r => r.slice());
+  currentStep = 0;
+  resetBestState();
+
+  boardTitle.textContent = '当 前 棋 盘 · ' + EXAMPLES[i].name;
+
+  renderExampleList();
+  render();
+  setStatus(`已载入「<span class="hl">${EXAMPLES[i].name}</span>」。点击「自动求解演示」查看算法过程。`);
+}
+
+function randomBoard() {
+  const rows = [];
+  for (let r = 0; r < 5; r++) {
+    let s = '';
+    for (let c = 0; c < 5; c++) s += Math.random() < 0.5 ? '0' : '1';
+    rows.push(s);
+  }
+  return rows;
+}
+
+function resetBestState() {
+  bestSteps = 1e9; bestOp = -1; bestFinalBoard = null;
+  bestPressSequence = null;
+  statBest.textContent = '-';
+  statEnum.textContent = '-';
+  btnReplay.disabled = true;
+  bestsolEl.classList.remove('show');
+  bestOpsEl.innerHTML = '';
+  bestFirstOpEl.textContent = '';
+}
+
+/* ================= 渲染 ================= */
+function render(pressing = null, currentBoard = null, orderMap = null) {
+  const b = currentBoard || board;
+  boardEl.innerHTML = '';
+  for (let r = 0; r < 5; r++) {
+    for (let c = 0; c < 5; c++) {
+      const d = document.createElement('div');
+      d.className = 'cell ' + (b[r][c] ? 'on' : 'off');
+      d.setAttribute('role', 'button');
+      d.tabIndex = 0;
+      d.setAttribute('aria-label', `第 ${r} 行第 ${c} 列，${b[r][c] ? '亮灯' : '灭灯'}；点击切换`);
+      if (pressing && pressing[0] === r && pressing[1] === c) d.classList.add('pressing');
+      d.innerHTML = `<span class="idx">${r},${c}</span>`;
+      if (orderMap) {
+        const key = r + ',' + c;
+        if (orderMap[key]) {
+          d.classList.add('replay');
+          const o = document.createElement('span');
+          o.className = 'order';
+          o.textContent = '#' + orderMap[key];
+          d.appendChild(o);
+        }
+      }
+      d.onclick = () => manualClick(r, c);
+      d.onkeydown = (event) => {
+        if (event.key === 'Enter' || event.key === ' ') {
+          event.preventDefault();
+          manualClick(r, c);
+        }
+      };
+      boardEl.appendChild(d);
+    }
+  }
+  statStep.textContent = currentStep;
+}
+
+function setStatus(html) { statusEl.innerHTML = html; }
+
+/* ================= 手动点击 ================= */
+function manualClick(r, c) {
+  if (animating || replaying) return;
+  applyTurn(board, r, c);
+  currentStep++;
+  render([r, c]);
+  setStatus('手动模式：可以继续点击试玩。点击「自动求解演示」开始自动演示。');
+}
+
+/* ================= 求解 generator（动画版） ================= */
+function* solveGenerator(startBoard) {
+  let best = 1e9, bestOpLocal = -1, bestFinal = null, bestPresses = null;
+
+  for (let op = 0; op < 32; op++) {
+    const g = startBoard.map(r => r.slice());
+    let step = 0;
+    const presses = [];
+
+    for (let j = 0; j < 5; j++) {
+      if ((op >> j) & 1) { step++; presses.push([0, j]); applyTurn(g, 0, j); }
+    }
+    for (let i = 0; i < 4; i++) {
+      for (let j = 0; j < 5; j++) {
+        if (g[i][j] === 0) {
+          step++; presses.push([i + 1, j]); applyTurn(g, i + 1, j);
+        }
+      }
+    }
+    let ok = true;
+    for (let j = 0; j < 5; j++) if (g[4][j] === 0) { ok = false; break; }
+
+    yield {
+      type: 'op', op, opIndex: op + 1, totalOps: 32,
+      presses, step, ok, finalBoard: g.map(r => r.slice())
+    };
+
+    if (ok && step < best) {
+      best = step; bestOpLocal = op;
+      bestFinal = g.map(r => r.slice());
+      bestPresses = presses.map(p => p.slice());
+    }
+  }
+
+  yield {
+    type: 'done',
+    best: best <= 6 ? best : -1,
+    bestOp: bestOpLocal,
+    bestFinal,
+    bestPresses
+  };
+}
+
+/* ================= 自动演示（枚举） ================= */
+let gen = null, opSeq = null, opSeqIdx = 0;
+
+function startSolve() {
+  if (animating || replaying) return;
+  initialBoard = board.map(r => r.slice());
+  currentStep = 0;
+  opSeq = null; opSeqIdx = 0;
+  resetBestState();
+  gen = solveGenerator(initialBoard);
+  animating = true; paused = false;
+  btnSolve.disabled = true;
+  btnReplay.disabled = true;
+  btnPause.disabled = false; btnStep.disabled = true;
+  btnPause.textContent = '⏸ 暂停';
+  setStatus('开始枚举第一行的 32 种按法……');
+  loop();
+}
+
+function stopAnim() {
+  animating = false; paused = false;
+  if (timer) { clearTimeout(timer); timer = null; }
+  btnSolve.disabled = false; btnPause.disabled = true; btnStep.disabled = true;
+  btnPause.textContent = '⏸ 暂停';
+}
+
+function togglePause() {
+  if (!animating && !replaying) return;
+  paused = !paused;
+  btnPause.textContent = paused ? '▶ 继续' : '⏸ 暂停';
+  btnStep.disabled = !paused;
+  if (!paused) loop();
+  else if (timer) { clearTimeout(timer); timer = null; }
+}
+
+function stepOnce() {
+  if (!paused) return;
+  if (timer) { clearTimeout(timer); timer = null; }
+  tick();
+}
+
+function getDelay() { return parseInt(document.getElementById('speed').value, 10); }
+function loop() { if ((animating || replaying) && !paused) timer = setTimeout(tick, getDelay()); }
+
+function tick() {
+  if (timer) { clearTimeout(timer); timer = null; }
+  if (replaying) { replayTick(); return; }
+  if (!animating) return;
+
+  if (opSeq && opSeqIdx < opSeq.length) { playOpStep(); loop(); return; }
+
+  const res = gen.next();
+  if (res.done) { finishSolve(null); return; }
+  const info = res.value;
+
+  if (info.type === 'done') { finishSolve(info); return; }
+
+  if (info.ok && info.step < bestSteps) {
+    bestSteps = info.step; bestOp = info.op;
+    bestFinalBoard = info.finalBoard;
+    bestPressSequence = info.presses.map(p => p.slice());
+    statBest.textContent = bestSteps <= 6 ? bestSteps : '-';
+  }
+  statEnum.textContent = `${info.opIndex}/32 (op=${info.op.toString(2).padStart(5,'0')})`;
+
+  board = initialBoard.map(r => r.slice());
+  currentStep = 0;
+  opSeq = info.presses; opSeqIdx = 0;
+  render();
+
+  setStatus(
+    `尝试第一行按法 <span class="hl">op=${info.op.toString(2).padStart(5,'0')}</span> ` +
+    `（第 ${info.opIndex}/32 种），共 ${info.presses.length} 次按键，` +
+    `最后一行${info.ok ? '<span class="ok">全亮 ✓</span>' : '<span class="bad">未全亮 ✗</span>'}` +
+    `，总步数 <span class="hl">${info.step}</span>` +
+    (info.ok && info.step <= 6 ? '（有效解）' : '')
+  );
+
+  playOpStep();
+  loop();
+}
+
+function playOpStep() {
+  if (!opSeq || opSeqIdx >= opSeq.length) return;
+  const [r, c] = opSeq[opSeqIdx];
+  applyTurn(board, r, c);
+  currentStep++;
+  opSeqIdx++;
+  render([r, c]);
+  if (opSeqIdx >= opSeq.length) opSeq = null;
+}
+
+function finishSolve(info) {
+  stopAnim();
+  const ans = info && info.type === 'done'
+    ? info.best : (bestSteps <= 6 ? bestSteps : -1);
+
+  if (info && info.type === 'done') {
+    if (info.bestPresses) bestPressSequence = info.bestPresses.map(p => p.slice());
+    if (info.bestOp >= 0) bestOp = info.bestOp;
+    if (info.bestFinal) bestFinalBoard = info.bestFinal;
+  }
+
+  if (ans === -1) {
+    setStatus('<span class="bad">枚举完毕：6 步以内无解，输出 -1</span>');
+    statBest.textContent = '-1';
+    btnReplay.disabled = true;
+    bestsolEl.classList.remove('show');
+  } else {
+    if (bestFinalBoard) board = bestFinalBoard.map(r => r.slice());
+    render();
+    setStatus(
+      `<span class="ok">找到最优解！最少 ${ans} 步使全部灯变亮。</span><br>` +
+      `最优第一行按法：<span class="hl">op=${bestOp.toString(2).padStart(5,'0')}</span>` +
+      ` &nbsp;·&nbsp; 点击下方「🔁 回放最优解」观看完整按键过程。`
+    );
+    statBest.textContent = ans;
+    btnReplay.disabled = false;
+    showBestSolution();
+  }
+  statEnum.textContent = '32/32';
+  btnStep.disabled = true;
+}
+
+/* ================= 展示最优解方案 ================= */
+function showBestSolution() {
+  if (!bestPressSequence || bestPressSequence.length === 0) {
+    if (bestSteps === 0) {
+      bestsolEl.classList.add('show');
+      bestFirstOpEl.textContent = '无需任何操作（棋盘已全亮）';
+      bestOpsEl.innerHTML = '';
+    }
+    return;
+  }
+  bestsolEl.classList.add('show');
+  bestFirstOpEl.innerHTML =
+    `最优第一行按法：<span style="color:#3ddc84;font-weight:800;">op=${bestOp.toString(2).padStart(5,'0')}</span>` +
+    ` &nbsp;·&nbsp; 共 <span style="color:#3ddc84;font-weight:800;">${bestPressSequence.length}</span> 步`;
+
+  bestOpsEl.innerHTML = '';
+  bestPressSequence.forEach((p, i) => {
+    const chip = document.createElement('div');
+    chip.className = 'op-chip';
+    chip.setAttribute('role', 'button');
+    chip.tabIndex = 0;
+    chip.setAttribute('aria-label', `回放第 ${i + 1} 步`);
+    chip.dataset.idx = i;
+    chip.textContent = `#${i + 1} (${p[0]},${p[1]})`;
+    chip.onclick = () => jumpToReplayStep(i);
+    chip.onkeydown = (event) => {
+      if (event.key === 'Enter' || event.key === ' ') {
+        event.preventDefault();
+        jumpToReplayStep(i);
+      }
+    };
+    bestOpsEl.appendChild(chip);
+  });
+}
+
+/* ================= 最优解回放 ================= */
+function startReplay() {
+  if (!bestPressSequence || animating) return;
+  stopReplay();
+  replaying = true; paused = false; replayIndex = 0;
+  replayBoard = initialBoard.map(r => r.slice());
+  board = replayBoard;
+  currentStep = 0;
+
+  btnSolve.disabled = true;
+  btnReplay.disabled = true;
+  btnPause.disabled = false; btnStep.disabled = true;
+  btnPause.textContent = '⏸ 暂停';
+
+  const orderMap = buildOrderMap(bestPressSequence);
+  render(null, replayBoard, orderMap);
+  setStatus(
+    `<span class="ok">🎬 开始回放最优解（共 ${bestPressSequence.length} 步）……</span><br>` +
+    `棋盘上绿色数字 #1 #2 ... 表示最优解按下这些位置的顺序。`
+  );
+  loop();
+}
+
+function buildOrderMap(seq) {
+  const map = {};
+  seq.forEach((p, i) => { map[p[0] + ',' + p[1]] = i + 1; });
+  return map;
+}
+
+function replayTick() {
+  if (!replaying) return;
+
+  if (replayIndex >= bestPressSequence.length) {
+    replaying = false;
+    btnSolve.disabled = false;
+    btnReplay.disabled = false;
+    btnPause.disabled = true; btnStep.disabled = true;
+    board = replayBoard;
+    currentStep = bestPressSequence.length;
+    render();
+    setStatus(
+      `<span class="ok">🎬 回放完成！棋盘已全部变亮，共用了 ${bestPressSequence.length} 步。</span>`
+    );
+    highlightChip(-1);
+    return;
+  }
+
+  const [r, c] = bestPressSequence[replayIndex];
+  applyTurn(replayBoard, r, c);
+  currentStep++;
+  replayIndex++;
+  render([r, c], replayBoard, buildOrderMap(bestPressSequence.slice(0, replayIndex)));
+  highlightChip(replayIndex - 1);
+
+  setStatus(
+    `<span class="ok">🎬 回放中…… 第 ${replayIndex}/${bestPressSequence.length} 步：` +
+    `按下 (${r}, ${c})</span>`
+  );
+  loop();
+}
+
+function jumpToReplayStep(targetIdx) {
+  stopReplay();
+  replaying = true; paused = true;
+  replayBoard = initialBoard.map(r => r.slice());
+
+  for (let i = 0; i <= targetIdx; i++) {
+    applyTurn(replayBoard, bestPressSequence[i][0], bestPressSequence[i][1]);
+  }
+  replayIndex = targetIdx + 1;
+  board = replayBoard;
+  currentStep = replayIndex;
+
+  btnSolve.disabled = true;
+  btnReplay.disabled = true;
+  btnPause.disabled = false; btnStep.disabled = false;
+  btnPause.textContent = '▶ 继续';
+
+  render(null, replayBoard, buildOrderMap(bestPressSequence.slice(0, replayIndex)));
+  highlightChip(targetIdx);
+  setStatus(
+    `<span class="ok">已跳转到第 ${replayIndex}/${bestPressSequence.length} 步。</span>` +
+    ` 点击「▶ 继续」或「⏭ 单步」继续回放。`
+  );
+}
+
+function highlightChip(idx) {
+  const chips = bestOpsEl.querySelectorAll('.op-chip');
+  chips.forEach((ch, i) => ch.classList.toggle('hi', i === idx));
+}
+
+function stopReplay() {
+  replaying = false;
+  if (timer) { clearTimeout(timer); timer = null; }
+  btnReplay.disabled = (bestPressSequence === null);
+  btnSolve.disabled = false;
+  btnPause.disabled = true; btnStep.disabled = true;
+  btnPause.textContent = '⏸ 暂停';
+}
+
+/* ================= 重置 ================= */
+function resetBoard() {
+  stopAnim();
+  stopReplay();
+  board = initialBoard.length ? initialBoard.map(r => r.slice()) : board.map(r => r.slice());
+  currentStep = 0;
+  opSeq = null; opSeqIdx = 0;
+  statStep.textContent = 0;
+  statBest.textContent = '-';
+  statEnum.textContent = '-';
+  btnReplay.disabled = true;
+  bestsolEl.classList.remove('show');
+  bestOpsEl.innerHTML = '';
+  render();
+  setStatus('已重置。点击「自动求解演示」开始，或直接点击棋盘上的灯手动试玩。');
+}
+
+/* ================= 初始化 ================= */
+renderExampleList();
+selectExample(0);
+
+// 键盘
+document.addEventListener('keydown', (e) => {
+  if (e.target instanceof HTMLElement && e.target.closest('button, input, [role="button"]')) return;
+  if (e.code === 'Space') {
+    e.preventDefault();
+    if (animating || replaying) togglePause();
+    else startSolve();
+  }
+  if (e.code === 'KeyR') resetBoard();
+  if (e.code === 'ArrowRight' && paused) stepOnce();
+});
+</script>
+</body>
+</html>
