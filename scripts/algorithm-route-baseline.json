@@ -1,0 +1,831 @@
+[
+  {
+    "source": "teachbook/algorithm/2025年秋季班.md",
+    "path": "/teachbook/algorithm/2025%E5%B9%B4%E7%A7%8B%E5%AD%A3%E7%8F%AD.html"
+  },
+  {
+    "source": "teachbook/algorithm/2026年秋季班.md",
+    "path": "/teachbook/algorithm/2026%E5%B9%B4%E7%A7%8B%E5%AD%A3%E7%8F%AD.html"
+  },
+  {
+    "source": "teachbook/algorithm/2026年秋第4次课.md",
+    "path": "/teachbook/algorithm/2026%E5%B9%B4%E7%A7%8B%E7%AC%AC4%E6%AC%A1%E8%AF%BE.html"
+  },
+  {
+    "source": "teachbook/algorithm/2026年秋算法设计与分析课程教学实施方案.md",
+    "path": "/teachbook/algorithm/2026%E5%B9%B4%E7%A7%8B%E7%AE%97%E6%B3%95%E8%AE%BE%E8%AE%A1%E4%B8%8E%E5%88%86%E6%9E%90%E8%AF%BE%E7%A8%8B%E6%95%99%E5%AD%A6%E5%AE%9E%E6%96%BD%E6%96%B9%E6%A1%88.html"
+  },
+  {
+    "source": "teachbook/algorithm/README.md",
+    "path": "/teachbook/algorithm/"
+  },
+  {
+    "source": "teachbook/algorithm/overview.md",
+    "path": "/teachbook/algorithm/overview.html"
+  },
+  {
+    "source": "teachbook/algorithm/动态规划/01背包问题.md",
+    "path": "/teachbook/algorithm/%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92/01%E8%83%8C%E5%8C%85%E9%97%AE%E9%A2%98.html"
+  },
+  {
+    "source": "teachbook/algorithm/动态规划/Corn-Fields-G.md",
+    "path": "/teachbook/algorithm/%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92/Corn-Fields-G.html"
+  },
+  {
+    "source": "teachbook/algorithm/动态规划/n个骰子的点数.md",
+    "path": "/teachbook/algorithm/%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92/n%E4%B8%AA%E9%AA%B0%E5%AD%90%E7%9A%84%E7%82%B9%E6%95%B0.html"
+  },
+  {
+    "source": "teachbook/algorithm/动态规划/丑数.md",
+    "path": "/teachbook/algorithm/%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92/%E4%B8%91%E6%95%B0.html"
+  },
+  {
+    "source": "teachbook/algorithm/动态规划/买不到的数字.md",
+    "path": "/teachbook/algorithm/%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92/%E4%B9%B0%E4%B8%8D%E5%88%B0%E7%9A%84%E6%95%B0%E5%AD%97.html"
+  },
+  {
+    "source": "teachbook/algorithm/动态规划/买包子.md",
+    "path": "/teachbook/algorithm/%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92/%E4%B9%B0%E5%8C%85%E5%AD%90.html"
+  },
+  {
+    "source": "teachbook/algorithm/动态规划/买卖股票的最佳时机I.md",
+    "path": "/teachbook/algorithm/%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92/%E4%B9%B0%E5%8D%96%E8%82%A1%E7%A5%A8%E7%9A%84%E6%9C%80%E4%BD%B3%E6%97%B6%E6%9C%BAI.html"
+  },
+  {
+    "source": "teachbook/algorithm/动态规划/买卖股票的最佳时机II.md",
+    "path": "/teachbook/algorithm/%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92/%E4%B9%B0%E5%8D%96%E8%82%A1%E7%A5%A8%E7%9A%84%E6%9C%80%E4%BD%B3%E6%97%B6%E6%9C%BAII.html"
+  },
+  {
+    "source": "teachbook/algorithm/动态规划/使用最小花费爬楼梯.md",
+    "path": "/teachbook/algorithm/%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92/%E4%BD%BF%E7%94%A8%E6%9C%80%E5%B0%8F%E8%8A%B1%E8%B4%B9%E7%88%AC%E6%A5%BC%E6%A2%AF.html"
+  },
+  {
+    "source": "teachbook/algorithm/动态规划/俄罗斯方块游戏.md",
+    "path": "/teachbook/algorithm/%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92/%E4%BF%84%E7%BD%97%E6%96%AF%E6%96%B9%E5%9D%97%E6%B8%B8%E6%88%8F.html"
+  },
+  {
+    "source": "teachbook/algorithm/动态规划/动态规划的分类.md",
+    "path": "/teachbook/algorithm/%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92/%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92%E7%9A%84%E5%88%86%E7%B1%BB.html"
+  },
+  {
+    "source": "teachbook/algorithm/动态规划/完全平方数.md",
+    "path": "/teachbook/algorithm/%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92/%E5%AE%8C%E5%85%A8%E5%B9%B3%E6%96%B9%E6%95%B0.html"
+  },
+  {
+    "source": "teachbook/algorithm/动态规划/完全背包问题.md",
+    "path": "/teachbook/algorithm/%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92/%E5%AE%8C%E5%85%A8%E8%83%8C%E5%8C%85%E9%97%AE%E9%A2%98.html"
+  },
+  {
+    "source": "teachbook/algorithm/动态规划/打家劫舍.md",
+    "path": "/teachbook/algorithm/%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92/%E6%89%93%E5%AE%B6%E5%8A%AB%E8%88%8D.html"
+  },
+  {
+    "source": "teachbook/algorithm/动态规划/摆花.md",
+    "path": "/teachbook/algorithm/%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92/%E6%91%86%E8%8A%B1.html"
+  },
+  {
+    "source": "teachbook/algorithm/动态规划/整数变换的代价.md",
+    "path": "/teachbook/algorithm/%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92/%E6%95%B4%E6%95%B0%E5%8F%98%E6%8D%A2%E7%9A%84%E4%BB%A3%E4%BB%B7.html"
+  },
+  {
+    "source": "teachbook/algorithm/动态规划/最低加油次数.md",
+    "path": "/teachbook/algorithm/%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92/%E6%9C%80%E4%BD%8E%E5%8A%A0%E6%B2%B9%E6%AC%A1%E6%95%B0.html"
+  },
+  {
+    "source": "teachbook/algorithm/动态规划/最大子数组和.md",
+    "path": "/teachbook/algorithm/%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92/%E6%9C%80%E5%A4%A7%E5%AD%90%E6%95%B0%E7%BB%84%E5%92%8C.html"
+  },
+  {
+    "source": "teachbook/algorithm/动态规划/最大正方形.md",
+    "path": "/teachbook/algorithm/%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92/%E6%9C%80%E5%A4%A7%E6%AD%A3%E6%96%B9%E5%BD%A2.html"
+  },
+  {
+    "source": "teachbook/algorithm/动态规划/最长公共子序列.md",
+    "path": "/teachbook/algorithm/%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92/%E6%9C%80%E9%95%BF%E5%85%AC%E5%85%B1%E5%AD%90%E5%BA%8F%E5%88%97.html"
+  },
+  {
+    "source": "teachbook/algorithm/动态规划/最长和谐子序列.md",
+    "path": "/teachbook/algorithm/%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92/%E6%9C%80%E9%95%BF%E5%92%8C%E8%B0%90%E5%AD%90%E5%BA%8F%E5%88%97.html"
+  },
+  {
+    "source": "teachbook/algorithm/动态规划/模糊坐标.md",
+    "path": "/teachbook/algorithm/%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92/%E6%A8%A1%E7%B3%8A%E5%9D%90%E6%A0%87.html"
+  },
+  {
+    "source": "teachbook/algorithm/动态规划/没有上司的舞会.md",
+    "path": "/teachbook/algorithm/%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92/%E6%B2%A1%E6%9C%89%E4%B8%8A%E5%8F%B8%E7%9A%84%E8%88%9E%E4%BC%9A.html"
+  },
+  {
+    "source": "teachbook/algorithm/动态规划/滑动窗口算法.md",
+    "path": "/teachbook/algorithm/%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92/%E6%BB%91%E5%8A%A8%E7%AA%97%E5%8F%A3%E7%AE%97%E6%B3%95.html"
+  },
+  {
+    "source": "teachbook/algorithm/动态规划/滑雪.md",
+    "path": "/teachbook/algorithm/%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92/%E6%BB%91%E9%9B%AA.html"
+  },
+  {
+    "source": "teachbook/algorithm/动态规划/滑雪问题.md",
+    "path": "/teachbook/algorithm/%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92/%E6%BB%91%E9%9B%AA%E9%97%AE%E9%A2%98.html"
+  },
+  {
+    "source": "teachbook/algorithm/动态规划/爬楼梯.md",
+    "path": "/teachbook/algorithm/%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92/%E7%88%AC%E6%A5%BC%E6%A2%AF.html"
+  },
+  {
+    "source": "teachbook/algorithm/动态规划/矩阵连乘.md",
+    "path": "/teachbook/algorithm/%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92/%E7%9F%A9%E9%98%B5%E8%BF%9E%E4%B9%98.html"
+  },
+  {
+    "source": "teachbook/algorithm/动态规划/石子合并.md",
+    "path": "/teachbook/algorithm/%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92/%E7%9F%B3%E5%AD%90%E5%90%88%E5%B9%B6.html"
+  },
+  {
+    "source": "teachbook/algorithm/动态规划/硬币找零问题.md",
+    "path": "/teachbook/algorithm/%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92/%E7%A1%AC%E5%B8%81%E6%89%BE%E9%9B%B6%E9%97%AE%E9%A2%98.html"
+  },
+  {
+    "source": "teachbook/algorithm/动态规划/精卫填海.md",
+    "path": "/teachbook/algorithm/%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92/%E7%B2%BE%E5%8D%AB%E5%A1%AB%E6%B5%B7.html"
+  },
+  {
+    "source": "teachbook/algorithm/动态规划/编辑距离.md",
+    "path": "/teachbook/algorithm/%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92/%E7%BC%96%E8%BE%91%E8%B7%9D%E7%A6%BB.html"
+  },
+  {
+    "source": "teachbook/algorithm/动态规划/赚钱计划.md",
+    "path": "/teachbook/algorithm/%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92/%E8%B5%9A%E9%92%B1%E8%AE%A1%E5%88%92.html"
+  },
+  {
+    "source": "teachbook/algorithm/动态规划/钱币找零问题.md",
+    "path": "/teachbook/algorithm/%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92/%E9%92%B1%E5%B8%81%E6%89%BE%E9%9B%B6%E9%97%AE%E9%A2%98.html"
+  },
+  {
+    "source": "teachbook/algorithm/动态规划/零钱兑换.md",
+    "path": "/teachbook/algorithm/%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92/%E9%9B%B6%E9%92%B1%E5%85%91%E6%8D%A2.html"
+  },
+  {
+    "source": "teachbook/algorithm/动态规划/飞扬的小鸟.md",
+    "path": "/teachbook/algorithm/%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92/%E9%A3%9E%E6%89%AC%E7%9A%84%E5%B0%8F%E9%B8%9F.html"
+  },
+  {
+    "source": "teachbook/algorithm/回溯与分支限界/N皇后问题.md",
+    "path": "/teachbook/algorithm/%E5%9B%9E%E6%BA%AF%E4%B8%8E%E5%88%86%E6%94%AF%E9%99%90%E7%95%8C/N%E7%9A%87%E5%90%8E%E9%97%AE%E9%A2%98.html"
+  },
+  {
+    "source": "teachbook/algorithm/回溯与分支限界/全排列.md",
+    "path": "/teachbook/algorithm/%E5%9B%9E%E6%BA%AF%E4%B8%8E%E5%88%86%E6%94%AF%E9%99%90%E7%95%8C/%E5%85%A8%E6%8E%92%E5%88%97.html"
+  },
+  {
+    "source": "teachbook/algorithm/回溯与分支限界/国际象棋  骑士巡游（Knight's Tour）问题.md",
+    "path": "/teachbook/algorithm/%E5%9B%9E%E6%BA%AF%E4%B8%8E%E5%88%86%E6%94%AF%E9%99%90%E7%95%8C/%E5%9B%BD%E9%99%85%E8%B1%A1%E6%A3%8B%20%20%E9%AA%91%E5%A3%AB%E5%B7%A1%E6%B8%B8%EF%BC%88Knight's%20Tour%EF%BC%89%E9%97%AE%E9%A2%98.html"
+  },
+  {
+    "source": "teachbook/algorithm/回溯与分支限界/复原IP地址.md",
+    "path": "/teachbook/algorithm/%E5%9B%9E%E6%BA%AF%E4%B8%8E%E5%88%86%E6%94%AF%E9%99%90%E7%95%8C/%E5%A4%8D%E5%8E%9FIP%E5%9C%B0%E5%9D%80.html"
+  },
+  {
+    "source": "teachbook/algorithm/回溯与分支限界/旅行商问题（TSP).md",
+    "path": "/teachbook/algorithm/%E5%9B%9E%E6%BA%AF%E4%B8%8E%E5%88%86%E6%94%AF%E9%99%90%E7%95%8C/%E6%97%85%E8%A1%8C%E5%95%86%E9%97%AE%E9%A2%98%EF%BC%88TSP).html"
+  },
+  {
+    "source": "teachbook/algorithm/回溯与分支限界/格雷编码.md",
+    "path": "/teachbook/algorithm/%E5%9B%9E%E6%BA%AF%E4%B8%8E%E5%88%86%E6%94%AF%E9%99%90%E7%95%8C/%E6%A0%BC%E9%9B%B7%E7%BC%96%E7%A0%81.html"
+  },
+  {
+    "source": "teachbook/algorithm/回溯与分支限界/模糊坐标.md",
+    "path": "/teachbook/algorithm/%E5%9B%9E%E6%BA%AF%E4%B8%8E%E5%88%86%E6%94%AF%E9%99%90%E7%95%8C/%E6%A8%A1%E7%B3%8A%E5%9D%90%E6%A0%87.html"
+  },
+  {
+    "source": "teachbook/algorithm/回溯与分支限界/火柴拼正方形.md",
+    "path": "/teachbook/algorithm/%E5%9B%9E%E6%BA%AF%E4%B8%8E%E5%88%86%E6%94%AF%E9%99%90%E7%95%8C/%E7%81%AB%E6%9F%B4%E6%8B%BC%E6%AD%A3%E6%96%B9%E5%BD%A2.html"
+  },
+  {
+    "source": "teachbook/algorithm/回溯与分支限界/电话号码的字母组合.md",
+    "path": "/teachbook/algorithm/%E5%9B%9E%E6%BA%AF%E4%B8%8E%E5%88%86%E6%94%AF%E9%99%90%E7%95%8C/%E7%94%B5%E8%AF%9D%E5%8F%B7%E7%A0%81%E7%9A%84%E5%AD%97%E6%AF%8D%E7%BB%84%E5%90%88.html"
+  },
+  {
+    "source": "teachbook/algorithm/回溯与分支限界/矩阵路径计数.md",
+    "path": "/teachbook/algorithm/%E5%9B%9E%E6%BA%AF%E4%B8%8E%E5%88%86%E6%94%AF%E9%99%90%E7%95%8C/%E7%9F%A9%E9%98%B5%E8%B7%AF%E5%BE%84%E8%AE%A1%E6%95%B0.html"
+  },
+  {
+    "source": "teachbook/algorithm/回溯与分支限界/累加数.md",
+    "path": "/teachbook/algorithm/%E5%9B%9E%E6%BA%AF%E4%B8%8E%E5%88%86%E6%94%AF%E9%99%90%E7%95%8C/%E7%B4%AF%E5%8A%A0%E6%95%B0.html"
+  },
+  {
+    "source": "teachbook/algorithm/回溯与分支限界/组合总和.md",
+    "path": "/teachbook/algorithm/%E5%9B%9E%E6%BA%AF%E4%B8%8E%E5%88%86%E6%94%AF%E9%99%90%E7%95%8C/%E7%BB%84%E5%90%88%E6%80%BB%E5%92%8C.html"
+  },
+  {
+    "source": "teachbook/algorithm/回溯与分支限界/组合总和II.md",
+    "path": "/teachbook/algorithm/%E5%9B%9E%E6%BA%AF%E4%B8%8E%E5%88%86%E6%94%AF%E9%99%90%E7%95%8C/%E7%BB%84%E5%90%88%E6%80%BB%E5%92%8CII.html"
+  },
+  {
+    "source": "teachbook/algorithm/回溯与分支限界/组合总和III.md",
+    "path": "/teachbook/algorithm/%E5%9B%9E%E6%BA%AF%E4%B8%8E%E5%88%86%E6%94%AF%E9%99%90%E7%95%8C/%E7%BB%84%E5%90%88%E6%80%BB%E5%92%8CIII.html"
+  },
+  {
+    "source": "teachbook/algorithm/回溯与分支限界/装载问题.md",
+    "path": "/teachbook/algorithm/%E5%9B%9E%E6%BA%AF%E4%B8%8E%E5%88%86%E6%94%AF%E9%99%90%E7%95%8C/%E8%A3%85%E8%BD%BD%E9%97%AE%E9%A2%98.html"
+  },
+  {
+    "source": "teachbook/algorithm/回溯与分支限界/解数独.md",
+    "path": "/teachbook/algorithm/%E5%9B%9E%E6%BA%AF%E4%B8%8E%E5%88%86%E6%94%AF%E9%99%90%E7%95%8C/%E8%A7%A3%E6%95%B0%E7%8B%AC.html"
+  },
+  {
+    "source": "teachbook/algorithm/回溯与分支限界/课程表.md",
+    "path": "/teachbook/algorithm/%E5%9B%9E%E6%BA%AF%E4%B8%8E%E5%88%86%E6%94%AF%E9%99%90%E7%95%8C/%E8%AF%BE%E7%A8%8B%E8%A1%A8.html"
+  },
+  {
+    "source": "teachbook/algorithm/回溯与分支限界/选数.md",
+    "path": "/teachbook/algorithm/%E5%9B%9E%E6%BA%AF%E4%B8%8E%E5%88%86%E6%94%AF%E9%99%90%E7%95%8C/%E9%80%89%E6%95%B0.html"
+  },
+  {
+    "source": "teachbook/algorithm/基础算法/三国杀算法 2.md",
+    "path": "/teachbook/algorithm/%E5%9F%BA%E7%A1%80%E7%AE%97%E6%B3%95/%E4%B8%89%E5%9B%BD%E6%9D%80%E7%AE%97%E6%B3%95%202.html"
+  },
+  {
+    "source": "teachbook/algorithm/基础算法/三国杀算法.md",
+    "path": "/teachbook/algorithm/%E5%9F%BA%E7%A1%80%E7%AE%97%E6%B3%95/%E4%B8%89%E5%9B%BD%E6%9D%80%E7%AE%97%E6%B3%95.html"
+  },
+  {
+    "source": "teachbook/algorithm/基础算法/串联所有单词的字串.md",
+    "path": "/teachbook/algorithm/%E5%9F%BA%E7%A1%80%E7%AE%97%E6%B3%95/%E4%B8%B2%E8%81%94%E6%89%80%E6%9C%89%E5%8D%95%E8%AF%8D%E7%9A%84%E5%AD%97%E4%B8%B2.html"
+  },
+  {
+    "source": "teachbook/algorithm/基础算法/二进制手表.md",
+    "path": "/teachbook/algorithm/%E5%9F%BA%E7%A1%80%E7%AE%97%E6%B3%95/%E4%BA%8C%E8%BF%9B%E5%88%B6%E6%89%8B%E8%A1%A8.html"
+  },
+  {
+    "source": "teachbook/algorithm/基础算法/位1的个数.md",
+    "path": "/teachbook/algorithm/%E5%9F%BA%E7%A1%80%E7%AE%97%E6%B3%95/%E4%BD%8D1%E7%9A%84%E4%B8%AA%E6%95%B0.html"
+  },
+  {
+    "source": "teachbook/algorithm/基础算法/只出现一次的数字.md",
+    "path": "/teachbook/algorithm/%E5%9F%BA%E7%A1%80%E7%AE%97%E6%B3%95/%E5%8F%AA%E5%87%BA%E7%8E%B0%E4%B8%80%E6%AC%A1%E7%9A%84%E6%95%B0%E5%AD%97.html"
+  },
+  {
+    "source": "teachbook/algorithm/基础算法/喝醉的狱卒.md",
+    "path": "/teachbook/algorithm/%E5%9F%BA%E7%A1%80%E7%AE%97%E6%B3%95/%E5%96%9D%E9%86%89%E7%9A%84%E7%8B%B1%E5%8D%92.html"
+  },
+  {
+    "source": "teachbook/algorithm/基础算法/按照频率将数组升序排列.md",
+    "path": "/teachbook/algorithm/%E5%9F%BA%E7%A1%80%E7%AE%97%E6%B3%95/%E6%8C%89%E7%85%A7%E9%A2%91%E7%8E%87%E5%B0%86%E6%95%B0%E7%BB%84%E5%8D%87%E5%BA%8F%E6%8E%92%E5%88%97.html"
+  },
+  {
+    "source": "teachbook/algorithm/基础算法/最大回文子串.md",
+    "path": "/teachbook/algorithm/%E5%9F%BA%E7%A1%80%E7%AE%97%E6%B3%95/%E6%9C%80%E5%A4%A7%E5%9B%9E%E6%96%87%E5%AD%90%E4%B8%B2.html"
+  },
+  {
+    "source": "teachbook/algorithm/基础算法/最小差值.md",
+    "path": "/teachbook/algorithm/%E5%9F%BA%E7%A1%80%E7%AE%97%E6%B3%95/%E6%9C%80%E5%B0%8F%E5%B7%AE%E5%80%BC.html"
+  },
+  {
+    "source": "teachbook/algorithm/基础算法/格雷编码.md",
+    "path": "/teachbook/algorithm/%E5%9F%BA%E7%A1%80%E7%AE%97%E6%B3%95/%E6%A0%BC%E9%9B%B7%E7%BC%96%E7%A0%81.html"
+  },
+  {
+    "source": "teachbook/algorithm/基础算法/计按位异或求结果.md",
+    "path": "/teachbook/algorithm/%E5%9F%BA%E7%A1%80%E7%AE%97%E6%B3%95/%E8%AE%A1%E6%8C%89%E4%BD%8D%E5%BC%82%E6%88%96%E6%B1%82%E7%BB%93%E6%9E%9C.html"
+  },
+  {
+    "source": "teachbook/algorithm/基础算法/颜色分类.md",
+    "path": "/teachbook/algorithm/%E5%9F%BA%E7%A1%80%E7%AE%97%E6%B3%95/%E9%A2%9C%E8%89%B2%E5%88%86%E7%B1%BB.html"
+  },
+  {
+    "source": "teachbook/algorithm/每周内容/第10次课.md",
+    "path": "/teachbook/algorithm/%E6%AF%8F%E5%91%A8%E5%86%85%E5%AE%B9/%E7%AC%AC10%E6%AC%A1%E8%AF%BE.html"
+  },
+  {
+    "source": "teachbook/algorithm/每周内容/第11次.md",
+    "path": "/teachbook/algorithm/%E6%AF%8F%E5%91%A8%E5%86%85%E5%AE%B9/%E7%AC%AC11%E6%AC%A1.html"
+  },
+  {
+    "source": "teachbook/algorithm/每周内容/第12次.md",
+    "path": "/teachbook/algorithm/%E6%AF%8F%E5%91%A8%E5%86%85%E5%AE%B9/%E7%AC%AC12%E6%AC%A1.html"
+  },
+  {
+    "source": "teachbook/algorithm/每周内容/第13次.md",
+    "path": "/teachbook/algorithm/%E6%AF%8F%E5%91%A8%E5%86%85%E5%AE%B9/%E7%AC%AC13%E6%AC%A1.html"
+  },
+  {
+    "source": "teachbook/algorithm/每周内容/第14次课.md",
+    "path": "/teachbook/algorithm/%E6%AF%8F%E5%91%A8%E5%86%85%E5%AE%B9/%E7%AC%AC14%E6%AC%A1%E8%AF%BE.html"
+  },
+  {
+    "source": "teachbook/algorithm/每周内容/第15次课.md",
+    "path": "/teachbook/algorithm/%E6%AF%8F%E5%91%A8%E5%86%85%E5%AE%B9/%E7%AC%AC15%E6%AC%A1%E8%AF%BE.html"
+  },
+  {
+    "source": "teachbook/algorithm/每周内容/第16次.md",
+    "path": "/teachbook/algorithm/%E6%AF%8F%E5%91%A8%E5%86%85%E5%AE%B9/%E7%AC%AC16%E6%AC%A1.html"
+  },
+  {
+    "source": "teachbook/algorithm/每周内容/第1周.md",
+    "path": "/teachbook/algorithm/%E6%AF%8F%E5%91%A8%E5%86%85%E5%AE%B9/%E7%AC%AC1%E5%91%A8.html"
+  },
+  {
+    "source": "teachbook/algorithm/每周内容/第3周.md",
+    "path": "/teachbook/algorithm/%E6%AF%8F%E5%91%A8%E5%86%85%E5%AE%B9/%E7%AC%AC3%E5%91%A8.html"
+  },
+  {
+    "source": "teachbook/algorithm/每周内容/第4周.md",
+    "path": "/teachbook/algorithm/%E6%AF%8F%E5%91%A8%E5%86%85%E5%AE%B9/%E7%AC%AC4%E5%91%A8.html"
+  },
+  {
+    "source": "teachbook/algorithm/每周内容/第5次.md",
+    "path": "/teachbook/algorithm/%E6%AF%8F%E5%91%A8%E5%86%85%E5%AE%B9/%E7%AC%AC5%E6%AC%A1.html"
+  },
+  {
+    "source": "teachbook/algorithm/每周内容/第6次.md",
+    "path": "/teachbook/algorithm/%E6%AF%8F%E5%91%A8%E5%86%85%E5%AE%B9/%E7%AC%AC6%E6%AC%A1.html"
+  },
+  {
+    "source": "teachbook/algorithm/每周内容/第7次.md",
+    "path": "/teachbook/algorithm/%E6%AF%8F%E5%91%A8%E5%86%85%E5%AE%B9/%E7%AC%AC7%E6%AC%A1.html"
+  },
+  {
+    "source": "teachbook/algorithm/每周内容/第8次.md",
+    "path": "/teachbook/algorithm/%E6%AF%8F%E5%91%A8%E5%86%85%E5%AE%B9/%E7%AC%AC8%E6%AC%A1.html"
+  },
+  {
+    "source": "teachbook/algorithm/每周内容/第9次.md",
+    "path": "/teachbook/algorithm/%E6%AF%8F%E5%91%A8%E5%86%85%E5%AE%B9/%E7%AC%AC9%E6%AC%A1.html"
+  },
+  {
+    "source": "teachbook/algorithm/目录导学.md",
+    "path": "/teachbook/algorithm/%E7%9B%AE%E5%BD%95%E5%AF%BC%E5%AD%A6.html"
+  },
+  {
+    "source": "teachbook/algorithm/算法简介.md",
+    "path": "/teachbook/algorithm/%E7%AE%97%E6%B3%95%E7%AE%80%E4%BB%8B.html"
+  },
+  {
+    "source": "teachbook/algorithm/算法课程主要内容.md",
+    "path": "/teachbook/algorithm/%E7%AE%97%E6%B3%95%E8%AF%BE%E7%A8%8B%E4%B8%BB%E8%A6%81%E5%86%85%E5%AE%B9.html"
+  },
+  {
+    "source": "teachbook/algorithm/讲课方法.md",
+    "path": "/teachbook/algorithm/%E8%AE%B2%E8%AF%BE%E6%96%B9%E6%B3%95.html"
+  },
+  {
+    "source": "teachbook/algorithm/贪心法/买卖股票的最佳时机II.md",
+    "path": "/teachbook/algorithm/%E8%B4%AA%E5%BF%83%E6%B3%95/%E4%B9%B0%E5%8D%96%E8%82%A1%E7%A5%A8%E7%9A%84%E6%9C%80%E4%BD%B3%E6%97%B6%E6%9C%BAII.html"
+  },
+  {
+    "source": "teachbook/algorithm/贪心法/分发糖果.md",
+    "path": "/teachbook/algorithm/%E8%B4%AA%E5%BF%83%E6%B3%95/%E5%88%86%E5%8F%91%E7%B3%96%E6%9E%9C.html"
+  },
+  {
+    "source": "teachbook/algorithm/贪心法/分发饼干.md",
+    "path": "/teachbook/algorithm/%E8%B4%AA%E5%BF%83%E6%B3%95/%E5%88%86%E5%8F%91%E9%A5%BC%E5%B9%B2.html"
+  },
+  {
+    "source": "teachbook/algorithm/贪心法/加油站.md",
+    "path": "/teachbook/algorithm/%E8%B4%AA%E5%BF%83%E6%B3%95/%E5%8A%A0%E6%B2%B9%E7%AB%99.html"
+  },
+  {
+    "source": "teachbook/algorithm/贪心法/摆动序列.md",
+    "path": "/teachbook/algorithm/%E8%B4%AA%E5%BF%83%E6%B3%95/%E6%91%86%E5%8A%A8%E5%BA%8F%E5%88%97.html"
+  },
+  {
+    "source": "teachbook/algorithm/贪心法/森林中的兔子.md",
+    "path": "/teachbook/algorithm/%E8%B4%AA%E5%BF%83%E6%B3%95/%E6%A3%AE%E6%9E%97%E4%B8%AD%E7%9A%84%E5%85%94%E5%AD%90.html"
+  },
+  {
+    "source": "teachbook/algorithm/贪心法/盛最多水的容器.md",
+    "path": "/teachbook/algorithm/%E8%B4%AA%E5%BF%83%E6%B3%95/%E7%9B%9B%E6%9C%80%E5%A4%9A%E6%B0%B4%E7%9A%84%E5%AE%B9%E5%99%A8.html"
+  },
+  {
+    "source": "teachbook/algorithm/贪心法/跳跃游戏.md",
+    "path": "/teachbook/algorithm/%E8%B4%AA%E5%BF%83%E6%B3%95/%E8%B7%B3%E8%B7%83%E6%B8%B8%E6%88%8F.html"
+  },
+  {
+    "source": "teachbook/algorithm/贪心法/跳跃游戏II.md",
+    "path": "/teachbook/algorithm/%E8%B4%AA%E5%BF%83%E6%B3%95/%E8%B7%B3%E8%B7%83%E6%B8%B8%E6%88%8FII.html"
+  },
+  {
+    "source": "teachbook/algorithm/贪心法/过河问题.md",
+    "path": "/teachbook/algorithm/%E8%B4%AA%E5%BF%83%E6%B3%95/%E8%BF%87%E6%B2%B3%E9%97%AE%E9%A2%98.html"
+  },
+  {
+    "source": "teachbook/algorithm/递推和分治/Karatsuba大整数乘法.md",
+    "path": "/teachbook/algorithm/%E9%80%92%E6%8E%A8%E5%92%8C%E5%88%86%E6%B2%BB/Karatsuba%E5%A4%A7%E6%95%B4%E6%95%B0%E4%B9%98%E6%B3%95.html",
+    "anchors": [
+      "题目描述",
+      "题目分析",
+      "从四次乘法到三次乘法",
+      "分割、边界与符号",
+      "正确性依据",
+      "实现代码",
+      "python-二进制分割实现",
+      "算法执行过程",
+      "复杂度分析",
+      "易错点",
+      "课堂练习"
+    ]
+  },
+  {
+    "source": "teachbook/algorithm/递推和分治/Strassen矩阵乘法.md",
+    "path": "/teachbook/algorithm/%E9%80%92%E6%8E%A8%E5%92%8C%E5%88%86%E6%B2%BB/Strassen%E7%9F%A9%E9%98%B5%E4%B9%98%E6%B3%95.html",
+    "anchors": [
+      "题目描述",
+      "题目分析",
+      "按四个块分解",
+      "补零与边界",
+      "正确性依据",
+      "实现代码",
+      "python-补零与七分支实现",
+      "算法执行过程",
+      "复杂度分析",
+      "易错点",
+      "课堂练习"
+    ]
+  },
+  {
+    "source": "teachbook/algorithm/递推和分治/下载插件.md",
+    "path": "/teachbook/algorithm/%E9%80%92%E6%8E%A8%E5%92%8C%E5%88%86%E6%B2%BB/%E4%B8%8B%E8%BD%BD%E6%8F%92%E4%BB%B6.html"
+  },
+  {
+    "source": "teachbook/algorithm/递推和分治/二分法求幂.md",
+    "path": "/teachbook/algorithm/%E9%80%92%E6%8E%A8%E5%92%8C%E5%88%86%E6%B2%BB/%E4%BA%8C%E5%88%86%E6%B3%95%E6%B1%82%E5%B9%82.html",
+    "anchors": [
+      "题目描述",
+      "贯穿示例",
+      "题目分析",
+      "从连续相乘到指数减半",
+      "定义函数、边界与递推关系",
+      "为什么结果正确",
+      "实现代码",
+      "python-递归实现",
+      "python-循环实现",
+      "算法执行过程",
+      "交互动画",
+      "递归调用-指数逐层减半",
+      "递归返回-平方并按奇偶补乘",
+      "循环执行-逐位累积幂",
+      "复杂度分析",
+      "先看结论",
+      "时间复杂度",
+      "辅助空间复杂度",
+      "易错点",
+      "用反例检查理解",
+      "课堂练习",
+      "基础核对",
+      "过程推演",
+      "进阶思考"
+    ]
+  },
+  {
+    "source": "teachbook/algorithm/递推和分治/二维有序矩阵查找.md",
+    "path": "/teachbook/algorithm/%E9%80%92%E6%8E%A8%E5%92%8C%E5%88%86%E6%B2%BB/%E4%BA%8C%E7%BB%B4%E6%9C%89%E5%BA%8F%E7%9F%A9%E9%98%B5%E6%9F%A5%E6%89%BE.html",
+    "anchors": [
+      "题目描述",
+      "题目分析",
+      "在中间列寻找分界行",
+      "正确性与终止性",
+      "实现代码",
+      "python-中间列分治实现",
+      "算法执行过程",
+      "复杂度分析",
+      "易错点",
+      "课堂练习"
+    ]
+  },
+  {
+    "source": "teachbook/algorithm/递推和分治/合并k个有序数组.md",
+    "path": "/teachbook/algorithm/%E9%80%92%E6%8E%A8%E5%92%8C%E5%88%86%E6%B2%BB/%E5%90%88%E5%B9%B6k%E4%B8%AA%E6%9C%89%E5%BA%8F%E6%95%B0%E7%BB%84.html",
+    "anchors": [
+      "题目描述",
+      "题目分析",
+      "为什么按数组个数均衡划分",
+      "函数与边界",
+      "正确性依据",
+      "实现代码",
+      "python-分治合并实现",
+      "算法执行过程",
+      "复杂度分析",
+      "易错点",
+      "课堂练习"
+    ]
+  },
+  {
+    "source": "teachbook/algorithm/递推和分治/合并排序.md",
+    "path": "/teachbook/algorithm/%E9%80%92%E6%8E%A8%E5%92%8C%E5%88%86%E6%B2%BB/%E5%90%88%E5%B9%B6%E6%8E%92%E5%BA%8F.html",
+    "anchors": [
+      "题目描述",
+      "题目分析",
+      "将排序问题拆成更小的排序问题",
+      "定义函数、边界与递推关系",
+      "用两个索引合并有序列表",
+      "合并为什么能得到有序结果",
+      "实现代码",
+      "python-递归实现",
+      "算法执行过程",
+      "交互动画",
+      "示例与调用顺序",
+      "递归调用-不断拆分",
+      "递归返回-逐步合并",
+      "双指针-最后一次合并的状态变化",
+      "相等元素-观察稳定性",
+      "复杂度分析",
+      "时间复杂度",
+      "辅助空间复杂度",
+      "易错点",
+      "课堂练习"
+    ]
+  },
+  {
+    "source": "teachbook/algorithm/递推和分治/同时求数组的最大值与最小值.md",
+    "path": "/teachbook/algorithm/%E9%80%92%E6%8E%A8%E5%92%8C%E5%88%86%E6%B2%BB/%E5%90%8C%E6%97%B6%E6%B1%82%E6%95%B0%E7%BB%84%E7%9A%84%E6%9C%80%E5%A4%A7%E5%80%BC%E4%B8%8E%E6%9C%80%E5%B0%8F%E5%80%BC.html",
+    "anchors": [
+      "题目描述",
+      "题目分析",
+      "把两个极值交给左右子问题",
+      "定义区间、返回值与边界",
+      "为什么结果正确",
+      "实现代码",
+      "python-递归实现",
+      "算法执行过程",
+      "递归调用-拆成两元素区间",
+      "递归返回-分别合并两个极值",
+      "复杂度分析",
+      "时间复杂度",
+      "辅助空间复杂度",
+      "易错点",
+      "课堂练习"
+    ]
+  },
+  {
+    "source": "teachbook/algorithm/递推和分治/四叉树构建与二值图像压缩.md",
+    "path": "/teachbook/algorithm/%E9%80%92%E6%8E%A8%E5%92%8C%E5%88%86%E6%B2%BB/%E5%9B%9B%E5%8F%89%E6%A0%91%E6%9E%84%E5%BB%BA%E4%B8%8E%E4%BA%8C%E5%80%BC%E5%9B%BE%E5%83%8F%E5%8E%8B%E7%BC%A9.html",
+    "anchors": [
+      "题目描述",
+      "题目分析",
+      "区域一致则停止-否则四分",
+      "用二维前缀和判断一致性",
+      "正确性依据",
+      "实现代码",
+      "python-前缀和与四叉树实现",
+      "算法执行过程",
+      "复杂度分析",
+      "易错点",
+      "课堂练习"
+    ]
+  },
+  {
+    "source": "teachbook/algorithm/递推和分治/多数元素.md",
+    "path": "/teachbook/algorithm/%E9%80%92%E6%8E%A8%E5%92%8C%E5%88%86%E6%B2%BB/%E5%A4%9A%E6%95%B0%E5%85%83%E7%B4%A0.html"
+  },
+  {
+    "source": "teachbook/algorithm/递推和分治/寻找两个有序数组的中位数.md",
+    "path": "/teachbook/algorithm/%E9%80%92%E6%8E%A8%E5%92%8C%E5%88%86%E6%B2%BB/%E5%AF%BB%E6%89%BE%E4%B8%A4%E4%B8%AA%E6%9C%89%E5%BA%8F%E6%95%B0%E7%BB%84%E7%9A%84%E4%B8%AD%E4%BD%8D%E6%95%B0.html"
+  },
+  {
+    "source": "teachbook/algorithm/递推和分治/寻找比目标字母大的最小字母.md",
+    "path": "/teachbook/algorithm/%E9%80%92%E6%8E%A8%E5%92%8C%E5%88%86%E6%B2%BB/%E5%AF%BB%E6%89%BE%E6%AF%94%E7%9B%AE%E6%A0%87%E5%AD%97%E6%AF%8D%E5%A4%A7%E7%9A%84%E6%9C%80%E5%B0%8F%E5%AD%97%E6%AF%8D.html"
+  },
+  {
+    "source": "teachbook/algorithm/递推和分治/平面最近点对.md",
+    "path": "/teachbook/algorithm/%E9%80%92%E6%8E%A8%E5%92%8C%E5%88%86%E6%B2%BB/%E5%B9%B3%E9%9D%A2%E6%9C%80%E8%BF%91%E7%82%B9%E5%AF%B9.html",
+    "anchors": [
+      "题目描述",
+      "题目分析",
+      "子调用既返回答案-也返回纵向顺序",
+      "只检查分界线附近的条带",
+      "正确性依据",
+      "实现代码",
+      "python-分治与条带扫描实现",
+      "算法执行过程",
+      "复杂度分析",
+      "易错点",
+      "课堂练习"
+    ]
+  },
+  {
+    "source": "teachbook/algorithm/递推和分治/循环赛日程表.md",
+    "path": "/teachbook/algorithm/%E9%80%92%E6%8E%A8%E5%92%8C%E5%88%86%E6%B2%BB/%E5%BE%AA%E7%8E%AF%E8%B5%9B%E6%97%A5%E7%A8%8B%E8%A1%A8.html"
+  },
+  {
+    "source": "teachbook/algorithm/递推和分治/快速排序.md",
+    "path": "/teachbook/algorithm/%E9%80%92%E6%8E%A8%E5%92%8C%E5%88%86%E6%B2%BB/%E5%BF%AB%E9%80%9F%E6%8E%92%E5%BA%8F.html"
+  },
+  {
+    "source": "teachbook/algorithm/递推和分治/数组中的第k个最大元素.md",
+    "path": "/teachbook/algorithm/%E9%80%92%E6%8E%A8%E5%92%8C%E5%88%86%E6%B2%BB/%E6%95%B0%E7%BB%84%E4%B8%AD%E7%9A%84%E7%AC%ACk%E4%B8%AA%E6%9C%80%E5%A4%A7%E5%85%83%E7%B4%A0.html"
+  },
+  {
+    "source": "teachbook/algorithm/递推和分治/最长公共前缀.md",
+    "path": "/teachbook/algorithm/%E9%80%92%E6%8E%A8%E5%92%8C%E5%88%86%E6%B2%BB/%E6%9C%80%E9%95%BF%E5%85%AC%E5%85%B1%E5%89%8D%E7%BC%80.html",
+    "anchors": [
+      "题目描述",
+      "题目分析",
+      "将字符串集合分成左右两组",
+      "定义函数、边界与合并规则",
+      "为什么结果正确",
+      "实现代码",
+      "python-递归实现",
+      "算法执行过程",
+      "递归调用-划分字符串列表",
+      "递归返回-逐字符合并前缀",
+      "边界-空前缀怎样参与合并",
+      "复杂度分析",
+      "时间复杂度",
+      "辅助空间复杂度",
+      "易错点",
+      "课堂练习"
+    ]
+  },
+  {
+    "source": "teachbook/algorithm/递推和分治/有序数组构造平衡二叉搜索树.md",
+    "path": "/teachbook/algorithm/%E9%80%92%E6%8E%A8%E5%92%8C%E5%88%86%E6%B2%BB/%E6%9C%89%E5%BA%8F%E6%95%B0%E7%BB%84%E6%9E%84%E9%80%A0%E5%B9%B3%E8%A1%A1%E4%BA%8C%E5%8F%89%E6%90%9C%E7%B4%A2%E6%A0%91.html",
+    "anchors": [
+      "题目描述",
+      "题目分析",
+      "选中间元素-再构造左右子树",
+      "定义函数、空区间与边界",
+      "为什么同时满足搜索树与平衡条件",
+      "实现代码",
+      "python-递归构造与结果输出",
+      "算法执行过程",
+      "递归调用-选择根并划分区间",
+      "递归返回-连接子树并核对高度",
+      "偶数长度与空列表",
+      "复杂度分析",
+      "时间复杂度",
+      "辅助空间复杂度",
+      "易错点",
+      "课堂练习"
+    ]
+  },
+  {
+    "source": "teachbook/algorithm/递推和分治/木材加工.md",
+    "path": "/teachbook/algorithm/%E9%80%92%E6%8E%A8%E5%92%8C%E5%88%86%E6%B2%BB/%E6%9C%A8%E6%9D%90%E5%8A%A0%E5%B7%A5.html",
+    "anchors": [
+      "题目描述",
+      "输入与输出",
+      "题目分析",
+      "把求最大值转为判断是否可行",
+      "找出可行性的单调性",
+      "设置边界与更新规则",
+      "为什么答案正确",
+      "实现代码",
+      "python-二分答案实现",
+      "算法执行过程",
+      "交互动画",
+      "一次可行性判断怎样计算",
+      "二分区间怎样逐轮缩小",
+      "没有可行长度时怎样结束",
+      "复杂度分析",
+      "时间复杂度",
+      "辅助空间复杂度",
+      "易错点",
+      "课堂练习"
+    ]
+  },
+  {
+    "source": "teachbook/algorithm/递推和分治/棋盘覆盖问题.md",
+    "path": "/teachbook/algorithm/%E9%80%92%E6%8E%A8%E5%92%8C%E5%88%86%E6%B2%BB/%E6%A3%8B%E7%9B%98%E8%A6%86%E7%9B%96%E9%97%AE%E9%A2%98.html"
+  },
+  {
+    "source": "teachbook/algorithm/递推和分治/汉诺塔.md",
+    "path": "/teachbook/algorithm/%E9%80%92%E6%8E%A8%E5%92%8C%E5%88%86%E6%B2%BB/%E6%B1%89%E8%AF%BA%E5%A1%94.html",
+    "anchors": [
+      "题目描述",
+      "题目分析",
+      "明确递归函数的任务",
+      "把大问题分为三个顺序步骤",
+      "为什么方案合法且步数最少",
+      "怎样直接定位第-m-步",
+      "实现代码",
+      "python-递归实现-输出全部步骤",
+      "python-进阶实现-直接查询第-m-步",
+      "算法执行过程",
+      "交互动画",
+      "三个圆盘的逐步移动",
+      "递归调用与返回",
+      "指定步骤查询的执行过程",
+      "复杂度分析",
+      "输出完整移动过程",
+      "直接查询指定步骤",
+      "易错点",
+      "课堂练习"
+    ]
+  },
+  {
+    "source": "teachbook/algorithm/递推和分治/猴子吃桃.md",
+    "path": "/teachbook/algorithm/%E9%80%92%E6%8E%A8%E5%92%8C%E5%88%86%E6%B2%BB/%E7%8C%B4%E5%AD%90%E5%90%83%E6%A1%83.html",
+    "anchors": [
+      "题目描述",
+      "题目分析",
+      "实现代码",
+      "python-递归实现",
+      "python-循环实现",
+      "算法执行过程",
+      "交互动画",
+      "递归调用与返回",
+      "复杂度分析",
+      "易错点",
+      "课堂练习"
+    ]
+  },
+  {
+    "source": "teachbook/algorithm/递推和分治/矩形分割.md",
+    "path": "/teachbook/algorithm/%E9%80%92%E6%8E%A8%E5%92%8C%E5%88%86%E6%B2%BB/%E7%9F%A9%E5%BD%A2%E5%88%86%E5%89%B2.html"
+  },
+  {
+    "source": "teachbook/algorithm/递推和分治/约瑟夫环.md",
+    "path": "/teachbook/algorithm/%E9%80%92%E6%8E%A8%E5%92%8C%E5%88%86%E6%B2%BB/%E7%BA%A6%E7%91%9F%E5%A4%AB%E7%8E%AF.html",
+    "anchors": [
+      "题目描述",
+      "题目分析",
+      "缩小问题并重新编号",
+      "建立递归公式",
+      "实现代码",
+      "python-递归实现",
+      "python-循环实现",
+      "python-模拟实现-输出出局顺序",
+      "算法执行过程",
+      "交互动画",
+      "报数与出局",
+      "递归调用与返回",
+      "复杂度分析",
+      "易错点",
+      "课堂练习"
+    ]
+  },
+  {
+    "source": "teachbook/algorithm/递推和分治/费解的开关.md",
+    "path": "/teachbook/algorithm/%E9%80%92%E6%8E%A8%E5%92%8C%E5%88%86%E6%B2%BB/%E8%B4%B9%E8%A7%A3%E7%9A%84%E5%BC%80%E5%85%B3.html",
+    "anchors": [
+      "题目描述",
+      "题目分析",
+      "按行推导必需的操作",
+      "枚举第一行的所有可能",
+      "为什么只枚举第一行就够",
+      "实现代码",
+      "算法执行过程",
+      "交互动画",
+      "例一-固定第一行按法后逐行推导",
+      "例二-枚举与强制操作的边界",
+      "复杂度分析",
+      "时间复杂度",
+      "辅助空间复杂度",
+      "易错点",
+      "课堂练习"
+    ]
+  },
+  {
+    "source": "teachbook/algorithm/递推和分治/连续数列.md",
+    "path": "/teachbook/algorithm/%E9%80%92%E6%8E%A8%E5%92%8C%E5%88%86%E6%B2%BB/%E8%BF%9E%E7%BB%AD%E6%95%B0%E5%88%97.html"
+  },
+  {
+    "source": "teachbook/algorithm/递推和分治/逆序对.md",
+    "path": "/teachbook/algorithm/%E9%80%92%E6%8E%A8%E5%92%8C%E5%88%86%E6%B2%BB/%E9%80%86%E5%BA%8F%E5%AF%B9.html",
+    "anchors": [
+      "题目描述",
+      "输入、输出与约束",
+      "题目分析",
+      "从逐对检查到合并排序",
+      "将逆序对分成三类",
+      "为什么一次增加左段剩余长度",
+      "为什么排序后仍能统计原来的逆序对",
+      "实现代码",
+      "python-归并计数实现",
+      "算法执行过程",
+      "交互动画",
+      "递归调用与返回-与合并排序对照",
+      "双指针合并-逐步累计跨段逆序对",
+      "重复值-相等时不计数",
+      "复杂度分析",
+      "时间复杂度",
+      "辅助空间复杂度",
+      "易错点",
+      "课堂练习"
+    ]
+  },
+  {
+    "source": "teachbook/algorithm/递推和分治/递归与分治.md",
+    "path": "/teachbook/algorithm/%E9%80%92%E6%8E%A8%E5%92%8C%E5%88%86%E6%B2%BB/%E9%80%92%E5%BD%92%E4%B8%8E%E5%88%86%E6%B2%BB.html"
+  },
+  {
+    "source": "teachbook/algorithm/递推和分治/重要逆序对.md",
+    "path": "/teachbook/algorithm/%E9%80%92%E6%8E%A8%E5%92%8C%E5%88%86%E6%B2%BB/%E9%87%8D%E8%A6%81%E9%80%86%E5%BA%8F%E5%AF%B9.html",
+    "anchors": [
+      "题目描述",
+      "题目分析",
+      "仍然分为三类位置对",
+      "在合并前单独统计跨段配对",
+      "正确性依据",
+      "实现代码",
+      "python-归并与双指针计数实现",
+      "算法执行过程",
+      "复杂度分析",
+      "易错点",
+      "课堂练习"
+    ]
+  },
+  {
+    "source": "teachbook/algorithm/递推和分治/黑白棋子的移动.md",
+    "path": "/teachbook/algorithm/%E9%80%92%E6%8E%A8%E5%92%8C%E5%88%86%E6%B2%BB/%E9%BB%91%E7%99%BD%E6%A3%8B%E5%AD%90%E7%9A%84%E7%A7%BB%E5%8A%A8.html"
+  }
+]

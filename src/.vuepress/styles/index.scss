@@ -1,1 +1,174 @@
-// place your custom styles here
+// 字体随站点打包，避免运行时依赖外部字体服务。
+// 仅包含 Inter 的拉丁字符子集；中文由系统中文字体显示。
+@font-face {
+  font-family: "Algorithm Inter";
+  font-style: normal;
+  font-weight: 400 700;
+  font-display: swap;
+  src: url("@source/.vuepress/styles/fonts/inter-latin.woff2") format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC,
+    U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F,
+    U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+// 算法课程共用排版。构建插件自动为课程页面添加作用域类。
+.algorithm-document {
+  --algorithm-copy-font: "Algorithm Inter", "PingFang SC", "Hiragino Sans GB",
+    "Microsoft YaHei", "Noto Sans CJK SC", sans-serif;
+  --algorithm-code-font: "SFMono-Regular", Menlo, Consolas, "Liberation Mono",
+    "PingFang SC", "Microsoft YaHei", monospace;
+
+  .vp-page-title h1 {
+    font-family: var(--algorithm-copy-font) !important;
+    font-size: clamp(30px, 3vw, 40px) !important;
+    font-weight: 700 !important;
+    line-height: 1.4 !important;
+    letter-spacing: -0.015em !important;
+    text-wrap: balance;
+  }
+
+  .theme-hope-content {
+    font-family: var(--algorithm-copy-font) !important;
+    font-size: 18px !important;
+    line-height: 1.9 !important;
+    letter-spacing: 0.01em;
+
+    p,
+    li {
+      line-height: 1.9 !important;
+      text-align: start !important;
+    }
+
+    > p {
+      margin-block: 1em !important;
+    }
+
+    strong {
+      font-weight: 700 !important;
+    }
+
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
+      font-family: var(--algorithm-copy-font) !important;
+      line-height: 1.5 !important;
+      letter-spacing: 0.015em !important;
+      margin-bottom: 0.8rem !important;
+    }
+
+    h1 {
+      font-size: 30px !important;
+      font-weight: 700 !important;
+    }
+
+    h2 {
+      font-size: 28px !important;
+      font-weight: 700 !important;
+      padding-bottom: 0.55rem !important;
+    }
+
+    h3 {
+      font-size: 22px !important;
+      font-weight: 600 !important;
+    }
+
+    h4 {
+      font-size: 19px !important;
+      font-weight: 600 !important;
+    }
+
+    h5,
+    h6 {
+      font-size: 18px !important;
+      font-weight: 600 !important;
+    }
+
+    table {
+      font-size: 16px !important;
+      line-height: 1.75 !important;
+    }
+
+    th,
+    td {
+      padding: 0.65rem 0.8rem !important;
+      vertical-align: top !important;
+    }
+
+    th,
+    summary,
+    .hint-container-title {
+      font-weight: 600 !important;
+      line-height: 1.7 !important;
+    }
+
+    code,
+    .line-number {
+      font-family: var(--algorithm-code-font) !important;
+      letter-spacing: normal !important;
+    }
+
+    pre,
+    pre code {
+      font-family: var(--algorithm-code-font) !important;
+      font-size: 14px !important;
+      line-height: 24px !important;
+      letter-spacing: normal !important;
+    }
+
+    // 高亮层和行号使用与代码一致的行高，保持逐行对齐。
+    div[class*="language-"] .highlight-lines {
+      line-height: 24px !important;
+    }
+
+    // KaTeX 和 iframe 动画继续使用各自的字体及排版。
+  }
+
+  @media (max-width: 768px) {
+    .theme-hope-content {
+      font-size: 17px !important;
+
+      h2 {
+        font-size: 25px !important;
+      }
+
+      h3 {
+        font-size: 20px !important;
+      }
+
+      table {
+        font-size: 15px !important;
+      }
+    }
+  }
+
+  @media (max-width: 420px) {
+    .vp-page-title h1 {
+      font-size: 28px !important;
+    }
+  }
+
+  @media print {
+    .vp-page-title h1 {
+      font-size: 22pt !important;
+    }
+
+    .theme-hope-content {
+      font-size: 11pt !important;
+
+      h2 {
+        font-size: 16pt !important;
+      }
+
+      h3 {
+        font-size: 13pt !important;
+      }
+
+      table {
+        font-size: 10pt !important;
+      }
+    }
+  }
+}

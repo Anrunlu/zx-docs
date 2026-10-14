@@ -1,5 +1,6 @@
 import { defineUserConfig } from "vuepress";
 import theme from "./theme.js";
+import { algorithmDocuments } from "./plugins/algorithm-documents.mjs";
 
 export default defineUserConfig({
   base: "/",
@@ -9,6 +10,7 @@ export default defineUserConfig({
   description: "知新新知，温故知新，交流互鉴，探索发现。",
 
   theme,
+  plugins: [algorithmDocuments()],
 
   // 和 PWA 一起启用
   // shouldPrefetch: false,
