@@ -1,0 +1,1022 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>快速排序 · 严格对应文档代码与过程表</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --bg:#0d1117; --bg1:#161b22; --bg2:#21262d;
+  --border:#30363d; --border-soft:#21262d;
+  --text:#e6edf3; --mid:#8b949e; --dim:#484f58;
+  --blue:#58a6ff; --blue-deep:#1f6feb;
+  --green:#3fb950; --purple:#bc8cff; --orange:#f0883e;
+  --yellow:#d29922; --red:#f85149;
+}
+html,body{height:auto;min-height:0;}
+body{
+  background:var(--bg);color:var(--text);
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;
+  font-size:14px;line-height:1.5;-webkit-font-smoothing:antialiased;
+}
+.app{max-width:1480px;margin:0 auto;padding:18px 20px 30px;}
+
+/* 顶栏 */
+.topbar{
+  display:flex;align-items:center;justify-content:space-between;
+  flex-wrap:wrap;gap:14px;margin-bottom:16px;padding-bottom:14px;
+  border-bottom:1px solid var(--border-soft);
+}
+.brand h1{font-size:19px;font-weight:600;}
+.brand h1 span{font-size:12.5px;font-weight:400;color:var(--mid);margin-left:9px;}
+.brand p{font-size:12.5px;color:var(--mid);margin-top:3px;}
+
+.controls{display:flex;align-items:center;flex-wrap:wrap;gap:7px;}
+button{
+  font:inherit;font-size:13px;padding:6px 13px;
+  border-radius:7px;border:1px solid var(--border);
+  background:var(--bg1);color:var(--text);
+  cursor:pointer;transition:.15s;white-space:nowrap;
+}
+button:hover:not(:disabled){background:var(--bg2);border-color:var(--dim);}
+button:disabled{opacity:.35;cursor:not-allowed;}
+button.primary{
+  background:var(--blue-deep);border-color:var(--blue-deep);
+  color:#fff;font-weight:600;min-width:88px;
+}
+button.primary:hover:not(:disabled){background:#388bfd;}
+.input-group{display:flex;gap:4px;}
+input[type=text]{
+  font:inherit;font-size:13px;padding:6px 11px;
+  border-radius:7px;border:1px solid var(--border);
+  background:var(--bg);color:var(--text);width:150px;outline:none;
+}
+input[type=text]:focus{border-color:var(--blue);}
+.speed-control{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--mid);}
+input[type=range]{width:88px;accent-color:var(--blue);}
+
+/* 布局 */
+.layout{display:grid;grid-template-columns:minmax(0,1fr) 380px;gap:16px;align-items:start;}
+@media(max-width:1100px){.layout{grid-template-columns:minmax(0,1fr);}}
+.viz-col{display:flex;flex-direction:column;gap:14px;min-width:0;}
+.side-col{display:flex;flex-direction:column;gap:12px;min-width:0;}
+
+/* 画布 */
+.canvas-wrap{
+  position:relative;background:linear-gradient(180deg,#0d1520,#0a0f18);
+  border:1px solid var(--border);border-radius:12px;
+  overflow-x:auto;overflow-y:hidden;height:420px;
+}
+#arena{position:absolute;inset:0;}
+
+/* 柱子 */
+.bar{
+  position:absolute;bottom:100px;border-radius:6px 6px 3px 3px;
+  transition:left .35s cubic-bezier(.4,.05,.2,1),height .3s,background .25s,box-shadow .25s,opacity .25s;
+  display:flex;justify-content:center;z-index:2;
+}
+.bar.pending {background:linear-gradient(180deg,#3d4a5f,#2a3448);}
+.bar.small   {background:linear-gradient(180deg,#58a6ff,#1f6feb);box-shadow:0 0 16px rgba(88,166,255,.35);}
+.bar.big     {background:linear-gradient(180deg,#f0883e,#c15f1a);box-shadow:0 0 14px rgba(240,136,62,.3);}
+.bar.pivot   {background:linear-gradient(180deg,#d2a8ff,#8957e5);box-shadow:0 0 22px rgba(188,140,255,.5);}
+.bar.checking{background:linear-gradient(180deg,#f0c04a,#b8860b);box-shadow:0 0 22px rgba(210,153,34,.6);}
+.bar.settled {background:linear-gradient(180deg,#56d364,#238636);box-shadow:0 0 14px rgba(63,185,80,.4);}
+.bar.outside {background:linear-gradient(180deg,#21262d,#161b22);opacity:.45;}
+.bar-value{
+  position:absolute;top:-26px;left:50%;transform:translateX(-50%);
+  font-weight:700;color:var(--text);font-variant-numeric:tabular-nums;
+  text-shadow:0 1px 4px rgba(0,0,0,.7);pointer-events:none;white-space:nowrap;
+}
+
+/* 区间覆盖层 */
+.range-overlay{
+  position:absolute;bottom:90px;border-radius:8px;
+  border:2px solid rgba(88,166,255,.22);border-bottom:none;
+  background:linear-gradient(180deg,rgba(88,166,255,.06),transparent);
+  transition:left .3s,width .3s,opacity .25s;pointer-events:none;z-index:1;
+}
+
+/* 指针 */
+.ptr{
+  position:absolute;transform:translateX(-50%);
+  font-size:11px;font-weight:700;padding:3px 8px;
+  border-radius:5px;white-space:nowrap;
+  transition:left .3s,opacity .2s;opacity:0;z-index:10;pointer-events:none;
+  font-variant-numeric:tabular-nums;
+}
+.ptr.show{opacity:1;}
+.ptr::after{
+  content:'';position:absolute;left:50%;top:100%;transform:translateX(-50%);
+  border:4px solid transparent;border-top-color:inherit;border-bottom:none;
+}
+.ptr-i{bottom:52px;background:var(--blue);color:#0d1117;}
+.ptr-i::after{border-top-color:var(--blue);}
+.ptr-j{bottom:24px;background:var(--yellow);color:#0d1117;}
+.ptr-j::after{border-top-color:var(--yellow);}
+
+/* 叙述 */
+.narrative{
+  background:var(--bg1);border:1px solid var(--border);
+  border-left:3px solid var(--blue);border-radius:10px;
+  padding:13px 16px;min-height:76px;
+  display:flex;gap:12px;align-items:flex-start;
+}
+.phase-badge{
+  flex-shrink:0;font-size:11px;font-weight:700;
+  padding:3px 9px;border-radius:5px;letter-spacing:.5px;
+  white-space:nowrap;margin-top:2px;
+}
+.narrative .content{flex:1;font-size:14px;line-height:1.62;}
+.narrative .content b{color:var(--blue);font-weight:700;}
+.narrative .content .ok{color:var(--green);font-weight:700;}
+.narrative .content .no{color:var(--red);font-weight:700;}
+.narrative .content code{
+  font-family:ui-monospace,"SF Mono",Consolas,monospace;
+  background:rgba(88,166,255,.12);padding:1px 5px;border-radius:4px;
+  font-size:12.5px;color:#a5d6ff;
+}
+
+/* 侧栏面板 */
+.panel{background:var(--bg1);border:1px solid var(--border);border-radius:10px;overflow:hidden;}
+.panel-header{
+  padding:10px 14px;border-bottom:1px solid var(--border-soft);
+  font-size:11.5px;font-weight:700;color:var(--mid);
+  letter-spacing:.8px;text-transform:uppercase;
+  display:flex;justify-content:space-between;align-items:center;
+}
+.panel-header .hint{font-size:10.5px;font-weight:400;color:var(--dim);letter-spacing:0;text-transform:none;}
+
+/* 分治树 */
+.tree-body{max-height:230px;overflow-y:auto;padding:10px 12px;}
+.tree-body::-webkit-scrollbar{width:5px;}
+.tree-body::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px;}
+.tree-branch{display:flex;flex-direction:column;gap:3px;}
+.tree-node{
+  display:inline-flex;align-items:center;gap:5px;
+  padding:2px 9px;border-radius:5px;
+  border:1px solid var(--border);background:var(--bg2);
+  font-size:12px;font-family:ui-monospace,Consolas,monospace;
+  font-variant-numeric:tabular-nums;color:var(--mid);
+  white-space:nowrap;transition:.3s;line-height:18px;
+}
+.tree-node .p-tag{
+  font-size:10.5px;padding:0 5px;border-radius:3px;
+  background:rgba(188,140,255,.18);color:var(--purple);
+}
+.tree-node.pending     {border-color:var(--border);color:var(--dim);}
+.tree-node.active      {border-color:var(--blue);background:rgba(88,166,255,.12);color:var(--blue);animation:pulse-blue 1.8s infinite;}
+.tree-node.partitioned {border-color:var(--purple);background:rgba(188,140,255,.1);color:var(--purple);}
+.tree-node.done        {border-color:var(--green);background:rgba(63,185,80,.1);color:var(--green);}
+.tree-node.single      {border-color:var(--green);background:rgba(63,185,80,.07);color:var(--green);opacity:.85;}
+.tree-node.empty       {border-color:var(--border-soft);color:var(--dim);opacity:.55;}
+@keyframes pulse-blue{
+  0%,100%{box-shadow:0 0 0 3px rgba(88,166,255,.08);}
+  50%    {box-shadow:0 0 0 6px rgba(88,166,255,.18);}
+}
+.tree-children{
+  display:flex;flex-direction:column;gap:3px;
+  margin-left:11px;padding-left:13px;border-left:1px dashed var(--border);
+}
+
+/* 伪代码 */
+.code-body{padding:10px 14px;font-family:ui-monospace,"SF Mono",Consolas,monospace;font-size:12px;line-height:1.72;color:#7d93b3;}
+.cl{padding:0 7px;border-radius:4px;white-space:pre;transition:.15s;}
+.cl.hl{background:rgba(88,166,255,.22);color:#d9ecff;box-shadow:inset 2px 0 0 var(--blue);}
+.cl.dim{opacity:.5;}
+
+/* 过程表 */
+.table-panel{margin-top:16px;background:var(--bg1);border:1px solid var(--border);border-radius:10px;overflow:hidden;}
+.table-wrap{max-height:260px;overflow:auto;}
+.table-wrap::-webkit-scrollbar{width:6px;height:6px;}
+.table-wrap::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px;}
+table{width:100%;border-collapse:collapse;font-size:12.5px;font-variant-numeric:tabular-nums;}
+thead th{
+  position:sticky;top:0;z-index:2;
+  background:var(--bg2);color:var(--mid);
+  font-weight:600;font-size:11.5px;letter-spacing:.3px;
+  padding:8px 10px;text-align:left;white-space:nowrap;
+  border-bottom:1px solid var(--border);
+}
+tbody td{padding:6px 10px;border-bottom:1px solid var(--border-soft);white-space:nowrap;}
+tbody tr:hover{background:rgba(88,166,255,.05);}
+tbody tr.active{background:rgba(88,166,255,.16);box-shadow:inset 2px 0 0 var(--blue);}
+tbody tr.summary{background:rgba(63,185,80,.08);}
+tbody tr.summary td{color:var(--green);font-weight:600;}
+tbody tr.start-row td{color:var(--purple);font-weight:600;}
+.cell-array{font-family:ui-monospace,Consolas,monospace;color:#c9d1d9;}
+.cell-small{color:var(--blue);font-family:ui-monospace,Consolas,monospace;}
+.cell-big{color:var(--orange);font-family:ui-monospace,Consolas,monospace;}
+.cell-ok{color:var(--green);font-weight:600;}
+.cell-no{color:var(--red);font-weight:600;}
+.cell-i{text-align:center;font-weight:700;color:var(--yellow);}
+.cell-j{text-align:center;font-weight:700;color:var(--yellow);}
+
+/* 图例 */
+.legend{display:flex;flex-wrap:wrap;gap:5px 14px;font-size:12px;color:var(--mid);padding:10px 14px;}
+.legend-item{display:flex;align-items:center;gap:6px;}
+.sw{width:13px;height:13px;border-radius:3px;flex-shrink:0;}
+.sw-pivot{background:linear-gradient(180deg,#d2a8ff,#8957e5);}
+.sw-small{background:linear-gradient(180deg,#58a6ff,#1f6feb);}
+.sw-big{background:linear-gradient(180deg,#f0883e,#c15f1a);}
+.sw-check{background:linear-gradient(180deg,#f0c04a,#b8860b);}
+.sw-pending{background:linear-gradient(180deg,#3d4a5f,#2a3448);}
+.sw-settled{background:linear-gradient(180deg,#56d364,#238636);}
+.sw-outside{background:linear-gradient(180deg,#21262d,#161b22);border:1px solid var(--border);}
+
+.input-help{font-size:12px;color:var(--mid);margin:-4px 0 10px;}
+.input-error{color:#ffb4ae;font-size:13px;margin:0 0 10px;}
+.playback-status{display:flex;align-items:center;flex-wrap:wrap;gap:8px 18px;margin:0 0 14px;font-size:12px;color:var(--mid);font-variant-numeric:tabular-nums;}
+.timeline{display:flex;align-items:center;gap:8px;}
+.timeline input{width:140px;}
+.slot-index{position:absolute;bottom:77px;transform:translateX(-50%);font-size:11px;color:var(--mid);font-variant-numeric:tabular-nums;}
+.code-body{overflow-x:auto;}
+.tree-body{overflow-x:auto;}
+button:focus-visible,input:focus-visible{outline:2px solid var(--blue);outline-offset:3px;}
+@media(max-width:600px){
+  .app{padding:14px 12px 20px;}
+  .brand h1 span{display:block;margin:4px 0 0;}
+  .controls{width:100%;}
+  .narrative{padding:11px;gap:8px;flex-direction:column;}
+  .brand p{font-size:12px;}
+}
+@media(prefers-reduced-motion:reduce){
+  *,*::before,*::after{transition:none!important;animation:none!important;}
+}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="topbar">
+    <div class="brand">
+      <h1>快速排序 <span>严格对应文档代码与过程表</span></h1>
+      <p>Lomuto 划分 · 末尾基准 · <code style="font-family:ui-monospace,Consolas,monospace;color:#a5d6ff;">&lt;=</code> 归左侧 · 闭区间递归</p>
+    </div>
+    <div class="controls">
+      <button id="btnReset">↺ 重置</button>
+      <button id="btnPrev">◀ 上一步</button>
+      <button id="btnPlay" class="primary">▶ 播放</button>
+      <button id="btnNext">下一步 ▶</button>
+      <div class="input-group">
+        <input type="text" id="dataInput" value="4, 2, 5, 1, 3" aria-label="待排序整数列表" aria-describedby="inputHelp" autocomplete="off">
+        <button id="btnApply">应用</button>
+      </div>
+      <button id="btnRandom">🎲 随机</button>
+      <div class="speed-control"><span>速度</span><input type="range" aria-label="播放速度" id="speed" min="1" max="10" value="5"></div>
+    </div>
+  </div>
+
+  <p id="inputHelp" class="input-help">输入最多12个 -99 到999的整数，用逗号或空格分隔；留空可演示空列表。</p>
+  <p id="inputError" class="input-error" role="alert" hidden></p>
+  <div class="playback-status">
+    <label class="timeline">演示进度 <input id="timeline" type="range" min="0" max="1" value="0" aria-label="演示进度"></label>
+    <span id="stepStatus" role="status"></span>
+    <span id="countStatus"></span>
+  </div>
+  <div class="layout">
+    <div class="viz-col">
+      <div class="canvas-wrap"><div id="arena"></div></div>
+      <div class="narrative" id="narrative"></div>
+    </div>
+    <aside class="side-col">
+      <div class="panel">
+        <div class="panel-header">分治调用树 <span class="hint">按文档递归顺序</span></div>
+        <div class="tree-body" id="tree"></div>
+      </div>
+      <div class="panel">
+        <div class="panel-header">伪代码 <span class="hint">与文档一致</span></div>
+        <div class="code-body" id="code"></div>
+      </div>
+      <div class="panel">
+        <div class="panel-header">图例</div>
+        <div class="legend">
+          <span class="legend-item"><i class="sw sw-pivot"></i>基准</span>
+          <span class="legend-item"><i class="sw sw-check"></i>正在比较</span>
+          <span class="legend-item"><i class="sw sw-small"></i>小值区</span>
+          <span class="legend-item"><i class="sw sw-big"></i>大值区</span>
+          <span class="legend-item"><i class="sw sw-pending"></i>未处理</span>
+          <span class="legend-item"><i class="sw sw-settled"></i>已落定</span>
+          <span class="legend-item"><i class="sw sw-outside"></i>区间外</span>
+        </div>
+      </div>
+    </aside>
+  </div>
+
+  <div class="table-panel">
+    <div class="panel-header">过程表 <span class="hint">严格对应文档“扫描与交换”表 · 自动高亮当前行</span></div>
+    <div class="table-wrap" id="tableWrap">
+      <table id="processTable">
+        <thead>
+          <tr>
+            <th style="width:44px;">划分</th>
+            <th style="width:150px;">本轮操作</th>
+            <th style="width:140px;">比较结果</th>
+            <th style="width:56px;text-align:center;">i</th>
+            <th style="width:56px;text-align:center;">j</th>
+            <th>整个数组</th>
+            <th>小值区 [low, i]</th>
+            <th>大值区 [i+1, j]</th>
+          </tr>
+        </thead>
+        <tbody id="tableBody"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+'use strict';
+
+/* ===== DOM ===== */
+const arena        = document.getElementById('arena');
+const narrativeEl  = document.getElementById('narrative');
+const treeEl       = document.getElementById('tree');
+const codeEl       = document.getElementById('code');
+const tableBody    = document.getElementById('tableBody');
+const tableWrap    = document.getElementById('tableWrap');
+const btnPlay      = document.getElementById('btnPlay');
+const btnPrev      = document.getElementById('btnPrev');
+const btnNext      = document.getElementById('btnNext');
+const btnReset     = document.getElementById('btnReset');
+const btnApply     = document.getElementById('btnApply');
+const btnRandom    = document.getElementById('btnRandom');
+const dataInput    = document.getElementById('dataInput');
+const speedInput   = document.getElementById('speed');
+const timeline     = document.getElementById('timeline');
+const inputError   = document.getElementById('inputError');
+const stepStatus   = document.getElementById('stepStatus');
+const countStatus  = document.getElementById('countStatus');
+
+/* ===== 状态 ===== */
+let steps = [];
+let cur = 0;
+let timer = null;
+let barEls = new Map();
+let slot = 60, barW = 40, offsetX = 0, minV = 0, maxV = 0;
+let originalValues = [4,2,5,1,3];
+let lastTreeStr = '';
+let lastCodeStr = '';
+let lastTableLen = -1;
+
+/* 指针 / 覆盖层 */
+const rangeOverlay = document.createElement('div');
+rangeOverlay.className = 'range-overlay';
+arena.appendChild(rangeOverlay);
+
+const ptrI = document.createElement('div');
+ptrI.className = 'ptr ptr-i';
+arena.appendChild(ptrI);
+
+const ptrJ = document.createElement('div');
+ptrJ.className = 'ptr ptr-j';
+arena.appendChild(ptrJ);
+
+/* ===== 伪代码（严格对应文档） ===== */
+const CODE_LINES = [
+  'def partition(arr, low, high):',
+  '    pivot = arr[high]',
+  '    i = low - 1',
+  '    for j in range(low, high):',
+  '        if arr[j] <= pivot:',
+  '            i += 1',
+  '            arr[i], arr[j] = arr[j], arr[i]',
+  '    arr[i + 1], arr[high] = arr[high], arr[i + 1]',
+  '    return i + 1',
+  '',
+  'def quicksort(arr, low, high):',
+  '    if low >= high:',
+  '        return',
+  '    p = partition(arr, low, high)',
+  '    quicksort(arr, low, p - 1)',
+  '    quicksort(arr, p + 1, high)'
+];
+const LINE_PARTITION_DEF = 0;
+const LINE_PIVOT = 1;
+const LINE_I_INIT = 2;
+const LINE_FOR = 3;
+const LINE_IF = 4;
+const LINE_I_INC = 5;
+const LINE_SWAP = 6;
+const LINE_PIVOT_SWAP = 7;
+const LINE_RETURN = 8;
+const LINE_QS_DEF = 10;
+const LINE_BASE = 11;
+const LINE_BASE_RET = 12;
+const LINE_CALL = 13;
+const LINE_LEFT = 14;
+const LINE_RIGHT = 15;
+
+/* =====================================================
+   一、生成步骤 + 过程表行
+   ===================================================== */
+function buildSteps(values){
+  const items = values.map((v,i) => ({ id:i, v:v }));
+  const out = [];
+  const settled = new Set();
+  let comparisons = 0, swaps = 0, partitions = 0;
+  let nidCounter = 1;
+  let partitionCounter = 0;
+  let tableRows = [];
+
+  const rootNode = { low:0, high:values.length-1, status:'pending', children:[], nid:0, p:null };
+
+  function cloneTree(node){
+    if(!node) return null;
+    return {
+      low:node.low, high:node.high, status:node.status,
+      nid:node.nid, p:node.p,
+      children:node.children.map(cloneTree)
+    };
+  }
+
+  function arrStr(arr){ return '[' + arr.join(', ') + ']'; }
+
+  function snap(html, extra, activeRow){
+    const s = {
+      items: items.map(it => ({ id:it.id, v:it.v })),
+      settled: Array.from(settled),
+      tree: cloneTree(rootNode),
+      comparisons, swaps, partitions,
+      low:null, high:null, i:null, j:null,
+      pivotIdx:null, p:null,
+      phase:'idle', code:[], html:html,
+      tableRows: tableRows.map(r => Object.assign({}, r)),
+      activeRow: (activeRow === undefined ? -1 : activeRow)
+    };
+    if(extra) Object.assign(s, extra);
+    out.push(s);
+  }
+
+  if(values.length === 0){
+    rootNode.status = 'empty';
+    snap('数组为空，主调用区间为 <code>[0, -1]</code>，<code>low &gt;= high</code> 直接返回。',
+      { phase:'done', code:[LINE_BASE, LINE_BASE_RET] });
+    return out;
+  }
+
+  snap('待排序数组共有 <b>' + values.length + '</b> 个元素，主调用 <code>quicksort(0, ' +
+       (values.length-1) + ')</code>。', {
+    low:0, high:values.length-1,
+    phase:'init', code:[LINE_QS_DEF]
+  });
+
+  function partition(node){
+    const low = node.low, high = node.high;
+    const pivotVal = items[high].v;
+    let i = low - 1;
+    partitions++;
+    partitionCounter++;
+
+    snap('区间 <code>[' + low + ', ' + high + ']</code>：取末尾元素 <code>' + pivotVal +
+         '</code> 作为基准 pivot。初始化 <code>i = ' + i + '</code>（小值区为空），' +
+         '<code>j</code> 从 <code>' + low + '</code> 开始扫描。', {
+      low, high, i, j:low, pivotIdx:high,
+      phase:'pivot', code:[LINE_PARTITION_DEF, LINE_PIVOT, LINE_I_INIT]
+    });
+
+    tableRows.push({
+      kind:'start',
+      partitionIdx:partitionCounter,
+      op:'划分开始',
+      cmp:'—',
+      i:i, j:'—',
+      array: items.map(it=>it.v),
+      small: [],
+      big: []
+    });
+    let activeRow = tableRows.length - 1;
+
+    for(let j = low; j < high; j++){
+      const v = items[j].v;
+      const ok = v <= pivotVal;
+      comparisons++;
+
+      /* 先比较 */
+      snap('比较 <code>arr[' + j + '] = ' + v + '</code> 与 <code>pivot = ' + pivotVal +
+           '</code>：<span class="' + (ok?'ok':'no') + '">' + v + (ok?' ≤ ':' > ') + pivotVal +
+           '</span>。' + (ok ? ' 应归入左侧小值区。' : ' 留在右侧大值区。'), {
+        low, high, i, j, pivotIdx:high,
+        phase:'compare', code:[LINE_FOR, LINE_IF]
+      });
+
+      if(ok){
+        i++;
+        if(i !== j){
+          swaps++;
+          const t = items[i]; items[i] = items[j]; items[j] = t;
+          snap('令 <code>i = ' + i + '</code>，交换 <code>arr[' + i + ']</code> 与 <code>arr[' +
+               j + ']</code>。小值区右端扩展；被换到 j 处的大值元素仍留在已处理区。', {
+            low, high, i, j, pivotIdx:high,
+            phase:'swap', code:[LINE_I_INC, LINE_SWAP]
+          });
+        }else{
+          snap('令 <code>i = ' + i + '</code>，与 j 重合，当前元素本就在小值区边界，无需交换。', {
+            low, high, i, j, pivotIdx:high,
+            phase:'swap', code:[LINE_I_INC]
+          });
+        }
+      }
+
+      /* 记录扫描行（操作后） */
+      const arrVals = items.map(it=>it.v);
+      const smallVals = (i >= low) ? arrVals.slice(low, i+1) : [];
+      const bigVals = (j >= i+1) ? arrVals.slice(i+1, j+1) : [];
+      tableRows.push({
+        kind:'scan',
+        partitionIdx:partitionCounter,
+        op:'j = ' + j + '，检查' + v,
+        cmp:v + ' <= ' + pivotVal + ' 为' + (ok ? '真' : '假'),
+        i:i, j:j,
+        array:arrVals,
+        small:smallVals,
+        big:bigVals
+      });
+      activeRow = tableRows.length - 1;
+
+      snap((ok ? '本轮检查值 ' + v + ' ≤ ' + pivotVal + '，已归入小值区。' :
+                 '本轮检查值 ' + v + ' > ' + pivotVal + '，留在右侧大值区。') +
+           ' 本轮操作后 <code>i = ' + i + '</code>，小值区 <code>' +
+           (smallVals.length ? arrStr(smallVals) : '空') + '</code>，大值区 <code>' +
+           (bigVals.length ? arrStr(bigVals) : '空') + '</code>。', {
+        low, high, i, j, pivotIdx:high,
+        phase:'scan', code:[LINE_FOR, LINE_IF]
+      }, activeRow);
+    }
+
+    const p = i + 1;
+    if(p !== high){
+      swaps++;
+      const t = items[p]; items[p] = items[high]; items[high] = t;
+    }
+    settled.add(p);
+
+    tableRows.push({
+      kind:'summary',
+      partitionIdx:partitionCounter,
+      op:'划分完成，基准 ' + pivotVal + ' 落在 p = ' + p,
+      cmp:'—',
+      i:i, j:'—',
+      array: items.map(it=>it.v),
+      small: items.slice(low, p).map(it=>it.v),
+      big: items.slice(p+1, high+1).map(it=>it.v)
+    });
+    activeRow = tableRows.length - 1;
+
+    snap('扫描结束。把基准 <b>' + pivotVal + '</b> 换到下标 <b>' + p +
+         '</b>：<code>arr[' + p + '] = ' + pivotVal + '</code>。' +
+         '左侧全部 ≤ 基准，右侧全部 &gt; 基准，基准位置已落定，不再参与递归。', {
+      low, high, i, j:null, pivotIdx:p, p:p,
+      phase:'placed', code:[LINE_PIVOT_SWAP, LINE_RETURN]
+    }, activeRow);
+
+    return p;
+  }
+
+  function quicksort(node){
+    const low = node.low, high = node.high;
+
+    if(low > high){
+      node.status = 'empty';
+      snap('调用 <code>quicksort(' + low + ', ' + high + ')</code>：空区间，' +
+           '<code>low &gt; high</code>，直接返回。', {
+        low, high, phase:'empty', code:[LINE_BASE, LINE_BASE_RET]
+      });
+      return;
+    }
+
+    if(low === high){
+      settled.add(low);
+      node.status = 'single';
+      snap('调用 <code>quicksort(' + low + ', ' + high + ')</code>：单元素区间，' +
+           '<code>low == high</code>，天然有序，直接返回。', {
+        low, high, i:low, pivotIdx:low,
+        phase:'single', code:[LINE_BASE, LINE_BASE_RET]
+      });
+      return;
+    }
+
+    node.status = 'active';
+    snap('进入 <code>quicksort(' + low + ', ' + high + ')</code>：对闭区间 [' + low +
+         ', ' + high + '] 执行一次划分。', {
+      low, high, phase:'enter', code:[LINE_QS_DEF, LINE_BASE]
+    });
+
+    const p = partition(node);
+
+    node.status = 'partitioned';
+    node.p = p;
+    const left  = { low, high:p-1, status:'pending', children:[], nid:nidCounter++, p:null };
+    const right = { low:p+1, high, status:'pending', children:[], nid:nidCounter++, p:null };
+    node.children.push(left, right);
+
+    snap('基准落在 <b>p = ' + p + '</b>。排除基准位置后，左右两个子问题分别为 ' +
+         '<code>[' + low + ', ' + (p-1) + ']</code> 与 <code>[' + (p+1) + ', ' + high +
+         ']</code>。规模严格缩小——这就是分治的“分”。', {
+      low, high, p, pivotIdx:p,
+      phase:'split', code:[LINE_LEFT, LINE_RIGHT]
+    });
+
+    quicksort(left);
+    quicksort(right);
+
+    node.status = 'done';
+    snap('区间 <code>[' + low + ', ' + high + ']</code> 的左右子问题均已有序，' +
+         '加上已落定的基准 <b>' + items[p].v + '</b>，整个区间自然有序，返回上层。', {
+      low, high, phase:'leave', code:[]
+    });
+  }
+
+  quicksort(rootNode);
+
+  snap('排序完成。回顾：快速排序在递归之前用一次划分建立了左右两侧的大小关系，' +
+       '所以两侧排好后整体自然有序，<b>不需要合并</b>。', {
+    phase:'done', code:[]
+  });
+
+  return out;
+}
+
+/* =====================================================
+   二、布局与渲染
+   ===================================================== */
+function computeLayout(){
+  if(!steps.length) return;
+  const n = steps[0].items.length;
+  arena.style.minWidth = Math.max(320, n * 48 + 72) + 'px';
+  const w = arena.clientWidth || 800;
+  const usableW = w - 90;
+  slot = usableW / Math.max(n, 1);
+  barW = Math.max(26, Math.min(72, slot * 0.6));
+  offsetX = (w - n * slot) / 2;
+
+  const vals = steps[0].items.map(it=>it.v);
+  if(vals.length){
+    minV = Math.min.apply(null, vals);
+    maxV = Math.max.apply(null, vals);
+  }
+}
+
+function barHeight(v){
+  if(maxV === minV) return 140;
+  return 50 + ((v - minV) / (maxV - minV)) * 210;
+}
+
+function buildBars(items){
+  barEls.forEach(el => el.remove());
+  barEls.clear();
+  arena.querySelectorAll('.slot-index').forEach(el => el.remove());
+  items.forEach(function(item){
+    const el = document.createElement('div');
+    el.className = 'bar pending';
+    const val = document.createElement('div');
+    val.className = 'bar-value';
+    val.textContent = item.v;
+    el.appendChild(val);
+    arena.appendChild(el);
+    barEls.set(item.id, el);
+    const index = document.createElement('div');
+    index.className = 'slot-index';
+    index.textContent = items.indexOf(item);
+    arena.appendChild(index);
+  });
+}
+
+function renderBars(step){
+  arena.querySelectorAll('.slot-index').forEach(function(el, idx){
+    el.style.left = (offsetX + idx * slot + slot / 2) + 'px';
+  });
+  step.items.forEach(function(item, idx){
+    const el = barEls.get(item.id);
+    if(!el) return;
+
+    const low = step.low, high = step.high;
+    const i = step.i, j = step.j, pivotIdx = step.pivotIdx;
+
+    let cls = 'bar';
+    if(step.settled.indexOf(idx) !== -1) cls += ' settled';
+    else if(pivotIdx !== null && pivotIdx !== undefined && idx === pivotIdx) cls += ' pivot';
+    else if(low === null || idx < low || idx > high) cls += ' outside';
+    else if(step.phase === 'compare' && idx === j) cls += ' checking';
+    else if(i !== null && i !== undefined && idx >= low && idx <= i) cls += ' small';
+    else if(i !== null && i !== undefined && j !== null && j !== undefined && idx > i && (idx < j || (step.phase !== 'compare' && idx === j))) cls += ' big';
+    else cls += ' pending';
+
+    if(el.className !== cls) el.className = cls;
+    el.style.left = (offsetX + idx * slot + (slot - barW) / 2) + 'px';
+    el.style.width = barW + 'px';
+    el.style.height = barHeight(item.v) + 'px';
+
+    const val = el.querySelector('.bar-value');
+    if(val) val.style.fontSize = Math.max(11, Math.min(15, barW * 0.35)) + 'px';
+  });
+}
+
+function renderRange(step){
+  if(step.low === null || step.high === null || step.low > step.high){
+    rangeOverlay.style.opacity = 0;
+    return;
+  }
+  rangeOverlay.style.opacity = 1;
+  rangeOverlay.style.left = (offsetX + step.low * slot + 4) + 'px';
+  rangeOverlay.style.width = ((step.high - step.low + 1) * slot - 8) + 'px';
+  rangeOverlay.style.height = (barHeight(maxV) + 20) + 'px';
+}
+
+function renderPointers(step){
+  /* i 指针 */
+  if(step.i !== null && step.i !== undefined && step.low !== null && step.high !== null && step.low <= step.high){
+    let x;
+    if(step.i >= step.low) x = offsetX + step.i * slot + slot / 2;
+    else x = offsetX + step.low * slot + 2;
+    ptrI.style.left = x + 'px';
+    ptrI.textContent = 'i = ' + step.i;
+    ptrI.classList.add('show');
+  }else{
+    ptrI.classList.remove('show');
+  }
+  /* j 指针 */
+  if(step.j !== null && step.j !== undefined && step.low !== null && step.high !== null && step.low <= step.high){
+    const x = offsetX + step.j * slot + slot / 2;
+    ptrJ.style.left = x + 'px';
+    ptrJ.textContent = 'j = ' + step.j;
+    ptrJ.classList.add('show');
+  }else{
+    ptrJ.classList.remove('show');
+  }
+}
+
+const PHASE_LABELS = {
+  init:'初始化', enter:'进入区间', pivot:'选取基准',
+  compare:'比较', swap:'交换', scan:'记录', placed:'基准落定',
+  split:'分治拆分', empty:'空区间', single:'单元素',
+  leave:'递归返回', done:'完成', idle:'步骤'
+};
+const PHASE_COLORS = {
+  init:'#8b949e', enter:'#58a6ff', pivot:'#bc8cff',
+  compare:'#d29922', swap:'#f0883e', scan:'#58a6ff', placed:'#3fb950',
+  split:'#bc8cff', empty:'#8b949e', single:'#3fb950',
+  leave:'#8b949e', done:'#3fb950', idle:'#8b949e'
+};
+
+function renderNarrative(step){
+  const label = PHASE_LABELS[step.phase] || '步骤';
+  const color = PHASE_COLORS[step.phase] || '#8b949e';
+  narrativeEl.innerHTML =
+    '<div class="phase-badge" style="background:' + color + ';color:#0d1117;">' + label + '</div>' +
+    '<div class="content">' + step.html + '</div>';
+}
+
+function treeHtml(node){
+  if(!node) return '<div style="color:#484f58;font-size:12px;font-style:italic;">（空数组，无递归调用）</div>';
+  let html = '<div class="tree-branch">';
+  let label = 'quicksort(' + node.low + ', ' + node.high + ')';
+  let pTag = '';
+  if(node.p !== null && node.p !== undefined){
+    pTag = '<span class="p-tag">p = ' + node.p + '</span>';
+  }
+  html += '<div class="tree-node ' + node.status + '">' + label + pTag + '</div>';
+  if(node.children.length > 0){
+    html += '<div class="tree-children">';
+    node.children.forEach(function(child){ html += treeHtml(child); });
+    html += '</div>';
+  }
+  html += '</div>';
+  return html;
+}
+
+function renderTree(tree){
+  const str = treeHtml(tree);
+  if(str !== lastTreeStr){
+    lastTreeStr = str;
+    treeEl.innerHTML = str;
+    const active = treeEl.querySelector('.tree-node.active');
+    if(active){
+      const activeTop = active.getBoundingClientRect().top - treeEl.getBoundingClientRect().top + treeEl.scrollTop;
+      if(activeTop < treeEl.scrollTop || activeTop + active.offsetHeight > treeEl.scrollTop + treeEl.clientHeight){
+        treeEl.scrollTop = activeTop - 16;
+      }
+    }
+  }
+}
+
+function renderCode(step){
+  const key = (step.code || []).join(',');
+  if(key === lastCodeStr) return;
+  lastCodeStr = key;
+  const hl = {};
+  (step.code || []).forEach(k => hl[k] = true);
+  codeEl.innerHTML = CODE_LINES.map(function(line, k){
+    const safe = line ? line.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;') : '&nbsp;';
+    return '<div class="cl' + (hl[k] ? ' hl' : '') + '">' + safe + '</div>';
+  }).join('');
+}
+
+function fmtArr(arr, cls){
+  const text = arr.length ? '[' + arr.join(', ') + ']' : '空';
+  return '<span class="' + cls + '">' + text + '</span>';
+}
+
+function renderTable(step){
+  const rows = step.tableRows;
+  if(rows.length !== lastTableLen){
+    lastTableLen = rows.length;
+    let html = '';
+    rows.forEach(function(r, idx){
+      const active = idx === step.activeRow ? ' active' : '';
+      if(r.kind === 'start'){
+        html += '<tr class="start-row' + active + '">' +
+          '<td>#' + r.partitionIdx + '</td>' +
+          '<td>划分开始</td>' +
+          '<td>—</td>' +
+          '<td class="cell-i">' + r.i + '</td>' +
+          '<td class="cell-j">—</td>' +
+          '<td class="cell-array">' + fmtArr(r.array,'cell-array') + '</td>' +
+          '<td>' + fmtArr(r.small,'cell-small') + '</td>' +
+          '<td>' + fmtArr(r.big,'cell-big') + '</td>' +
+        '</tr>';
+      }else if(r.kind === 'summary'){
+        html += '<tr class="summary' + active + '">' +
+          '<td>#' + r.partitionIdx + '</td>' +
+          '<td colspan="2">' + r.op + '</td>' +
+          '<td class="cell-i">' + r.i + '</td>' +
+          '<td class="cell-j">—</td>' +
+          '<td class="cell-array">' + fmtArr(r.array,'cell-array') + '</td>' +
+          '<td>' + fmtArr(r.small,'cell-small') + '</td>' +
+          '<td>' + fmtArr(r.big,'cell-big') + '</td>' +
+        '</tr>';
+      }else{
+        const ok = r.cmp.indexOf('为真') !== -1;
+        html += '<tr class="' + active + '">' +
+          '<td>#' + r.partitionIdx + '</td>' +
+          '<td>' + r.op + '</td>' +
+          '<td class="' + (ok?'cell-ok':'cell-no') + '">' + r.cmp + '</td>' +
+          '<td class="cell-i">' + r.i + '</td>' +
+          '<td class="cell-j">' + r.j + '</td>' +
+          '<td class="cell-array">' + fmtArr(r.array,'cell-array') + '</td>' +
+          '<td>' + fmtArr(r.small,'cell-small') + '</td>' +
+          '<td>' + fmtArr(r.big,'cell-big') + '</td>' +
+        '</tr>';
+      }
+    });
+    tableBody.innerHTML = html;
+  }else{
+    /* 行数不变时只更新高亮 */
+    Array.prototype.forEach.call(tableBody.children, function(tr, idx){
+      tr.classList.toggle('active', idx === step.activeRow);
+    });
+  }
+
+  /* 自动滚动到高亮行 */
+  const activeTr = tableBody.querySelector('tr.active');
+  if(activeTr){
+    const trTop = activeTr.getBoundingClientRect().top - tableWrap.getBoundingClientRect().top + tableWrap.scrollTop;
+    const wrapTop = tableWrap.scrollTop;
+    const wrapH = tableWrap.clientHeight;
+    if(trTop < wrapTop + 40 || trTop + activeTr.offsetHeight > wrapTop + wrapH - 20){
+      tableWrap.scrollTop = trTop - 40;
+    }
+  }
+}
+
+function render(){
+  const step = steps[cur];
+  if(!step) return;
+  renderBars(step);
+  renderRange(step);
+  renderPointers(step);
+  renderNarrative(step);
+  renderTree(step.tree);
+  renderCode(step);
+  renderTable(step);
+  timeline.value = cur;
+  stepStatus.textContent = '步骤 ' + (cur + 1) + ' / ' + steps.length;
+  countStatus.textContent = '比较 ' + step.comparisons + ' 次 · 划分 ' + step.partitions + ' 次 · 交换（不同下标）' + step.swaps + ' 次';
+
+  btnPrev.disabled = cur === 0;
+  btnNext.disabled = cur === steps.length - 1;
+  if(cur === steps.length - 1) pause();
+}
+
+/* =====================================================
+   三、播放控制
+   ===================================================== */
+function delayMs(){
+  return Math.round(1600 / Number(speedInput.value)) + 80;
+}
+
+function play(){
+  if(timer) return;
+  if(cur >= steps.length - 1) cur = 0;
+  btnPlay.textContent = '⏸ 暂停';
+  timer = setInterval(function(){
+    if(cur >= steps.length - 1){ pause(); return; }
+    cur++;
+    render();
+  }, delayMs());
+}
+
+function pause(){
+  if(timer){ clearInterval(timer); timer = null; }
+  btnPlay.textContent = '▶ 播放';
+}
+
+function go(delta){
+  pause();
+  const nc = cur + delta;
+  if(nc < 0 || nc >= steps.length) return;
+  cur = nc;
+  render();
+}
+
+/* =====================================================
+   四、载入
+   ===================================================== */
+function load(values){
+  pause();
+  inputError.hidden = true;
+  inputError.textContent = '';
+  dataInput.removeAttribute('aria-invalid');
+
+  originalValues = values.slice();
+  steps = buildSteps(values);
+  timeline.max = steps.length - 1;
+  timeline.disabled = steps.length === 1;
+  cur = 0;
+  lastTreeStr = '';
+  lastCodeStr = '';
+  lastTableLen = -1;
+
+  buildBars(steps[0].items);
+  computeLayout();
+  render();
+}
+
+function parseInput(){
+  const raw = dataInput.value.trim();
+  if(!raw) return [];
+  const tokens = raw.split(/[,\s，]+/);
+  if(tokens.length > 12 || tokens.some(token => !/^[+-]?\d+$/.test(token))){
+    throw new Error('请输入最多12个整数，用逗号或空格分隔；不要输入小数或其他字符。');
+  }
+  const values = tokens.map(Number);
+  if(values.some(value => !Number.isSafeInteger(value) || value < -99 || value > 999)){
+    throw new Error('每个整数须在 -99 到999之间，请修改后重新应用。');
+  }
+  return values;
+}
+
+/* =====================================================
+   五、事件
+   ===================================================== */
+btnPlay.addEventListener('click', function(){ if(timer) pause(); else play(); });
+btnPrev.addEventListener('click', function(){ go(-1); });
+btnNext.addEventListener('click', function(){ go(1); });
+btnReset.addEventListener('click', function(){
+  pause();
+  dataInput.value = originalValues.join(', ');
+  load(originalValues);
+});
+btnApply.addEventListener('click', function(){
+  pause();
+  try{ load(parseInput()); }
+  catch(error){
+    inputError.textContent = error.message;
+    inputError.hidden = false;
+    dataInput.setAttribute('aria-invalid', 'true');
+  }
+});
+btnRandom.addEventListener('click', function(){
+  const n = 5 + Math.floor(Math.random() * 4);
+  const arr = [];
+  for(let k = 0; k < n; k++) arr.push(Math.floor(Math.random() * 90) + 5);
+  dataInput.value = arr.join(', ');
+  load(arr);
+});
+dataInput.addEventListener('keydown', function(e){ if(e.key === 'Enter') btnApply.click(); });
+speedInput.addEventListener('input', function(){ if(timer){ pause(); play(); } });
+timeline.addEventListener('input', function(){ pause(); cur = Number(timeline.value); render(); });
+document.addEventListener('visibilitychange', function(){ if(document.hidden) pause(); });
+document.addEventListener('keydown', function(e){
+  if(e.target.tagName === 'INPUT') return;
+  if(e.key === 'ArrowLeft'){ go(-1); e.preventDefault(); }
+  if(e.key === 'ArrowRight'){ go(1); e.preventDefault(); }
+  if(e.key === ' '){ btnPlay.click(); e.preventDefault(); }
+});
+
+let resizeTimer = null;
+window.addEventListener('resize', function(){
+  clearTimeout(resizeTimer);
+  resizeTimer = setTimeout(function(){
+    if(!steps.length) return;
+    computeLayout();
+    render();
+  }, 100);
+});
+
+/* ===== 启动 ===== */
+load([4, 2, 5, 1, 3]);
+})();
+</script>
+</body>
+</html>

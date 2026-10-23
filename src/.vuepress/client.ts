@@ -14,5 +14,6 @@ export default defineClientConfig({
     app.component("LightsOutAnimation", defineAsyncComponent(() => import("./components/LightsOutAnimation.vue")));
     app.component("MergeSortAnimation", defineAsyncComponent(() => import("./components/MergeSortAnimation.vue")));
     app.component("InversionsAnimation", defineAsyncComponent(() => import("./components/InversionsAnimation.vue")));
+    app.component("QuickSortAnimation", defineAsyncComponent(() => import("./components/QuickSortAnimation.vue")));
   },
 });
