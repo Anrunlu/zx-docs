@@ -1,0 +1,1170 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>最大子数组和 · 动态规划求解过程</title>
+<style>
+  * { box-sizing: border-box; }
+
+  :root {
+    --blue: #2563eb;
+    --violet: #7c3aed;
+    --green: #10b981;
+    --amber: #f59e0b;
+    --ink: #1e293b;
+    --muted: #64748b;
+    --line: #e2e8f0;
+  }
+
+  body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC",
+                 "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+    background: #f1f5f9;
+    color: var(--ink);
+    line-height: 1.65;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ============ 顶部 ============ */
+  .hero {
+    background: linear-gradient(135deg, #0f766e 0%, #2563eb 55%, #7c3aed 100%);
+    color: #fff;
+    padding: 44px 24px 38px;
+    text-align: center;
+    box-shadow: 0 6px 24px rgba(37, 99, 235, .24);
+  }
+  .hero h1 {
+    margin: 0 0 8px;
+    font-size: clamp(25px, 4.4vw, 37px);
+    letter-spacing: 2px;
+    font-weight: 800;
+  }
+  .hero p {
+    margin: 0;
+    opacity: .9;
+    font-size: 15px;
+    letter-spacing: .5px;
+  }
+
+  main {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 26px 18px 60px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  /* ============ 卡片 ============ */
+  .card {
+    background: #fff;
+    border-radius: 16px;
+    padding: 22px 24px;
+    box-shadow: 0 2px 14px rgba(15, 23, 42, .07);
+    border: 1px solid #e8eef5;
+  }
+  .card h2 {
+    margin: 0 0 14px;
+    font-size: 17px;
+    display: flex;
+    align-items: center;
+    gap: 9px;
+  }
+  .card h2::before {
+    content: "";
+    width: 4px;
+    height: 17px;
+    border-radius: 3px;
+    background: linear-gradient(180deg, #2563eb, #7c3aed);
+  }
+  .desc { margin: 0 0 14px; color: #475569; font-size: 14.5px; }
+
+  code {
+    background: #eef2ff;
+    color: #4338ca;
+    padding: 1px 6px;
+    border-radius: 5px;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-size: .92em;
+  }
+
+  /* ============ 输入 ============ */
+  .input-row { display: flex; gap: 10px; flex-wrap: wrap; }
+  #numsInput {
+    flex: 1;
+    min-width: 210px;
+    font: inherit;
+    font-family: ui-monospace, monospace;
+    padding: 10px 14px;
+    border-radius: 10px;
+    border: 1.5px solid #cbd5e1;
+    outline: none;
+    transition: all .18s;
+    background: #f8fafc;
+  }
+  #numsInput:focus {
+    border-color: var(--blue);
+    background: #fff;
+    box-shadow: 0 0 0 4px rgba(37, 99, 235, .13);
+  }
+  .presets { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+  .chip {
+    font: inherit;
+    font-size: 13px;
+    padding: 6px 13px;
+    border-radius: 999px;
+    border: 1.5px solid #dbe3ee;
+    background: #f8fafc;
+    color: #475569;
+    cursor: pointer;
+    transition: all .18s;
+  }
+  .chip:hover { border-color: var(--blue); color: #1d4ed8; background: #eff6ff; }
+  .chip.active { background: var(--blue); border-color: var(--blue); color: #fff; }
+
+  /* ============ 公式 ============ */
+  .formula { display: flex; flex-direction: column; gap: 10px; }
+  .f-line { color: #334155; font-size: 15px; }
+  .f-line.big {
+    font-family: ui-monospace, monospace;
+    font-size: 16px;
+    font-weight: 700;
+    background: #f5f3ff;
+    color: #5b21b6;
+    padding: 12px 16px;
+    border-radius: 10px;
+    border-left: 4px solid var(--violet);
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+  .f-line.big.green {
+    background: #ecfdf5;
+    color: #047857;
+    border-left-color: var(--green);
+  }
+  .f-sub { font-size: 13.5px; color: var(--muted); display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+  .tag {
+    display: inline-block;
+    padding: 2px 9px;
+    border-radius: 6px;
+    font-size: 12.5px;
+    font-weight: 700;
+    white-space: nowrap;
+  }
+  .tag.blue  { background: #dbeafe; color: #1d4ed8; }
+  .tag.amber { background: #fef3c7; color: #b45309; }
+  .tag.green { background: #d1fae5; color: #047857; }
+  .tag.violet{ background: #ede9fe; color: #6d28d9; }
+
+  /* ============ Tabs ============ */
+  .tabs {
+    display: flex;
+    gap: 6px;
+    background: #f1f5f9;
+    padding: 5px;
+    border-radius: 11px;
+    margin-bottom: 18px;
+  }
+  .tab-btn {
+    flex: 1;
+    font: inherit;
+    font-weight: 700;
+    font-size: 14px;
+    padding: 9px 12px;
+    border: none;
+    border-radius: 8px;
+    background: transparent;
+    color: var(--muted);
+    cursor: pointer;
+    transition: all .2s;
+  }
+  .tab-btn:hover { color: #1d4ed8; }
+  .tab-btn.active {
+    background: #fff;
+    color: #1d4ed8;
+    box-shadow: 0 2px 8px rgba(15, 23, 42, .1);
+  }
+
+  .pane { display: none; }
+  .pane.active { display: block; }
+
+  /* ============ 数组可视化 ============ */
+  .arr-wrap {
+    overflow-x: auto;
+    padding: 14px 4px 10px;
+    display: flex;
+    justify-content: center;
+  }
+  .arr {
+    display: flex;
+    gap: 8px;
+    width: max-content;
+    padding: 4px 0 8px;
+  }
+  .acell {
+    flex: 0 0 auto;
+    width: 66px;
+    border-radius: 12px;
+    background: #f8fafc;
+    border: 2px solid var(--line);
+    padding: 7px 3px 5px;
+    text-align: center;
+    transition: transform .22s ease, background .22s ease,
+                border-color .22s ease, box-shadow .22s ease;
+    position: relative;
+  }
+  .acell .idx { font-size: 10.5px; color: #94a3b8; font-family: ui-monospace, monospace; }
+  .acell .num { font-size: 21px; font-weight: 800; color: #1e293b; line-height: 1.25; }
+  .acell .dpv {
+    margin-top: 4px;
+    font-family: ui-monospace, monospace;
+    font-size: 13.5px;
+    font-weight: 700;
+    color: var(--violet);
+    background: #f5f3ff;
+    border-radius: 6px;
+    padding: 2px 0;
+    transition: all .2s;
+  }
+  .acell .dpv.pending { color: #cbd5e1; background: #f1f5f9; }
+  .acell .mark {
+    height: 3px;
+    margin-top: 5px;
+    border-radius: 2px;
+    background: transparent;
+    transition: background .2s;
+  }
+  .acell.best .mark { background: var(--green); }
+
+  .acell.cur {
+    border-color: var(--blue);
+    background: #eff6ff;
+    transform: translateY(-4px);
+    box-shadow: 0 8px 18px rgba(37, 99, 235, .22);
+  }
+  .acell.prev {
+    border-color: var(--amber);
+    background: #fffbeb;
+  }
+  .acell.prev .dpv { background: #fef3c7; color: #b45309; }
+  .acell.cur .dpv { background: #dbeafe; color: #1d4ed8; }
+
+  .empty-hint {
+    color: #94a3b8;
+    font-size: 14px;
+    padding: 26px 12px;
+    text-align: center;
+    width: 100%;
+  }
+
+  .legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    justify-content: center;
+    font-size: 12.5px;
+    color: var(--muted);
+    margin-top: 4px;
+  }
+  .legend span { display: inline-flex; align-items: center; gap: 6px; }
+  .legend i {
+    width: 13px; height: 13px; border-radius: 4px; display: inline-block;
+  }
+  .lg-cur  { background: #dbeafe; border: 2px solid var(--blue); }
+  .lg-prev { background: #fef3c7; border: 2px solid var(--amber); }
+  .lg-best { background: var(--green); height: 4px !important; border-radius: 2px !important; width: 16px !important; }
+
+  /* ============ 计算面板 ============ */
+  .calc {
+    background: #f8fafc;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 16px 18px;
+    margin-top: 14px;
+    min-height: 110px;
+  }
+  .line { margin: 5px 0; font-size: 14.5px; color: #334155; }
+  .line.title { font-weight: 700; color: #0f172a; font-size: 15px; margin-bottom: 10px; }
+  .line.note { font-size: 13px; color: var(--muted); }
+  .line b { color: #0f172a; }
+  .line.result {
+    margin-top: 14px;
+    background: #ecfdf5;
+    border-left: 4px solid var(--green);
+    padding: 9px 14px;
+    border-radius: 8px;
+    font-size: 15.5px;
+    color: #065f46;
+  }
+  .line.result b { color: #047857; font-size: 19px; }
+  .line.warn {
+    background: #fffbeb;
+    border-left: 4px solid var(--amber);
+    padding: 8px 14px;
+    border-radius: 8px;
+    font-size: 13.5px;
+    color: #92400e;
+  }
+
+  .cmp { display: flex; gap: 10px; align-items: stretch; margin: 12px 0; flex-wrap: wrap; }
+  .opt {
+    flex: 1;
+    min-width: 160px;
+    background: #fff;
+    border: 2px solid var(--line);
+    border-radius: 11px;
+    padding: 10px 14px;
+    transition: all .25s;
+  }
+  .opt.win {
+    border-color: var(--green);
+    background: #f0fdf4;
+    box-shadow: 0 5px 16px rgba(16, 185, 129, .16);
+  }
+  .opt-label { font-size: 12.5px; color: var(--muted); font-weight: 600; }
+  .opt-expr {
+    font-family: ui-monospace, monospace;
+    font-size: 13px;
+    color: var(--muted);
+    margin: 3px 0;
+    word-break: break-all;
+  }
+  .opt-val { font-size: 23px; font-weight: 800; color: #334155; line-height: 1.2; }
+  .opt.win .opt-val { color: #059669; }
+  .vs { align-self: center; font-size: 12px; font-weight: 800; color: #cbd5e1; }
+
+  .rolling {
+    margin-top: 14px;
+    padding-top: 13px;
+    border-top: 1px dashed #cbd5e1;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 7px;
+    align-items: center;
+    font-family: ui-monospace, monospace;
+    font-size: 12.5px;
+  }
+  .rv { background: #eef2ff; color: #4338ca; padding: 4px 10px; border-radius: 7px; }
+  .rv.new { background: #d1fae5; color: #047857; }
+  .rv.after { background: #e0f2fe; color: #0369a1; }
+  .arrow { color: #cbd5e1; font-weight: 700; }
+
+  /* ============ 分治树 ============ */
+  .dc-scroll { overflow-x: auto; padding: 10px 4px 20px; }
+  .dc-tree { width: max-content; margin: 0 auto; }
+  .dc-node { display: flex; flex-direction: column; align-items: center; }
+  .dc-children { display: flex; gap: 14px; margin-top: 20px; position: relative; }
+  .dc-children > .dc-node { position: relative; }
+  .dc-children > .dc-node::before {
+    content: "";
+    position: absolute;
+    top: -10px;
+    left: 50%;
+    width: 2px;
+    height: 10px;
+    background: #cbd5e1;
+  }
+  .dc-box {
+    background: #fff;
+    border: 2px solid #c7d2fe;
+    border-radius: 10px;
+    padding: 7px 10px;
+    min-width: 118px;
+    text-align: center;
+    transition: all .22s;
+  }
+  .dc-box.pending {
+    border-color: #e2e8f0;
+    background: #f8fafc;
+    opacity: .5;
+  }
+  .dc-box.fresh {
+    border-color: var(--green);
+    background: #ecfdf5;
+    box-shadow: 0 6px 16px rgba(16, 185, 129, .2);
+    animation: pop .45s cubic-bezier(.34, 1.56, .64, 1);
+  }
+  @keyframes pop {
+    0% { transform: scale(.92); }
+    55% { transform: scale(1.07); }
+    100% { transform: scale(1); }
+  }
+  .dc-range {
+    font-family: ui-monospace, monospace;
+    font-size: 11px;
+    color: #6366f1;
+    font-weight: 700;
+    margin-bottom: 4px;
+  }
+  .dc-box.pending .dc-range { color: #94a3b8; }
+  .dc-vals {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1px 8px;
+    font-size: 11px;
+    color: var(--muted);
+  }
+  .dc-vals span { display: flex; justify-content: space-between; gap: 4px; }
+  .dc-vals b {
+    color: #1e293b;
+    font-family: ui-monospace, monospace;
+    font-size: 11.5px;
+  }
+  .dc-box.pending .dc-vals b { color: #cbd5e1; }
+  .dc-box.fresh .dc-vals b { color: #047857; }
+
+  /* ============ 控制条 ============ */
+  .controls {
+    display: flex;
+    gap: 9px;
+    flex-wrap: wrap;
+    align-items: center;
+    margin-top: 16px;
+  }
+  button {
+    font: inherit;
+    font-weight: 600;
+    padding: 9px 17px;
+    border-radius: 9px;
+    border: 1.5px solid #cbd5e1;
+    background: #fff;
+    color: #334155;
+    cursor: pointer;
+    transition: all .18s;
+  }
+  button:hover:not(:disabled) {
+    border-color: var(--blue);
+    color: #1d4ed8;
+    background: #eff6ff;
+  }
+  button:disabled { opacity: .38; cursor: not-allowed; }
+  button.primary { background: var(--blue); border-color: var(--blue); color: #fff; }
+  button.primary:hover:not(:disabled) { background: #1d4ed8; border-color: #1d4ed8; color: #fff; }
+  .step-label {
+    margin-left: auto;
+    font-size: 13px;
+    color: var(--muted);
+    font-family: ui-monospace, monospace;
+    background: #f1f5f9;
+    padding: 6px 12px;
+    border-radius: 8px;
+  }
+
+  /* ============ 提示 ============ */
+  .tips { margin: 0; padding-left: 20px; color: #475569; font-size: 14.5px; }
+  .tips li { margin: 8px 0; }
+  .tips b { color: #0f172a; }
+
+  @media (max-width: 620px) {
+    .card { padding: 18px 15px; }
+    .acell { width: 58px; }
+    .acell .num { font-size: 18px; }
+    .step-label { margin-left: 0; width: 100%; text-align: center; }
+    .dc-children { gap: 8px; }
+    .dc-box { min-width: 98px; padding: 6px 7px; }
+  }
+
+  main, .card { min-width:0; }
+  #numsInput { min-width:0; width:100%; }
+  #inputHelp { margin-top:12px; font-size:13px; }
+  #inputError { color:#b91c1c; }
+  button:focus-visible,input:focus-visible { outline:2px solid var(--blue); outline-offset:3px; }
+  @media(max-width:620px) { main { padding:16px 10px 30px; } .hero { padding:26px 16px; } .cmp { flex-direction:column; } .opt { min-width:0; } }
+  @media(prefers-reduced-motion:reduce) { *,*::before,*::after { transition:none!important; animation:none!important; } }
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <h1>最大子数组和</h1>
+  <p>非空连续子数组 · 结尾状态动态规划 · 分治四项摘要</p>
+</header>
+
+<main>
+
+  <!-- 输入 -->
+  <section class="card">
+    <h2>题目与输入</h2>
+    <p class="desc">
+      给定整数列表 <code>nums</code>，找出一个和最大的<b>非空连续子数组</b>，返回它的元素和。
+      子数组必须由原列表中连续的一段组成，不能跳过元素、也不能排序。
+    </p>
+    <div class="input-row">
+      <input id="numsInput" aria-label="整数列表" aria-describedby="inputHelp" type="text" spellcheck="false" autocomplete="off"
+             value="-2, 1, -3, 4, -1, 2, 1, -5, 4">
+      <button id="applyBtn" class="primary">应用</button>
+    </div>
+    <p id="inputHelp" class="desc">最多12个整数，每个值为 -10000 到10000；用逗号或空格分隔，留空演示空列表。</p>
+    <p id="inputError" role="alert" hidden></p>
+    <div class="presets" id="presets"></div>
+  </section>
+
+  <!-- 核心结论 -->
+  <section class="card">
+    <h2>核心结论</h2>
+    <div class="formula">
+      <div class="f-line">
+        <b>dp[i]</b>：<b>必须以 nums[i] 结尾</b>的非空连续子数组的最大和。
+      </div>
+      <div class="f-line big">dp[i] = max( nums[i], dp[i-1] + nums[i] )</div>
+      <div class="f-sub">
+        <span class="tag blue">重新开始</span> 只含当前元素
+        &nbsp;·&nbsp;
+        <span class="tag amber">接上前段</span> 以 i-1 结尾的最优非空段再接当前元素
+      </div>
+      <div class="f-line" style="margin-top:6px;">
+        但全局最优可能在前面就结束了，所以还要单独维护历史最优：
+      </div>
+      <div class="f-line big green">max_sum = max( max_sum, dp[i] )　　答案 = max_sum</div>
+    </div>
+  </section>
+
+  <!-- 演示 -->
+  <section class="card">
+    <div class="tabs">
+      <button class="tab-btn active" data-tab="dp">动态规划 · 逐步演示</button>
+      <button class="tab-btn" data-tab="dc">分治 · 四项摘要</button>
+    </div>
+
+    <!-- ===== DP 面板 ===== -->
+    <div class="pane active" id="pane-dp">
+      <div class="arr-wrap">
+        <div class="arr" id="dpArr"></div>
+      </div>
+      <div class="legend" id="dpLegend">
+        <span><i class="lg-cur"></i>当前处理的位置</span>
+        <span><i class="lg-prev"></i>dp[i-1] 来源</span>
+        <span><i class="lg-best"></i>当前最优子数组</span>
+        <span style="color:#7c3aed;">紫色数字 = dp 值</span>
+      </div>
+
+      <div class="calc" id="dpCalc"></div>
+
+      <div class="controls">
+        <button id="dpPrev">← 上一步</button>
+        <button id="dpNext" class="primary">下一步 →</button>
+        <button id="dpPlay">▶ 自动播放</button>
+        <button id="dpReset">⟲ 重来</button>
+        <span class="step-label" id="dpStepLabel"></span>
+      </div>
+    </div>
+
+    <!-- ===== 分治面板 ===== -->
+    <div class="pane" id="pane-dc">
+      <p class="desc" style="margin-bottom:6px;">
+        每个区间返回四项摘要 <code>(total, prefix, suffix, best)</code>，
+        合并时用常数时间得到父区间，因此整体是 <b>O(n)</b>。
+        自底向上按后序顺序计算：
+      </p>
+      <div class="dc-scroll">
+        <div class="dc-tree" id="dcTree"></div>
+      </div>
+
+      <div class="calc" id="dcCalc"></div>
+
+      <div class="controls">
+        <button id="dcPrev">← 上一步</button>
+        <button id="dcNext" class="primary">下一步 →</button>
+        <button id="dcPlay">▶ 自动播放</button>
+        <button id="dcReset">⟲ 重来</button>
+        <span class="step-label" id="dcStepLabel"></span>
+      </div>
+    </div>
+  </section>
+
+  <!-- 易错点 -->
+  <section class="card">
+    <h2>易错点提示</h2>
+    <ul class="tips">
+      <li><b>不能排序、不能跳负数：</b><code>[4,-1,2,1]</code> 的最大和是 6 而不是 7，因为必须连续。</li>
+      <li><b>dp[i] 必须包含当前位置：</b>它不是"前 i 项的最优值"，全局最优要另外用 <code>max_sum</code> 维护。</li>
+      <li><b>不能拿历史最优直接加当前元素：</b><code>[-5,4,-1,2]</code> 中把历史最优 4 直接加 2 得到 6，跳过了 -1，不合法，正解是 5。</li>
+      <li><b>看到负数不要立刻清零：</b>要看 <code>dp[i-1]</code> 是否有利，而不是看当前元素本身的正负。</li>
+      <li><b>非空输入的初始值不能是 0：</b>全负数 <code>[-8,-3,-6]</code> 应返回 -3，而不是 0。</li>
+      <li><b>不能返回 dp[n-1]：</b>最大子数组可能在更早的位置结束，应返回 <code>max_sum</code>。</li>
+      <li><b>分治不能只返回左右最优值：</b>会漏掉跨过分界线的候选，还需要 <code>suffix</code> 与 <code>prefix</code>。</li>
+      <li><b>分治叶子不能初始化为 0：</b>单元素区间四项摘要都等于该元素（即使是负数），否则会混入空段。</li>
+    </ul>
+  </section>
+
+</main>
+
+<script>
+(function () {
+  "use strict";
+
+  /* ================= 预设 ================= */
+  const PRESETS = [
+    { label: "主示例", nums: [-2, 1, -3, 4, -1, 2, 1, -5, 4] },
+    { label: "整段最优 [5,4,-1,7,8]", nums: [5, 4, -1, 7, 8] },
+    { label: "全负数 [-8,-3,-6]", nums: [-8, -3, -6] },
+    { label: "贪心陷阱 [-5,4,-1,2]", nums: [-5, 4, -1, 2] },
+    { label: "单元素 [7]", nums: [7] },
+    { label: "含零 [0,0]", nums: [0, 0] },
+    { label: "空列表 []", nums: [] }
+  ];
+
+  const MAX_LEN = 12;
+
+  /* ================= 全局状态 ================= */
+  let nums = [-2, 1, -3, 4, -1, 2, 1, -5, 4];
+
+  let dpSteps = [];
+  let dpIdx = 0;
+  let dpTimer = null;
+
+  let dcRoot = null;
+  let dcOrder = [];
+  let dcIdx = 0;
+  let dcTimer = null;
+
+  /* =====================================================
+     一、动态规划：构建步骤
+     ===================================================== */
+  function buildDPSteps(arr) {
+    if (arr.length === 0) {
+      return [{
+        type: "empty", i: -1, dp: [],
+        maxSum: 0, bestStart: 0, bestEnd: -1
+      }];
+    }
+
+    const n = arr.length;
+    const dp = new Array(n).fill(null);
+    dp[0] = arr[0];
+
+    let maxSum = dp[0];
+    let bestStart = 0, bestEnd = 0;
+    let curStart = 0;
+
+    const steps = [{
+      type: "init", i: 0, dp: dp.slice(),
+      maxSum: maxSum, bestStart: bestStart, bestEnd: bestEnd,
+      curStart: curStart
+    }];
+
+    for (let i = 1; i < n; i++) {
+      const prev = dp[i - 1];
+      const restart = arr[i];
+      const extend = prev + arr[i];
+
+      let start = curStart;
+      let won;
+
+      if (restart > extend) {
+        dp[i] = restart;
+        start = i;
+        won = "restart";
+      } else {
+        dp[i] = extend;
+        won = "extend";
+      }
+      curStart = start;
+
+      let nMax = maxSum, nbs = bestStart, nbe = bestEnd;
+      if (dp[i] > maxSum) {
+        nMax = dp[i];
+        nbs = curStart;
+        nbe = i;
+      }
+      maxSum = nMax;
+      bestStart = nbs;
+      bestEnd = nbe;
+
+      steps.push({
+        type: "loop", i: i, dp: dp.slice(),
+        maxSum: maxSum, bestStart: bestStart, bestEnd: bestEnd,
+        curStart: curStart,
+        prev: prev, restart: restart, extend: extend, won: won
+      });
+    }
+
+    steps.push({
+      type: "done", i: n - 1, dp: dp.slice(),
+      maxSum: maxSum, bestStart: bestStart, bestEnd: bestEnd,
+      curStart: curStart
+    });
+
+    return steps;
+  }
+
+  /* =====================================================
+     二、分治：构建递归树与后序顺序
+     ===================================================== */
+  function buildDCNode(arr, lo, hi) {
+    if (hi - lo === 1) {
+      const v = arr[lo];
+      return {
+        lo: lo, hi: hi, leaf: true,
+        total: v, prefix: v, suffix: v, best: v, seq: -1
+      };
+    }
+    const mid = (lo + hi) >> 1;
+    const left = buildDCNode(arr, lo, mid);
+    const right = buildDCNode(arr, mid, hi);
+    return {
+      lo: lo, hi: hi, leaf: false, left: left, right: right,
+      total: left.total + right.total,
+      prefix: Math.max(left.prefix, left.total + right.prefix),
+      suffix: Math.max(right.suffix, right.total + left.suffix),
+      best: Math.max(left.best, right.best, left.suffix + right.prefix),
+      seq: -1
+    };
+  }
+
+  function postorder(node, out) {
+    if (!node) return;
+    if (node.leaf) { out.push(node); return; }
+    postorder(node.left, out);
+    postorder(node.right, out);
+    out.push(node);
+  }
+
+  /* =====================================================
+     三、DP 渲染
+     ===================================================== */
+  function renderDP() {
+    const step = dpSteps[dpIdx];
+    const arrEl = document.getElementById("dpArr");
+    const calcEl = document.getElementById("dpCalc");
+    const labelEl = document.getElementById("dpStepLabel");
+
+    labelEl.textContent = "步骤 " + (dpIdx + 1) + " / " + dpSteps.length;
+    document.getElementById("dpPrev").disabled = (dpIdx === 0);
+    document.getElementById("dpNext").disabled = (dpIdx === dpSteps.length - 1);
+
+    /* ---- 空输入 ---- */
+    if (step.type === "empty") {
+      arrEl.innerHTML = '<div class="empty-hint">（空列表）</div>';
+      document.getElementById("dpLegend").style.display = "none";
+      calcEl.innerHTML =
+        '<div class="line title">空输入</div>' +
+        '<div class="line">输入为空，按函数额外约定返回 <b>0</b>。</div>' +
+        '<div class="line note">注意：这不表示非空输入可以选择空子数组，' +
+        '<code>[-8,-3,-6]</code> 的答案仍是 -3。</div>';
+      return;
+    }
+
+    document.getElementById("dpLegend").style.display = "flex";
+
+    /* ---- 数组单元格 ---- */
+    let html = "";
+    for (let i = 0; i < nums.length; i++) {
+      const v = step.dp[i];
+      const pending = (v === null || v === undefined);
+
+      const cls = ["acell"];
+      if (i === step.i) cls.push("cur");
+      if (step.type === "loop" && i === step.i - 1) cls.push("prev");
+      if (i >= step.bestStart && i <= step.bestEnd) cls.push("best");
+
+      html +=
+        '<div class="' + cls.join(" ") + '">' +
+          '<div class="idx">i=' + i + '</div>' +
+          '<div class="num">' + nums[i] + '</div>' +
+          '<div class="dpv' + (pending ? " pending" : "") + '">' +
+            (pending ? "?" : v) +
+          '</div>' +
+          '<div class="mark"></div>' +
+        '</div>';
+    }
+    arrEl.innerHTML = html;
+
+    /* ---- 计算面板 ---- */
+    let panel = "";
+
+    if (step.type === "init") {
+      panel =
+        '<div class="line title">初始化</div>' +
+        '<div class="line">dp[0] = nums[0] = <b>' + nums[0] + '</b>' +
+          ' &nbsp;—&nbsp; 必须以首元素结尾，非空</div>' +
+        '<div class="line">max_sum = dp[0] = <b>' + step.maxSum + '</b></div>' +
+        '<div class="line warn">⚠ 非空输入的 max_sum 必须初始化为首元素，' +
+          '不能用 0，否则全负数时（如 <code>[-8,-3,-6]</code>）会错误返回 0。</div>';
+
+    } else if (step.type === "loop") {
+      const i = step.i;
+      const winRestart = step.won === "restart";
+
+      panel =
+        '<div class="line title">处理下标 i = ' + i +
+          '，nums[' + i + '] = ' + nums[i] + '</div>' +
+
+        '<div class="cmp">' +
+          '<div class="opt' + (winRestart ? " win" : "") + '">' +
+            '<div class="opt-label">重新开始（只含当前元素）</div>' +
+            '<div class="opt-expr">nums[' + i + ']</div>' +
+            '<div class="opt-val">' + step.restart + '</div>' +
+          '</div>' +
+          '<div class="vs">VS</div>' +
+          '<div class="opt' + (winRestart ? "" : " win") + '">' +
+            '<div class="opt-label">接上前段（保持连续）</div>' +
+            '<div class="opt-expr">dp[' + (i - 1) + '] + nums[' + i + '] = ' +
+              step.prev + ' + ' + nums[i] + '</div>' +
+            '<div class="opt-val">' + step.extend + '</div>' +
+          '</div>' +
+        '</div>' +
+
+        '<div class="line">dp[' + i + '] = max(' + step.restart + ', ' +
+          step.extend + ') = <b>' + step.dp[i] + '</b></div>' +
+
+        '<div class="line">max_sum = max(前值, dp[' + i + ']) = <b>' +
+          step.maxSum + '</b>' +
+          (step.bestEnd === i
+            ? ' &nbsp;<span class="tag green">刷新最优</span>'
+            : ' &nbsp;<span class="tag blue">保持不变</span>') +
+        '</div>' +
+
+        '<div class="line note">当前最优子数组：nums[' + step.bestStart +
+          '..' + step.bestEnd + ']</div>' +
+
+        '<div class="rolling">' +
+          '<span class="rv">current_sum = ' + step.dp[i] + '</span>' +
+          '<span class="arrow">·</span>' +
+          '<span class="rv after">max_sum = ' + step.maxSum + '</span>' +
+          '<span class="arrow">⟳</span>' +
+          '<span class="rv new">下一轮用 current_sum 参与比较</span>' +
+        '</div>';
+
+    } else { // done
+      const seg = nums.slice(step.bestStart, step.bestEnd + 1);
+      panel =
+        '<div class="line title">扫描结束</div>' +
+        '<div class="line">所有结尾状态 dp[0..' + (nums.length - 1) +
+          '] 都已求出，取其中的最大值。</div>' +
+        '<div class="line result">最大子数组和 = <b>' + step.maxSum + '</b></div>' +
+        '<div class="line">最优子数组：nums[' + step.bestStart + '..' +
+          step.bestEnd + '] = [' + seg.join(", ") + ']</div>' +
+        '<div class="line note">注意最后的 dp[' + (nums.length - 1) + '] = ' +
+          step.dp[nums.length - 1] +
+          '，它不一定等于答案 —— 所以必须返回历史最优 max_sum。</div>';
+    }
+
+    calcEl.innerHTML = panel;
+  }
+
+  /* =====================================================
+     四、分治渲染
+     ===================================================== */
+  function buildDCHTML(node) {
+    const revealed = node.seq < dcIdx;
+    const fresh = revealed && node.seq === dcIdx - 1;
+
+    const boxCls = ["dc-box"];
+    if (!revealed) boxCls.push("pending");
+    if (fresh) boxCls.push("fresh");
+
+    const q = "?";
+    let h =
+      '<div class="dc-node">' +
+        '<div class="' + boxCls.join(" ") + '">' +
+          '<div class="dc-range">[' + node.lo + ', ' + node.hi + ')' +
+            (node.leaf ? ' 叶' : '') + '</div>' +
+          '<div class="dc-vals">' +
+            '<span>总<b>' + (revealed ? node.total : q) + '</b></span>' +
+            '<span>前<b>' + (revealed ? node.prefix : q) + '</b></span>' +
+            '<span>后<b>' + (revealed ? node.suffix : q) + '</b></span>' +
+            '<span>优<b>' + (revealed ? node.best : q) + '</b></span>' +
+          '</div>' +
+        '</div>';
+
+    if (!node.leaf) {
+      h += '<div class="dc-children">' +
+             buildDCHTML(node.left) +
+             buildDCHTML(node.right) +
+           '</div>';
+    }
+
+    h += '</div>';
+    return h;
+  }
+
+  function renderDC() {
+    const treeEl = document.getElementById("dcTree");
+    const calcEl = document.getElementById("dcCalc");
+    const labelEl = document.getElementById("dcStepLabel");
+
+    const totalSteps = dcOrder.length + 1;
+    labelEl.textContent = "步骤 " + (dcIdx + 1) + " / " + totalSteps;
+    document.getElementById("dcPrev").disabled = (dcIdx === 0);
+    document.getElementById("dcNext").disabled = (dcIdx === dcOrder.length);
+
+    if (!dcRoot) {
+      treeEl.innerHTML = '<div class="empty-hint">（空列表）</div>';
+      calcEl.innerHTML =
+        '<div class="line title">空输入</div>' +
+        '<div class="line">按约定返回 <b>0</b>，不参与非空子数组的比较。</div>';
+      return;
+    }
+
+    treeEl.innerHTML = buildDCHTML(dcRoot);
+
+    let panel = "";
+
+    if (dcIdx === 0) {
+      panel =
+        '<div class="line title">准备开始</div>' +
+        '<div class="line">自底向上进行后序遍历：先算出每个单元素叶子，' +
+          '再逐层合并成更大的区间。</div>' +
+        '<div class="line note">每个区间返回 (total, prefix, suffix, best)，' +
+          '四项都对应<b>非空</b>区间。</div>';
+
+    } else {
+      const node = dcOrder[dcIdx - 1];
+
+      if (node.leaf) {
+        const v = nums[node.lo];
+        panel =
+          '<div class="line title">叶子区间 [' + node.lo + ', ' + node.hi +
+            ') — 单元素 ' + v + '</div>' +
+          '<div class="line">单元素区间的四项摘要都等于该元素：</div>' +
+          '<div class="line">total = prefix = suffix = best = <b>' + v + '</b></div>' +
+          '<div class="line note">即使 v 是负数也保持为 ' + v +
+            '，不能初始化为 0，否则会混入"空段"。</div>';
+      } else {
+        const L = node.left, R = node.right;
+        panel =
+          '<div class="line title">合并 [' + L.lo + ', ' + L.hi + ') 与 [' +
+            R.lo + ', ' + R.hi + ')</div>' +
+
+          '<div class="line">total = ' + L.total + ' + ' + R.total +
+            ' = <b>' + node.total + '</b></div>' +
+
+          '<div class="line">prefix = max(' + L.prefix + ', ' +
+            L.total + ' + ' + R.prefix + ') = <b>' + node.prefix + '</b>' +
+            ' &nbsp;<span class="tag blue">左整段 + 右前缀</span></div>' +
+
+          '<div class="line">suffix = max(' + R.suffix + ', ' +
+            R.total + ' + ' + L.suffix + ') = <b>' + node.suffix + '</b>' +
+            ' &nbsp;<span class="tag amber">右整段 + 左后缀</span></div>' +
+
+          '<div class="line">best = max(' + L.best + ', ' + R.best + ', ' +
+            L.suffix + ' + ' + R.prefix + ') = <b>' + node.best + '</b>' +
+            ' &nbsp;<span class="tag green">跨界候选</span></div>';
+
+        if (node.seq === dcOrder.length - 1) {
+          panel +=
+            '<div class="line result">最大子数组和 = <b>' + node.best + '</b></div>' +
+            '<div class="line note">正文算法合并为常数时间，T(n) = T(⌊n/2⌋) + T(⌈n/2⌉) + O(1)，' +
+              '总时间为 O(n)，辅助空间 O(log(n+1))。动画额外保存步骤和完整树用于回放，不计入正文算法的复杂度。</div>';
+        }
+      }
+    }
+
+    calcEl.innerHTML = panel;
+  }
+
+  /* =====================================================
+     五、渲染总入口
+     ===================================================== */
+  function renderAll() {
+    renderDP();
+    renderDC();
+  }
+
+  /* =====================================================
+     六、控制
+     ===================================================== */
+  function stopDpPlay() {
+    if (dpTimer) { clearInterval(dpTimer); dpTimer = null; }
+    document.getElementById("dpPlay").textContent = "▶ 自动播放";
+  }
+  function stopDcPlay() {
+    if (dcTimer) { clearInterval(dcTimer); dcTimer = null; }
+    document.getElementById("dcPlay").textContent = "▶ 自动播放";
+  }
+
+  function dpGoTo(idx) {
+    if (idx < 0 || idx >= dpSteps.length) return;
+    dpIdx = idx;
+    renderDP();
+    if (dpIdx === dpSteps.length - 1) stopDpPlay();
+  }
+  function dcGoTo(idx) {
+    if (idx < 0 || idx > dcOrder.length) return;
+    dcIdx = idx;
+    renderDC();
+    if (dcIdx === dcOrder.length) stopDcPlay();
+  }
+
+  function toggleDpPlay() {
+    if (dpTimer) { stopDpPlay(); return; }
+    if (dpIdx >= dpSteps.length - 1) { dpIdx = 0; renderDP(); }
+    document.getElementById("dpPlay").textContent = "⏸ 暂停";
+    dpTimer = setInterval(function () {
+      if (dpIdx < dpSteps.length - 1) { dpIdx++; renderDP(); }
+      else { stopDpPlay(); }
+    }, 1000);
+  }
+
+  function toggleDcPlay() {
+    if (dcTimer) { stopDcPlay(); return; }
+    if (dcIdx >= dcOrder.length) { dcIdx = 0; renderDC(); }
+    document.getElementById("dcPlay").textContent = "⏸ 暂停";
+    dcTimer = setInterval(function () {
+      if (dcIdx < dcOrder.length) { dcIdx++; renderDC(); }
+      else { stopDcPlay(); }
+    }, 800);
+  }
+
+  /* =====================================================
+     七、输入处理
+     ===================================================== */
+  function parseInput(str) {
+    const raw=String(str).trim();
+    if (!raw) return [];
+    const parts=raw.split(/[,，\s]+/);
+    if (parts.length>MAX_LEN || parts.some(v=>! /^[+-]?\d+$/.test(v))) {
+      throw new Error("请输入最多12个整数，不要输入小数或其他字符。");
+    }
+    const values=parts.map(Number);
+    if (values.some(v=>!Number.isSafeInteger(v)||v < -10000||v > 10000)) {
+      throw new Error("每个整数须在 -10000 到10000之间。");
+    }
+    return values;
+  }
+
+  function applyInput() {
+    stopDpPlay(); stopDcPlay();
+    try { applyNums(parseInput(document.getElementById("numsInput").value)); }
+    catch(error) {
+      const message=document.getElementById("inputError");
+      message.textContent=error.message;
+      message.hidden=false;
+      document.getElementById("numsInput").setAttribute("aria-invalid","true");
+    }
+  }
+
+  function applyNums(arr) {
+    document.getElementById("inputError").hidden=true;
+    document.getElementById("inputError").textContent="";
+    document.getElementById("numsInput").removeAttribute("aria-invalid");
+    stopDpPlay();
+    stopDcPlay();
+
+    nums = arr;
+
+    dpSteps = buildDPSteps(nums);
+    dpIdx = 0;
+
+    if (nums.length) {
+      dcRoot = buildDCNode(nums, 0, nums.length);
+      dcOrder = [];
+      postorder(dcRoot, dcOrder);
+      dcOrder.forEach(function (n, k) { n.seq = k; });
+    } else {
+      dcRoot = null;
+      dcOrder = [];
+    }
+    dcIdx = 0;
+
+    document.getElementById("numsInput").value = nums.join(", ");
+    syncPresets();
+    renderAll();
+  }
+
+  function syncPresets() {
+    const chips = document.querySelectorAll("#presets .chip");
+    chips.forEach(function (chip) {
+      const p = PRESETS[Number(chip.dataset.idx)];
+      const same = p.nums.length === nums.length &&
+                   p.nums.every(function (v, k) { return v === nums[k]; });
+      chip.classList.toggle("active", same);
+    });
+  }
+
+  /* =====================================================
+     八、初始化
+     ===================================================== */
+  function init() {
+    /* 预设按钮 */
+    const box = document.getElementById("presets");
+    PRESETS.forEach(function (p, i) {
+      const btn = document.createElement("button");
+      btn.className = "chip";
+      btn.textContent = p.label;
+      btn.dataset.idx = i;
+      btn.addEventListener("click", function () {
+        applyNums(p.nums.slice());
+      });
+      box.appendChild(btn);
+    });
+
+    /* Tab 切换 */
+    document.querySelectorAll(".tab-btn").forEach(function (btn) {
+      btn.addEventListener("click", function () {
+        document.querySelectorAll(".tab-btn").forEach(function (b) {
+          b.classList.remove("active");
+        });
+        document.querySelectorAll(".pane").forEach(function (p) {
+          p.classList.remove("active");
+        });
+        btn.classList.add("active");
+        document.getElementById("pane-" + btn.dataset.tab).classList.add("active");
+        stopDpPlay();
+        stopDcPlay();
+      });
+    });
+
+    /* 输入 */
+    document.getElementById("applyBtn").addEventListener("click", function () {
+      applyInput();
+    });
+    document.getElementById("numsInput").addEventListener("keydown", function (e) {
+      if (e.key === "Enter") {
+        applyInput();
+      }
+    });
+
+    /* DP 控制 */
+    document.getElementById("dpPrev").addEventListener("click", function () {
+      stopDpPlay(); dpGoTo(dpIdx - 1);
+    });
+    document.getElementById("dpNext").addEventListener("click", function () {
+      stopDpPlay(); dpGoTo(dpIdx + 1);
+    });
+    document.getElementById("dpPlay").addEventListener("click", toggleDpPlay);
+    document.getElementById("dpReset").addEventListener("click", function () {
+      stopDpPlay(); dpGoTo(0);
+    });
+
+    /* 分治控制 */
+    document.getElementById("dcPrev").addEventListener("click", function () {
+      stopDcPlay(); dcGoTo(dcIdx - 1);
+    });
+    document.getElementById("dcNext").addEventListener("click", function () {
+      stopDcPlay(); dcGoTo(dcIdx + 1);
+    });
+    document.getElementById("dcPlay").addEventListener("click", toggleDcPlay);
+    document.getElementById("dcReset").addEventListener("click", function () {
+      stopDcPlay(); dcGoTo(0);
+    });
+
+    /* 键盘方向键 */
+    document.addEventListener("keydown", function (e) {
+      if (e.target && e.target.tagName === "INPUT") return;
+      const dpVisible = document.getElementById("pane-dp").classList.contains("active");
+      if (e.key === "ArrowRight") {
+        e.preventDefault();
+        if (dpVisible) { stopDpPlay(); dpGoTo(dpIdx + 1); }
+        else { stopDcPlay(); dcGoTo(dcIdx + 1); }
+      }
+      if (e.key === "ArrowLeft") {
+        e.preventDefault();
+        if (dpVisible) { stopDpPlay(); dpGoTo(dpIdx - 1); }
+        else { stopDcPlay(); dcGoTo(dcIdx - 1); }
+      }
+    });
+
+    /* 首次渲染 */
+    applyNums(nums.slice());
+  }
+
+  document.addEventListener("visibilitychange",function(){if(document.hidden){stopDpPlay();stopDcPlay();}});
+  document.addEventListener("DOMContentLoaded", init);
+})();
+</script>
+</body>
+</html>

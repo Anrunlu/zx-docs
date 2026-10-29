@@ -15,5 +15,8 @@ export default defineClientConfig({
     app.component("MergeSortAnimation", defineAsyncComponent(() => import("./components/MergeSortAnimation.vue")));
     app.component("InversionsAnimation", defineAsyncComponent(() => import("./components/InversionsAnimation.vue")));
     app.component("QuickSortAnimation", defineAsyncComponent(() => import("./components/QuickSortAnimation.vue")));
+    app.component("HouseRobberAnimation", defineAsyncComponent(() => import("./components/HouseRobberAnimation.vue")));
+    app.component("MaxSubarrayAnimation", defineAsyncComponent(() => import("./components/MaxSubarrayAnimation.vue")));
+    app.component("MatrixChainAnimation", defineAsyncComponent(() => import("./components/MatrixChainAnimation.vue")));
   },
 });
