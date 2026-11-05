@@ -29,8 +29,8 @@ for (const file of files) {
     if (JSON.stringify(doc.headings) !== JSON.stringify(chapters)) errors.push(`${display}: 二级标题必须按七章结构组织`);
     if (!/^::: tip 本节学习目标\s*$/m.test(doc.text)) errors.push(`${display}: 缺少学习目标`);
     const implementation = doc.text.split("## 实现代码")[1]?.split("## 算法执行过程")[0] ?? "";
-    if (!/```python[^\n]*\n/.test(implementation)) errors.push(`${display}: 缺少 Python 主实现`);
-    if (!/```text\n/.test(implementation)) errors.push(`${display}: 缺少主实现的运行输出`);
+    if (!/```python[^\r\n]*\r?\n/.test(implementation)) errors.push(`${display}: 缺少 Python 主实现`);
+    if (!/```text[^\r\n]*\r?\n/.test(implementation)) errors.push(`${display}: 缺少主实现的运行输出`);
     if (!/^::: details 参考答案\s*$/m.test(doc.text)) errors.push(`${display}: 缺少可展开的练习答案`);
     const exercises = doc.text.split("## 课堂练习")[1] ?? "";
     for (const heading of ["基础核对", "过程推演", "进阶思考"]) {
