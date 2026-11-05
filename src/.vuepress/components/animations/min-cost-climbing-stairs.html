@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>最小花费爬楼梯 · 直观动画</title>
+<style>
+  :root {
+    --bg: #f7f7f5;
+    --paper: #ffffff;
+    --text: #1a1a1a;
+    --muted: #6b6b6b;
+    --border: #e2e2de;
+    --border-strong: #c8c8c2;
+    --mark: #2563eb;
+    --mark-soft: #dbeafe;
+    --gold: #d97706;
+    --ok: #15803d;
+    --ok-soft: #dcfce7;
+    --info: #1d4ed8;
+    --info-soft: #eff6ff;
+    --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    --sans: system-ui, -apple-system, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: var(--sans);
+    color: var(--text);
+    background: var(--bg);
+    line-height: 1.55;
+  }
+  .wrap {
+    max-width: 920px;
+    margin: 0 auto;
+    padding: 28px 20px 64px;
+  }
+  h1 { font-size: 1.65rem; margin: 0 0 8px; }
+  .summary { color: var(--muted); margin: 0 0 24px; }
+  .card {
+    background: var(--paper);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 20px;
+    margin-bottom: 16px;
+  }
+  h2 { font-size: 1.1rem; margin: 0 0 12px; }
+  .seg {
+    display: inline-flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    background: var(--bg);
+    border-radius: 10px;
+    padding: 4px;
+    margin-bottom: 12px;
+  }
+  .seg button {
+    border: 0;
+    background: transparent;
+    padding: 8px 14px;
+    border-radius: 8px;
+    cursor: pointer;
+    font: inherit;
+    color: var(--muted);
+  }
+  .seg button.active {
+    background: var(--paper);
+    color: var(--text);
+    box-shadow: 0 1px 2px rgba(0,0,0,.08);
+  }
+  .toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    align-items: center;
+    margin: 8px 0 12px;
+  }
+  button.btn {
+    border: 1px solid var(--border-strong);
+    background: var(--paper);
+    border-radius: 10px;
+    padding: 8px 12px;
+    font: inherit;
+    cursor: pointer;
+  }
+  button.btn:disabled { opacity: .4; cursor: not-allowed; }
+  button.btn.primary {
+    background: var(--mark);
+    border-color: var(--mark);
+    color: #fff;
+  }
+  .progress { color: var(--muted); font-size: 13px; }
+  .callout {
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 12px 14px;
+    margin: 10px 0;
+    background: var(--paper);
+  }
+  .callout.info { background: var(--info-soft); border-color: #bfdbfe; }
+  .callout.ok { background: var(--ok-soft); border-color: #bbf7d0; }
+  .callout .lead { font-weight: 700; margin-bottom: 4px; }
+  .callout.info .lead { color: var(--info); }
+  .callout.ok .lead { color: var(--ok); }
+  svg.stage { width: 100%; height: auto; display: block; margin: 8px 0; background: var(--paper); border-radius: 12px; border: 1px solid var(--border); }
+  ol.steps { margin: 8px 0 0; padding-left: 0; list-style: none; counter-reset: step; }
+  ol.steps li {
+    counter-increment: step;
+    position: relative;
+    padding: 8px 0 8px 42px;
+    border-left: 2px solid var(--border);
+    margin-left: 14px;
+  }
+  ol.steps li::before {
+    content: counter(step);
+    position: absolute;
+    left: -13px;
+    top: 10px;
+    width: 24px; height: 24px;
+    border-radius: 50%;
+    background: var(--mark);
+    color: #fff;
+    font-size: 12px;
+    font-weight: 700;
+    display: flex; align-items: center; justify-content: center;
+  }
+  ol.steps .t { font-weight: 700; }
+  ol.steps .d { color: var(--muted); font-size: .95rem; }
+  .eq {
+    text-align: center;
+    font-family: var(--mono);
+    font-size: 1.05rem;
+    padding: 14px;
+    margin: 12px 0;
+    background: var(--bg);
+    border-radius: 10px;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: .95rem;
+  }
+  th, td {
+    border-bottom: 1px solid var(--border);
+    padding: 10px 8px;
+    text-align: left;
+  }
+  th { color: var(--muted); font-weight: 600; }
+  td.num { text-align: right; font-family: var(--mono); }
+  tr.emph td { background: var(--mark-soft); font-weight: 600; }
+  .grid2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+  @media (max-width: 720px) { .grid2 { grid-template-columns: 1fr; } }
+  .compare-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    margin: 12px 0;
+  }
+  @media (max-width: 720px) { .compare-grid { grid-template-columns: 1fr; } }
+  ul.bullets { margin: 8px 0; padding-left: 1.2em; }
+  .hidden { display: none !important; }
+  footer { color: var(--muted); font-size: 13px; margin-top: 8px; }
+  a { color: var(--mark); }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>最小花费爬楼梯 · 直观动画</h1>
+  <p class="summary">先看小人怎么跳、怎么付钱；每一步下面同步写出对应算式，再自然推出通用公式。</p>
+
+  <div class="card">
+    <h2>cost = [10, 15, 20]</h2>
+    <div class="seg" id="seg">
+      <button type="button" data-mode="story" class="active">故事 + 公式</button>
+      <button type="button" data-mode="compare">三条路线对比</button>
+    </div>
+
+    <div id="panel-story">
+      <div class="toolbar">
+        <button type="button" class="btn primary" id="btn-play">播放故事</button>
+        <button type="button" class="btn" id="btn-prev">上一步</button>
+        <button type="button" class="btn" id="btn-next">下一步</button>
+        <button type="button" class="btn" id="btn-jump">跳到公式推导</button>
+        <button type="button" class="btn" id="btn-reset">从头</button>
+        <span class="progress" id="progress"></span>
+      </div>
+      <div class="callout" id="say"></div>
+      <svg class="stage" id="stage" viewBox="0 0 720 420" role="img" aria-label="爬楼梯侧面动画"></svg>
+      <div class="callout info" id="formula-lead"></div>
+      <ol class="steps" id="formula-steps"></ol>
+      <div class="eq hidden" id="equation"></div>
+    </div>
+
+    <div id="panel-compare" class="hidden">
+      <p>三条合法路线，谁最省？算式写在下面。</p>
+      <div class="toolbar">
+        <button type="button" class="btn" data-goto="3">看甲（30）</button>
+        <button type="button" class="btn" data-goto="5">看乙（25）</button>
+        <button type="button" class="btn primary" data-goto="7">看丙最优（15）</button>
+      </div>
+      <div class="compare-grid">
+        <div class="callout"><div class="lead">甲：0→2→3</div>合计 30</div>
+        <div class="callout"><div class="lead">乙：0→1→3</div>合计 25</div>
+        <div class="callout ok"><div class="lead">丙：1→3</div>最省：合计 15</div>
+      </div>
+      <div class="eq">甲: 10+20=30　乙: 10+15=25　丙: 15=15</div>
+      <p>丙为什么省：一开始站在 1，付 15 跳两级到顶，跨过了费用 20 的台阶。</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>状态表（跟着故事逐步揭开）</h2>
+    <p>dp[i]：到位置 i、还没付离开费时的最少花费。楼顶答案看最后一行。</p>
+    <table>
+      <thead>
+        <tr><th>位置</th><th>离开费用</th><th>dp[i]</th><th>怎么来的</th></tr>
+      </thead>
+      <tbody id="dp-body"></tbody>
+    </table>
+  </div>
+
+  <div class="grid2">
+    <div class="card">
+      <h2>付钱时机</h2>
+      <ol class="steps">
+        <li><div class="t">站上去</div><div class="d">可以免费站到第 0 或第 1 级。</div></li>
+        <li><div class="t">离开才付</div><div class="d">从某级往上跳时，付这一级的钱。</div></li>
+        <li><div class="t">可跳 1 或 2</div><div class="d">跨过且不停留的台阶不用付钱。</div></li>
+      </ol>
+    </div>
+    <div class="card">
+      <h2>通用公式（从例子抽象）</h2>
+      <div class="eq">dp[0]=0, dp[1]=0</div>
+      <div class="eq">dp[i]=min(dp[i−1]+cost[i−1], dp[i−2]+cost[i−2])</div>
+      <ul class="bullets">
+        <li>加的是来源台阶费用，不是当前位置</li>
+        <li>答案取 dp[n]，不是最后一个收费台阶</li>
+      </ul>
+    </div>
+  </div>
+
+  <footer>
+    教学示例 cost=[10,15,20]。参考：
+    <a href="https://docs.z-xin.net/teachbook/algorithm/%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92/%E4%BD%BF%E7%94%A8%E6%9C%80%E5%B0%8F%E8%8A%B1%E8%B4%B9%E7%88%AC%E6%A5%BC%E6%A2%AF.html">使用最小花费爬楼梯</a>
+  </footer>
+</div>
+
+<script>
+const COST = [10, 15, 20];
+const N = COST.length;
+const STORY = [
+  { id:"map", title:"这是楼梯", say:"地上有 3 级收费台阶：费用 10、15、20。楼顶在它们后面，楼顶不收费。", personAt:-1, payFrom:null, payAmount:null, runningTotal:null, highlightPath:null, badge:null, dimOthers:false, formulaLead:"先约定符号", formulaSteps:[{title:"费用数组",detail:"cost[0]=10，cost[1]=15，cost[2]=20"},{title:"楼顶位置",detail:"记作位置 3，没有 cost[3]"},{title:"目标",detail:"求到达位置 3 的最小总费用"}], equation:null },
+  { id:"rule", title:"规矩：离开才付钱", say:"站在台阶上先不付钱。只有当你从这级往上跳时，才付这级的钱，然后可以跳 1 级或 2 级。", personAt:0, payFrom:null, payAmount:null, runningTotal:0, highlightPath:null, badge:"先站着，不收费", dimOthers:false, formulaLead:"支付规则写成一句话", formulaSteps:[{title:"何时付钱",detail:"离开位置 i 时，支付 cost[i]"},{title:"跳多远",detail:"然后可以走到 i+1 或 i+2"},{title:"跨过去",detail:"没停留的台阶：不支付"}], equation:null },
+  { id:"start", title:"起点免费选", say:"你可以免费先站到第 0 级，也可以免费先站到第 1 级。免费的是‘站过去’，离开时该付还是要付。", personAt:1, payFrom:null, payAmount:null, runningTotal:0, highlightPath:null, badge:"也可以从这里起步", dimOthers:false, formulaLead:"状态边界（公式的起点）", formulaSteps:[{title:"定义 dp[i]",detail:"已经到达位置 i，但还没付离开费时的最少花费"},{title:"为什么边界是 0",detail:"可以直接站到 0 或 1，还没离开，所以还没付钱"}], equation:"dp[0] = 0，  dp[1] = 0" },
+  { id:"pathA1", title:"路线甲：从 0 走", say:"试一条路：站在 0，付 10，跳两级到 2。", personAt:2, payFrom:0, payAmount:10, runningTotal:10, highlightPath:[0,2], badge:"已付 10", dimOthers:true, formulaLead:"这一跳对应哪项", formulaSteps:[{title:"从哪到哪",detail:"从位置 0 跳到 2，属于走 2 步"},{title:"付谁的钱",detail:"离开 0 时支付 cost[0]"}], equation:"花费 = cost[0] = 10" },
+  { id:"pathA2", title:"路线甲到顶", say:"再从 2 付 20，跳一级到楼顶。一共 10+20=30，挺贵。", personAt:3, payFrom:2, payAmount:20, runningTotal:30, highlightPath:[0,2,3], badge:"合计 30", dimOthers:true, formulaLead:"把整条路加成总和", formulaSteps:[{title:"付了两次",detail:"离开 0 付 10，离开 2 付 20"},{title:"注意",detail:"这是一条可行路，但未必最优"}], equation:"总费用 = cost[0] + cost[2] = 10 + 20 = 30" },
+  { id:"pathB1", title:"路线乙：0 → 1", say:"换一条：站在 0，付 10，只跳一级到 1。", personAt:1, payFrom:0, payAmount:10, runningTotal:10, highlightPath:[0,1], badge:"已付 10", dimOthers:true, formulaLead:"同样从 0 出发，改走 1 步", formulaSteps:[{title:"离开 0",detail:"支付 cost[0]=10，到达位置 1"}], equation:"花费 = cost[0] = 10" },
+  { id:"pathB2", title:"路线乙到顶", say:"再从 1 付 15，跳两级到楼顶。一共 10+15=25，比刚才好一点。", personAt:3, payFrom:1, payAmount:15, runningTotal:25, highlightPath:[0,1,3], badge:"合计 25", dimOthers:true, formulaLead:"第二条完整路径", formulaSteps:[{title:"付了两次",detail:"离开 0 和离开 1 各付一次"}], equation:"总费用 = cost[0] + cost[1] = 10 + 15 = 25" },
+  { id:"pathC1", title:"路线丙：直接站 1", say:"第三种：一开始就免费站到 1（还没付钱）。", personAt:1, payFrom:null, payAmount:null, runningTotal:0, highlightPath:[1], badge:"起点免费", dimOthers:true, formulaLead:"用上边界 dp[1]=0", formulaSteps:[{title:"免费站到 1",detail:"对应 dp[1]=0"},{title:"还没离开",detail:"所以还没加 cost[1]"}], equation:"当前累计 = dp[1] = 0" },
+  { id:"pathC2", title:"路线丙到顶 · 最省", say:"从 1 付 15，直接跳两级到楼顶。位置 2 被跨过去了，20 不用付！一共只要 15。", personAt:3, payFrom:1, payAmount:15, runningTotal:15, highlightPath:[1,3], badge:"最优 · 合计 15", dimOthers:true, formulaLead:"最优路径的算式", formulaSteps:[{title:"只付一次",detail:"只离开位置 1，支付 cost[1]"},{title:"跳法",detail:"从 1 走 2 步直接到楼顶 3"},{title:"三条路对比",detail:"30、25、15 → 最小是 15"}], equation:"总费用 = cost[1] = 15" },
+  { id:"why", title:"关键想法：最后一步从哪来？", say:"枚举路线太累。换个想法：不管前面怎么走，到达某个位置 i，最后一跳只能来自 i−1（跳 1）或 i−2（跳 2）。", personAt:3, payFrom:null, payAmount:null, runningTotal:15, highlightPath:[1,3], badge:"只看最后一跳", dimOthers:false, formulaLead:"为什么公式里只有两项", formulaSteps:[{title:"候选甲",detail:"从 i−1 来：先到 i−1（花费 dp[i−1]），再离开 i−1 付 cost[i−1]"},{title:"候选乙",detail:"从 i−2 来：先到 i−2（花费 dp[i−2]），再离开 i−2 付 cost[i−2]"},{title:"为什么加来源费用",detail:"付钱发生在离开来源时；刚到 i 还没离开 i，所以不加 cost[i]"}], equation:"dp[i] = min(dp[i−1]+cost[i−1], dp[i−2]+cost[i−2])" },
+  { id:"dp2", title:"用公式算 dp[2]", say:"到位置 2：从 1 跳 1 步，或从 0 跳 2 步。两个候选取较小值。", personAt:2, payFrom:null, payAmount:null, runningTotal:10, highlightPath:[0,2], badge:"dp[2]=10", dimOthers:false, formulaLead:"把 i=2 代进公式", formulaSteps:[{title:"从 1 来",detail:"dp[1] + cost[1] = 0 + 15 = 15"},{title:"从 0 来",detail:"dp[0] + cost[0] = 0 + 10 = 10"},{title:"取 min",detail:"到达 2 最少花 10（还没付 cost[2]）"}], equation:"dp[2] = min(15, 10) = 10" },
+  { id:"dp3", title:"用公式算楼顶 dp[3]", say:"到楼顶同样两种来源：从 2 走 1 步，或从 1 走 2 步。取较小的，就是答案。", personAt:3, payFrom:null, payAmount:null, runningTotal:15, highlightPath:[1,3], badge:"答案 dp[3]=15", dimOthers:false, formulaLead:"把 i=3 代进公式", formulaSteps:[{title:"从 2 来",detail:"dp[2] + cost[2] = 10 + 20 = 30 · 就是路线甲"},{title:"从 1 来",detail:"dp[1] + cost[1] = 0 + 15 = 15 · 就是路线丙"},{title:"取 min",detail:"15，与最优路线一致"}], equation:"dp[3] = min(30, 15) = 15" },
+  { id:"summary", title:"公式是怎么来的（总结）", say:"到任意位置 i，最后一步只能来自 i−1 或 i−2；付的是来源台阶的费用。对每个 i 取两个候选的最小值就够了。", personAt:3, payFrom:null, payAmount:null, runningTotal:15, highlightPath:[1,3], badge:"通用公式", dimOthers:false, formulaLead:"从例子抽象成通用式", formulaSteps:[{title:"边界",detail:"dp[0]=0，dp[1]=0"},{title:"转移",detail:"对 i=2…n：比较‘从左边一格付费过来’和‘从左边两格付费过来’"},{title:"答案",detail:"dp[n]（本例 n=3，答案 15）"}], equation:"dp[i] = min(dp[i−1]+cost[i−1], dp[i−2]+cost[i−2])" }
+];
+
+const MARK = "#2563eb", GOLD = "#d97706", ELEV = "#ffffff", BORDER = "#c8c8c2", MUTED = "#6b6b6b", SOFT = "#dbeafe", SEC = "#e5e5e0", ON = "#ffffff";
+const W=720,H=420,groundY=350,stepW=150,stepH=64,left0=56,rise=70,run=132;
+
+function stepGeom(i){ return {x:left0+i*run, y:groundY-(i+1)*rise, w:stepW, h:stepH}; }
+function roofGeom(){ return stepGeom(N); }
+function posXY(pos){
+  if(pos<0) return {x:left0-36,y:groundY-36};
+  if(pos>=N){ const g=roofGeom(); return {x:g.x+g.w*0.5,y:g.y-36}; }
+  const g=stepGeom(pos); return {x:g.x+g.w*0.55,y:g.y-36};
+}
+function lerp(a,b,t){ return a+(b-a)*t; }
+function ease(t){ return t<0.5 ? 2*t*t : 1-Math.pow(-2*t+2,2)/2; }
+function esc(s){ return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;"); }
+
+let mode="story", idx=0, playing=false, animT=1, fromPos=-1, prevPerson=-1, raf=0, playTimer=0;
+
+function revealDp(scene){
+  if(scene.id==="dp2") return 2;
+  if(scene.id==="dp3"||scene.id==="summary") return 3;
+  if(scene.id==="why") return 1;
+  if(scene.id==="start"||scene.id==="pathC1") return 1;
+  if(scene.id==="map"||scene.id==="rule") return -1;
+  return 1;
+}
+
+function renderDp(scene){
+  const r=revealDp(scene);
+  const rows=[
+    ["0","10",r>=0?"0":"…","可直接当起点"],
+    ["1","15",r>=1?"0":"…","可直接当起点"],
+    ["2","20",r>=2?"10":"…","min(15,10)"],
+    ["3 楼顶","—",r>=3?"15":"…","min(30,15) · 答案"]
+  ];
+  document.getElementById("dp-body").innerHTML = rows.map((row,i)=>
+    `<tr class="${r>=3&&i===3?"emph":""}"><td>${esc(row[0])}</td><td class="num">${esc(row[1])}</td><td class="num">${esc(row[2])}</td><td>${esc(row[3])}</td></tr>`
+  ).join("");
+}
+
+function drawStage(scene, animT, fromPos, toPos){
+  const path=scene.highlightPath;
+  const t=ease(Math.min(1,Math.max(0,animT)));
+  const a=posXY(fromPos), b=posXY(toPos);
+  const px=lerp(a.x,b.x,t);
+  const py=lerp(a.y,b.y,t)-Math.sin(Math.PI*t)*(38+Math.abs(toPos-fromPos)*10);
+  let html=`<line x1="40" y1="${groundY}" x2="${W-40}" y2="${groundY}" stroke="${BORDER}" stroke-width="2"/>`;
+  html+=`<text x="40" y="${groundY+28}" fill="${MUTED}" font-size="12">地面</text>`;
+  COST.forEach((c,i)=>{
+    const g=stepGeom(i);
+    const onPath=path?path.includes(i):true;
+    const dim=scene.dimOthers&&path&&!onPath;
+    const paying=scene.payFrom===i && animT>0.15 && animT<0.85;
+    html+=`<g opacity="${dim?0.35:1}">`;
+    html+=`<rect x="${g.x}" y="${g.y}" width="${g.w}" height="${g.h}" rx="6" fill="${paying?SOFT:ELEV}" stroke="${paying?MARK:BORDER}" stroke-width="${paying?2.5:1.5}"/>`;
+    html+=`<rect x="${g.x}" y="${g.y}" width="14" height="${g.h}" rx="2" fill="${SEC}" opacity="0.45"/>`;
+    html+=`<text x="${g.x+26}" y="${g.y+26}" fill="#1a1a1a" font-size="15" font-weight="600">台阶 ${i}</text>`;
+    html+=`<text x="${g.x+26}" y="${g.y+50}" fill="#1a1a1a" font-family="ui-monospace,monospace" font-size="18" font-weight="700">费用 ${c}</text>`;
+    html+=`</g>`;
+    if(paying && scene.payAmount!=null){
+      html+=`<g transform="translate(${g.x+g.w-8}, ${g.y-22})"><rect x="-30" y="-16" width="60" height="30" rx="15" fill="${GOLD}"/><text text-anchor="middle" y="5" fill="${ON}" font-size="15" font-weight="700">-${scene.payAmount}</text></g>`;
+    }
+  });
+  const g=roofGeom();
+  const onPath=path?path.includes(N):true;
+  const dim=scene.dimOthers&&path&&!onPath;
+  html+=`<g opacity="${dim?0.28:1}">`;
+  html+=`<rect x="${g.x}" y="${g.y}" width="${g.w+24}" height="${g.h}" rx="6" fill="${SOFT}" stroke="${MARK}" stroke-width="2"/>`;
+  html+=`<text x="${g.x+22}" y="${g.y+28}" fill="${MARK}" font-size="15" font-weight="700">楼顶</text>`;
+  html+=`<text x="${g.x+22}" y="${g.y+50}" fill="${MUTED}" font-size="14">不收费</text></g>`;
+  if(path){
+    for(let i=0;i<path.length-1;i++){
+      const p1=posXY(path[i]), p2=posXY(path[i+1]);
+      html+=`<path d="M ${p1.x} ${p1.y+8} Q ${(p1.x+p2.x)/2} ${Math.min(p1.y,p2.y)-40} ${p2.x} ${p2.y+8}" fill="none" stroke="${GOLD}" stroke-width="3" stroke-dasharray="6 5" opacity="0.7"/>`;
+    }
+  }
+  if(scene.personAt>=-1){
+    html+=`<g transform="translate(${px},${py})">`;
+    html+=`<ellipse cx="0" cy="22" rx="14" ry="5" fill="${SEC}" opacity="0.5"/>`;
+    html+=`<circle cx="0" cy="0" r="14" fill="${MARK}"/>`;
+    html+=`<circle cx="-5" cy="-3" r="2" fill="${ON}"/><circle cx="5" cy="-3" r="2" fill="${ON}"/>`;
+    html+=`<path d="M -5 5 Q 0 9 5 5" fill="none" stroke="${ON}" stroke-width="2" stroke-linecap="round"/>`;
+    html+=`<line x1="0" y1="14" x2="0" y2="34" stroke="${MARK}" stroke-width="5" stroke-linecap="round"/>`;
+    html+=`<line x1="0" y1="20" x2="-12" y2="28" stroke="${MARK}" stroke-width="4" stroke-linecap="round"/>`;
+    html+=`<line x1="0" y1="20" x2="12" y2="28" stroke="${MARK}" stroke-width="4" stroke-linecap="round"/>`;
+    html+=`<line x1="0" y1="34" x2="-10" y2="46" stroke="${MARK}" stroke-width="4" stroke-linecap="round"/>`;
+    html+=`<line x1="0" y1="34" x2="10" y2="46" stroke="${MARK}" stroke-width="4" stroke-linecap="round"/>`;
+    html+=`</g>`;
+  }
+  if(scene.runningTotal!=null){
+    html+=`<g transform="translate(${W-150},36)"><rect width="120" height="54" rx="12" fill="${ELEV}" stroke="${BORDER}"/><text x="16" y="22" fill="${MUTED}" font-size="12">当前花费</text><text x="16" y="44" fill="#1a1a1a" font-family="ui-monospace,monospace" font-size="22" font-weight="700">${scene.runningTotal}</text></g>`;
+  }
+  if(scene.badge){
+    const bw=Math.min(300, 18+scene.badge.length*14);
+    html+=`<g transform="translate(40,36)"><rect width="${bw}" height="36" rx="18" fill="${MARK}"/><text x="16" y="23" fill="${ON}" font-size="14" font-weight="600">${esc(scene.badge)}</text></g>`;
+  }
+  document.getElementById("stage").innerHTML=html;
+}
+
+function startAnim(from,to){
+  cancelAnimationFrame(raf);
+  fromPos=from; animT=0;
+  const start=performance.now(), dur=900;
+  const tick=(now)=>{
+    animT=Math.min(1,(now-start)/dur);
+    drawStage(STORY[idx], animT, fromPos, to);
+    if(animT<1) raf=requestAnimationFrame(tick);
+    else prevPerson=to;
+  };
+  raf=requestAnimationFrame(tick);
+}
+
+function updatePlayLabel(){
+  const btn=document.getElementById("btn-play");
+  if(playing) btn.textContent="暂停";
+  else if(idx>=STORY.length-1) btn.textContent="再看一遍";
+  else btn.textContent="播放故事";
+}
+
+function render(){
+  const scene=STORY[idx];
+  document.getElementById("progress").textContent=`${idx+1} / ${STORY.length} · ${scene.title}`;
+  document.getElementById("say").innerHTML=`<div class="lead">${esc(scene.title)}</div>${esc(scene.say)}`;
+  document.getElementById("formula-lead").innerHTML=`<div class="lead">${esc(scene.formulaLead)}</div>跟着动画看下方步骤；算式在最底下。`;
+  document.getElementById("formula-steps").innerHTML=scene.formulaSteps.map(s=>
+    `<li><div class="t">${esc(s.title)}</div><div class="d">${esc(s.detail)}</div></li>`
+  ).join("");
+  const eq=document.getElementById("equation");
+  if(scene.equation){ eq.classList.remove("hidden"); eq.textContent=scene.equation; }
+  else { eq.classList.add("hidden"); eq.textContent=""; }
+  document.getElementById("btn-prev").disabled=idx===0;
+  document.getElementById("btn-next").disabled=idx>=STORY.length-1;
+  drawStage(scene, animT, fromPos, scene.personAt);
+  renderDp(scene);
+  updatePlayLabel();
+}
+
+function setIdx(next, animate){
+  const prev=prevPerson;
+  const scene=STORY[next];
+  idx=next;
+  if(animate && prev!==scene.personAt){
+    startAnim(prev, scene.personAt);
+  } else {
+    animT=1; fromPos=scene.personAt; prevPerson=scene.personAt;
+  }
+  render();
+}
+
+function setMode(m){
+  mode=m; playing=false; clearTimeout(playTimer);
+  document.querySelectorAll("#seg button").forEach(b=>b.classList.toggle("active", b.dataset.mode===m));
+  document.getElementById("panel-story").classList.toggle("hidden", m!=="story");
+  document.getElementById("panel-compare").classList.toggle("hidden", m!=="compare");
+  updatePlayLabel();
+}
+
+document.getElementById("seg").addEventListener("click", e=>{
+  const b=e.target.closest("button[data-mode]"); if(!b) return; setMode(b.dataset.mode);
+});
+document.getElementById("btn-play").onclick=()=>{
+  if(idx>=STORY.length-1 && !playing){ prevPerson=-1; setIdx(0,true); playing=true; updatePlayLabel(); schedulePlay(); return; }
+  playing=!playing; updatePlayLabel();
+  if(playing) schedulePlay(); else clearTimeout(playTimer);
+};
+function schedulePlay(){
+  clearTimeout(playTimer);
+  if(!playing) return;
+  if(idx>=STORY.length-1){ playing=false; updatePlayLabel(); return; }
+  const wait=animT<1?1100:2600;
+  playTimer=setTimeout(()=>{ setIdx(idx+1,true); schedulePlay(); }, wait);
+}
+document.getElementById("btn-prev").onclick=()=>{ playing=false; clearTimeout(playTimer); setIdx(Math.max(0,idx-1),true); };
+document.getElementById("btn-next").onclick=()=>{ playing=false; clearTimeout(playTimer); setIdx(Math.min(STORY.length-1,idx+1),true); };
+document.getElementById("btn-reset").onclick=()=>{ playing=false; clearTimeout(playTimer); prevPerson=-1; setIdx(0,true); };
+document.getElementById("btn-jump").onclick=()=>{
+  playing=false; clearTimeout(playTimer);
+  const j=STORY.findIndex(s=>s.id==="why");
+  if(j>=0){ prevPerson=STORY[j].personAt; setIdx(j,false); }
+};
+document.querySelectorAll("[data-goto]").forEach(b=>{
+  b.onclick=()=>{ setMode("story"); prevPerson=-1; setIdx(+b.dataset.goto,true); };
+});
+
+prevPerson=-1; setIdx(0,false);
+</script>
+</body>
+</html>
