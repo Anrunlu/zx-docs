@@ -1,0 +1,833 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>打家劫舍 · 动态规划求解过程</title>
+<style>
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC",
+                 "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+    background: #f1f5f9;
+    color: #1e293b;
+    line-height: 1.65;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ---------- 顶部 ---------- */
+  .hero {
+    background: linear-gradient(135deg, #1e40af 0%, #4f46e5 55%, #7c3aed 100%);
+    color: #fff;
+    padding: 44px 24px 40px;
+    text-align: center;
+    box-shadow: 0 6px 24px rgba(30, 64, 175, .25);
+  }
+  .hero h1 {
+    margin: 0 0 8px;
+    font-size: clamp(26px, 4.5vw, 38px);
+    letter-spacing: 2px;
+    font-weight: 800;
+  }
+  .hero p {
+    margin: 0;
+    opacity: .88;
+    font-size: 15px;
+    letter-spacing: .5px;
+  }
+
+  main {
+    max-width: 980px;
+    margin: 0 auto;
+    padding: 26px 18px 60px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  /* ---------- 卡片 ---------- */
+  .card {
+    background: #fff;
+    border-radius: 16px;
+    padding: 22px 24px;
+    box-shadow: 0 2px 14px rgba(15, 23, 42, .07);
+    border: 1px solid #e8eef5;
+  }
+  .card h2 {
+    margin: 0 0 14px;
+    font-size: 17px;
+    color: #0f172a;
+    display: flex;
+    align-items: center;
+    gap: 9px;
+  }
+  .card h2::before {
+    content: "";
+    width: 4px;
+    height: 17px;
+    border-radius: 3px;
+    background: linear-gradient(180deg, #3b82f6, #8b5cf6);
+  }
+  .desc { margin: 0 0 14px; color: #475569; font-size: 14.5px; }
+  code {
+    background: #eef2ff;
+    color: #4338ca;
+    padding: 1px 6px;
+    border-radius: 5px;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-size: .92em;
+  }
+
+  /* ---------- 输入 ---------- */
+  .input-row { display: flex; gap: 10px; flex-wrap: wrap; }
+  #numsInput {
+    flex: 1;
+    min-width: 200px;
+    font: inherit;
+    font-family: ui-monospace, monospace;
+    padding: 10px 14px;
+    border-radius: 10px;
+    border: 1.5px solid #cbd5e1;
+    outline: none;
+    transition: all .18s;
+    background: #f8fafc;
+  }
+  #numsInput:focus {
+    border-color: #3b82f6;
+    background: #fff;
+    box-shadow: 0 0 0 4px rgba(59, 130, 246, .13);
+  }
+
+  .presets { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+  .chip {
+    font: inherit;
+    font-size: 13px;
+    padding: 6px 13px;
+    border-radius: 999px;
+    border: 1.5px solid #dbe3ee;
+    background: #f8fafc;
+    color: #475569;
+    cursor: pointer;
+    transition: all .18s;
+  }
+  .chip:hover { border-color: #3b82f6; color: #1d4ed8; background: #eff6ff; }
+  .chip.active { background: #2563eb; border-color: #2563eb; color: #fff; }
+
+  /* ---------- 公式 ---------- */
+  .formula { display: flex; flex-direction: column; gap: 10px; }
+  .f-line { color: #334155; font-size: 15px; }
+  .f-line.big {
+    font-family: ui-monospace, monospace;
+    font-size: 16px;
+    font-weight: 700;
+    background: #f5f3ff;
+    color: #5b21b6;
+    padding: 12px 16px;
+    border-radius: 10px;
+    border-left: 4px solid #8b5cf6;
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+  .f-sub { font-size: 13.5px; color: #64748b; display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+  .tag {
+    display: inline-block;
+    padding: 2px 9px;
+    border-radius: 6px;
+    font-size: 12.5px;
+    font-weight: 700;
+    white-space: nowrap;
+  }
+  .tag.blue  { background: #dbeafe; color: #1d4ed8; }
+  .tag.amber { background: #fef3c7; color: #b45309; }
+  .tag.green { background: #d1fae5; color: #047857; }
+
+  /* ---------- 状态板 ---------- */
+  .board-wrap { overflow-x: auto; padding: 10px 0 6px; }
+  .board {
+    display: grid;
+    grid-template-columns: repeat(var(--cols), 92px);
+    gap: 8px;
+    width: max-content;
+    min-width: 100%;
+    justify-content: center;
+    margin: 0 auto;
+  }
+
+  .cell {
+    border-radius: 12px;
+    padding: 9px 4px;
+    text-align: center;
+    border: 2px solid transparent;
+    transition: transform .22s ease, background .22s ease,
+                border-color .22s ease, box-shadow .22s ease;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 1px;
+    min-height: 64px;
+    position: relative;
+  }
+  .cell .badge { font-size: 11px; font-weight: 600; letter-spacing: .3px; }
+
+  .cell.house { background: #eff6ff; border-color: #bfdbfe; }
+  .cell.house .badge { color: #3b82f6; }
+  .cell.house .amt { font-size: 24px; font-weight: 800; color: #1e3a8a; line-height: 1.15; }
+
+  .cell.dp { background: #f8fafc; border-color: #e2e8f0; }
+  .cell.dp .badge { color: #94a3b8; }
+  .cell.dp .val { font-size: 21px; font-weight: 800; color: #334155; line-height: 1.2; }
+  .cell.dp.pending { opacity: .45; }
+  .cell.dp.pending .val { color: #cbd5e1; }
+
+  .cell.placeholder { background: transparent; border: none; }
+
+  /* 状态高亮 */
+  .cell.current {
+    background: #dbeafe;
+    border-color: #2563eb;
+    transform: translateY(-4px);
+    box-shadow: 0 8px 18px rgba(37, 99, 235, .24);
+  }
+  .cell.src-skip { border-color: #3b82f6; background: #eff6ff; }
+  .cell.src-skip .badge { color: #1d4ed8; }
+  .cell.src-take { border-color: #f59e0b; background: #fffbeb; }
+  .cell.src-take .badge { color: #b45309; }
+  .cell.src-take .val { color: #b45309; }
+
+  .cell.new {
+    border-color: #10b981;
+    background: #ecfdf5;
+    animation: pop .5s cubic-bezier(.34, 1.56, .64, 1);
+  }
+  .cell.new .val { color: #047857; }
+  .cell.new .badge { color: #059669; }
+
+  .cell.selected {
+    background: #fef3c7;
+    border-color: #f59e0b;
+    box-shadow: 0 0 0 4px rgba(245, 158, 11, .18);
+  }
+  .cell.selected .amt { color: #b45309; }
+
+  .cell.final {
+    border-color: #10b981;
+    background: #d1fae5;
+    box-shadow: 0 0 0 4px rgba(16, 185, 129, .2);
+  }
+  .cell.final .val { color: #047857; }
+
+  @keyframes pop {
+    0%   { transform: scale(.9); }
+    55%  { transform: scale(1.09); }
+    100% { transform: scale(1); }
+  }
+
+  /* ---------- 计算面板 ---------- */
+  .calc {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 16px 18px;
+    margin-top: 14px;
+    min-height: 96px;
+  }
+  .line { margin: 5px 0; font-size: 14.5px; color: #334155; }
+  .line.title { font-weight: 700; color: #0f172a; font-size: 15px; margin-bottom: 10px; }
+  .line.note { font-size: 13px; color: #64748b; }
+  .line.result {
+    margin-top: 14px;
+    background: #ecfdf5;
+    border-left: 4px solid #10b981;
+    padding: 9px 14px;
+    border-radius: 8px;
+    font-size: 15.5px;
+    color: #065f46;
+  }
+  .line.result b { color: #047857; font-size: 18px; }
+
+  .cmp { display: flex; gap: 10px; align-items: stretch; margin: 12px 0; flex-wrap: wrap; }
+  .opt {
+    flex: 1;
+    min-width: 155px;
+    background: #fff;
+    border: 2px solid #e2e8f0;
+    border-radius: 11px;
+    padding: 10px 14px;
+    transition: all .25s;
+  }
+  .opt.win {
+    border-color: #10b981;
+    background: #f0fdf4;
+    box-shadow: 0 5px 16px rgba(16, 185, 129, .16);
+  }
+  .opt-label { font-size: 12.5px; color: #64748b; font-weight: 600; }
+  .opt-expr {
+    font-family: ui-monospace, monospace;
+    font-size: 13px;
+    color: #64748b;
+    margin: 3px 0;
+    word-break: break-all;
+  }
+  .opt-val { font-size: 23px; font-weight: 800; color: #334155; line-height: 1.2; }
+  .opt.win .opt-val { color: #059669; }
+  .vs { align-self: center; font-size: 12px; font-weight: 800; color: #cbd5e1; }
+
+  .rolling {
+    margin-top: 14px;
+    padding-top: 13px;
+    border-top: 1px dashed #cbd5e1;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 7px;
+    align-items: center;
+    font-family: ui-monospace, monospace;
+    font-size: 12.5px;
+  }
+  .rv { background: #eef2ff; color: #4338ca; padding: 4px 10px; border-radius: 7px; }
+  .rv.new { background: #d1fae5; color: #047857; }
+  .rv.after { background: #e0f2fe; color: #0369a1; }
+  .arrow { color: #cbd5e1; font-weight: 700; }
+
+  /* ---------- 控制条 ---------- */
+  .controls {
+    display: flex;
+    gap: 9px;
+    flex-wrap: wrap;
+    align-items: center;
+    margin-top: 16px;
+  }
+  button {
+    font: inherit;
+    font-weight: 600;
+    padding: 9px 17px;
+    border-radius: 9px;
+    border: 1.5px solid #cbd5e1;
+    background: #fff;
+    color: #334155;
+    cursor: pointer;
+    transition: all .18s;
+  }
+  button:hover:not(:disabled) {
+    border-color: #3b82f6;
+    color: #1d4ed8;
+    background: #eff6ff;
+  }
+  button:disabled { opacity: .38; cursor: not-allowed; }
+  button.primary { background: #2563eb; border-color: #2563eb; color: #fff; }
+  button.primary:hover:not(:disabled) { background: #1d4ed8; border-color: #1d4ed8; color: #fff; }
+  .step-label {
+    margin-left: auto;
+    font-size: 13px;
+    color: #64748b;
+    font-family: ui-monospace, monospace;
+    background: #f1f5f9;
+    padding: 6px 12px;
+    border-radius: 8px;
+  }
+
+  /* ---------- 提示列表 ---------- */
+  .tips { margin: 0; padding-left: 20px; color: #475569; font-size: 14.5px; }
+  .tips li { margin: 8px 0; }
+  .tips b { color: #0f172a; }
+
+  @media (max-width: 560px) {
+    .card { padding: 18px 16px; }
+    .board { grid-template-columns: repeat(var(--cols), 76px); }
+    .cell.house .amt { font-size: 20px; }
+    .step-label { margin-left: 0; width: 100%; text-align: center; }
+  }
+
+  main, .card { min-width: 0; }
+  #numsInput { min-width: 0; width: 100%; }
+  #inputHelp { margin-top: 12px; font-size: 13px; }
+  #inputError { color: #b91c1c; }
+  button:focus-visible, input:focus-visible { outline: 2px solid #2563eb; outline-offset: 3px; }
+  .cell .amt, .cell .val { overflow-wrap: anywhere; }
+  @media(max-width:560px) { .hero { padding: 26px 16px; } main { padding: 16px 10px 30px; } .cmp { flex-direction: column; } .opt { min-width:0; } }
+  @media(prefers-reduced-motion:reduce) { *, *::before, *::after { transition:none!important; animation:none!important; } }
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <h1>打家劫舍</h1>
+  <p>相邻房屋不能同时选择 · 线性动态规划逐步演示</p>
+</header>
+
+<main>
+
+  <!-- 输入 -->
+  <section class="card">
+    <h2>题目与输入</h2>
+    <p class="desc">
+      给定非负整数列表 <code>nums</code>，从中选择若干个互不相邻的位置，使对应元素之和最大。
+      允许一个位置也不选。
+    </p>
+    <div class="input-row">
+      <input id="numsInput" aria-label="房屋金额列表" aria-describedby="inputHelp" type="text" value="2, 7, 9, 3, 1" spellcheck="false" autocomplete="off">
+      <button id="applyBtn" class="primary">应用</button>
+    </div>
+    <p id="inputHelp" class="desc">最多10间房屋，每个金额为0到1000000000的整数，用逗号或空格分隔；留空可演示空列表。</p>
+    <p id="inputError" role="alert" hidden></p>
+    <div class="presets" id="presets"></div>
+  </section>
+
+  <!-- 核心思路 -->
+  <section class="card">
+    <h2>核心思路</h2>
+    <div class="formula">
+      <div class="f-line"><b>dp[i]</b>：只考虑前 <b>i</b> 间房屋，在不同时选择相邻房屋的条件下能获得的最大金额。</div>
+      <div class="f-line big">dp[i] = max( dp[i-1], dp[i-2] + nums[i-1] )</div>
+      <div class="f-sub">
+        <span class="tag blue">不选第 i 间</span> 直接继承 dp[i-1]
+        &nbsp;·&nbsp;
+        <span class="tag amber">选第 i 间</span> 跳过相邻的第 i-1 间，用 dp[i-2] + nums[i-1]
+      </div>
+    </div>
+  </section>
+
+  <!-- 演示区 -->
+  <section class="card">
+    <h2>求解过程</h2>
+    <div class="board-wrap">
+      <div class="board" id="board"></div>
+    </div>
+    <div class="calc" id="calcPanel"></div>
+    <div class="controls">
+      <button id="prevBtn">← 上一步</button>
+      <button id="nextBtn" class="primary">下一步 →</button>
+      <button id="playBtn">▶ 自动播放</button>
+      <button id="resetBtn">⟲ 重来</button>
+      <span class="step-label" id="stepLabel"></span>
+    </div>
+  </section>
+
+  <!-- 要点 -->
+  <section class="card">
+    <h2>易错点提示</h2>
+    <ul class="tips">
+      <li><b>下标偏移：</b>第 i 间房屋的金额是 <code>nums[i-1]</code>，而循环变量 <code>i</code> 表示"房屋数量"。</li>
+      <li><b>dp[i] 不要求选中第 i 间：</b>它只表示"考虑前 i 间"这个范围内能取到的最优金额。</li>
+      <li><b>选当前房屋时不能用 dp[i-1]：</b>那可能已经包含了相邻的第 i-1 间，应改用 dp[i-2]。</li>
+      <li><b>不是奇偶分组：</b>如 <code>[2,1,1,2]</code> 最优是选第 1、4 间，金额为 4，而按奇偶分组都只有 3。</li>
+      <li><b>不能贪心：</b><code>[2,3,2]</code> 先选最大的 3 只能得到 3，最优是选两端得到 4。</li>
+      <li><b>更新顺序：</b>滚动变量必须先算出 <code>current</code>，再更新 <code>prev2, prev1</code>，否则会把相邻房屋同时选中。</li>
+      <li><b>空间优化不改时间：</b>两个变量把空间降到 O(1)，但每间房屋仍需处理一次，时间依然是 O(n)。</li>
+    </ul>
+  </section>
+
+</main>
+
+<script>
+(function () {
+  "use strict";
+
+  /* =========================================================
+     预设用例
+     ========================================================= */
+  const PRESETS = [
+    { label: "主示例 [2,7,9,3,1]",  nums: [2, 7, 9, 3, 1] },
+    { label: "首尾可同选 [2,1,1,2]", nums: [2, 1, 1, 2] },
+    { label: "贪心会错 [2,3,2]",     nums: [2, 3, 2] },
+    { label: "全零 [0,0,0]",         nums: [0, 0, 0] },
+    { label: "单间 [7]",             nums: [7] },
+    { label: "空列表 []",            nums: [] }
+  ];
+
+  const MAX_HOUSES = 10;
+
+  /* =========================================================
+     全局状态
+     ========================================================= */
+  const state = {
+    nums: [2, 7, 9, 3, 1],
+    steps: [],
+    idx: 0
+  };
+
+  let playTimer = null;
+
+  /* =========================================================
+     回溯：从 dp 值反推一种最优选择
+     ========================================================= */
+  function backtrack(nums, dp) {
+    const picked = [];
+    let i = nums.length;
+
+    while (i >= 1) {
+      if (i === 1) {
+        if (nums[0] > 0) picked.push(1);
+        break;
+      }
+      if (dp[i] === dp[i - 1]) {
+        i -= 1;              // 没选第 i 间
+      } else {
+        picked.push(i);      // 选了第 i 间
+        i -= 2;              // 跳过第 i-1 间
+      }
+    }
+    return picked.reverse();
+  }
+
+  /* =========================================================
+     构建步骤序列
+     ========================================================= */
+  function buildSteps(nums) {
+    const n = nums.length;
+
+    if (n === 0) {
+      return [{ type: "empty", i: 0, dp: [0] }];
+    }
+
+    const dp = new Array(n + 1).fill(null);
+    dp[0] = 0;
+    dp[1] = nums[0];
+
+    const steps = [{ type: "init", i: 1, dp: dp.slice() }];
+
+    for (let i = 2; i <= n; i++) {
+      dp[i] = Math.max(dp[i - 1], dp[i - 2] + nums[i - 1]);
+      steps.push({ type: "loop", i: i, dp: dp.slice() });
+    }
+
+    steps.push({
+      type: "optimal",
+      i: n,
+      dp: dp.slice(),
+      picked: backtrack(nums, dp)
+    });
+
+    return steps;
+  }
+
+  /* =========================================================
+     渲染：状态板
+     ========================================================= */
+  function renderBoard(step) {
+    const nums = state.nums;
+    const n = nums.length;
+    const board = document.getElementById("board");
+
+    board.style.setProperty("--cols", n + 1);
+
+    let html = '<div class="cell placeholder"></div>';
+
+    // 第一行：房屋（第 1 ~ n 间）
+    for (let i = 1; i <= n; i++) {
+      html +=
+        '<div class="cell house" data-h="' + i + '">' +
+          '<div class="badge">第 ' + i + ' 间</div>' +
+          '<div class="amt">' + nums[i - 1] + '</div>' +
+        '</div>';
+    }
+
+    // 第二行：状态 dp[0] ~ dp[n]
+    for (let i = 0; i <= n; i++) {
+      const v = step.dp[i];
+      const pending = (v === null || v === undefined);
+      html +=
+        '<div class="cell dp' + (pending ? ' pending' : '') + '" data-d="' + i + '">' +
+          '<div class="badge">dp[' + i + ']</div>' +
+          '<div class="val">' + (pending ? '·' : v) + '</div>' +
+        '</div>';
+    }
+
+    board.innerHTML = html;
+
+    const addClass = function (sel, cls) {
+      const el = board.querySelector(sel);
+      if (el) el.classList.add(cls);
+    };
+
+    // ---- 按步骤类型打高亮 ----
+    if (step.type === "init") {
+      addClass('[data-h="1"]', "current");
+      addClass('[data-d="1"]', "new");
+    } else if (step.type === "loop") {
+      const i = step.i;
+      addClass('[data-h="' + i + '"]', "current");
+      addClass('[data-d="' + (i - 2) + '"]', "src-take");
+      addClass('[data-d="' + (i - 1) + '"]', "src-skip");
+      addClass('[data-d="' + i + '"]', "new");
+    } else if (step.type === "optimal") {
+      step.picked.forEach(function (p) {
+        addClass('[data-h="' + p + '"]', "selected");
+      });
+      addClass('[data-d="' + n + '"]', "final");
+    }
+  }
+
+  /* =========================================================
+     渲染：计算面板
+     ========================================================= */
+  function renderPanel(step) {
+    const nums = state.nums;
+    const panel = document.getElementById("calcPanel");
+    let html = "";
+
+    if (step.type === "empty") {
+      html =
+        '<div class="line title">空列表</div>' +
+        '<div class="line">输入为空，直接返回 <b>0</b>。允许一间房屋都不选。</div>';
+
+    } else if (step.type === "init") {
+      html =
+        '<div class="line title">初始化边界</div>' +
+        '<div class="line"><span class="tag blue">dp[0]</span> = 0 &nbsp;—&nbsp; 不考虑任何房屋时的最大金额</div>' +
+        '<div class="line"><span class="tag green">dp[1]</span> = nums[0] = ' + nums[0] +
+          ' &nbsp;—&nbsp; 只有一间房屋，选它</div>' +
+        '<div class="line note">注意：dp 的下标是"房屋数量"，第 i 间的金额要用 nums[i-1] 读取。</div>';
+
+    } else if (step.type === "loop") {
+      const i    = step.i;
+      const amt  = nums[i - 1];
+      const skip = step.dp[i - 1];
+      const base = step.dp[i - 2];
+      const take = base + amt;
+      const res  = step.dp[i];
+
+      let winSkip = false, winTake = false;
+      if (skip > take)      winSkip = true;
+      else if (take > skip) winTake = true;
+      else                  { winSkip = true; winTake = true; }
+
+      html =
+        '<div class="line title">处理第 ' + i + ' 间房屋（金额 nums[' + (i - 1) + '] = ' + amt + '）</div>' +
+
+        '<div class="cmp">' +
+          '<div class="opt' + (winSkip ? ' win' : '') + '">' +
+            '<div class="opt-label">不选第 ' + i + ' 间</div>' +
+            '<div class="opt-expr">dp[' + (i - 1) + ']</div>' +
+            '<div class="opt-val">' + skip + '</div>' +
+          '</div>' +
+          '<div class="vs">VS</div>' +
+          '<div class="opt' + (winTake ? ' win' : '') + '">' +
+            '<div class="opt-label">选第 ' + i + ' 间</div>' +
+            '<div class="opt-expr">dp[' + (i - 2) + '] + nums[' + (i - 1) + '] = ' +
+              base + ' + ' + amt + '</div>' +
+            '<div class="opt-val">' + take + '</div>' +
+          '</div>' +
+        '</div>' +
+
+        '<div class="line result">dp[' + i + '] = max(' + skip + ', ' + take + ') = <b>' + res + '</b></div>' +
+
+        '<div class="rolling">' +
+          '<span class="rv">prev2 = dp[' + (i - 2) + '] = ' + base + '</span>' +
+          '<span class="arrow">·</span>' +
+          '<span class="rv">prev1 = dp[' + (i - 1) + '] = ' + skip + '</span>' +
+          '<span class="arrow">→</span>' +
+          '<span class="rv new">current = ' + res + '</span>' +
+          '<span class="arrow">⟳</span>' +
+          '<span class="rv after">更新后 prev2 = ' + skip + ', prev1 = ' + res + '</span>' +
+        '</div>';
+
+    } else if (step.type === "optimal") {
+      const picked = step.picked;
+      const total  = step.dp[nums.length];
+      const list   = picked.length
+        ? picked.map(function (p) { return "第 " + p + " 间"; }).join("、")
+        : "（一间都不选）";
+      const expr   = picked.length
+        ? picked.map(function (p) { return nums[p - 1]; }).join(" + ") + " = " + total
+        : "0";
+
+      html =
+        '<div class="line title">最优方案核对</div>' +
+        '<div class="line">选择的房屋：<b>' + list + '</b></div>' +
+        '<div class="line">金额：' + expr + '</div>' +
+        '<div class="line result">最大总金额 = <b>' + total + '</b></div>' +
+        '<div class="line note">状态表只保存金额；具体房屋编号是沿 dp 值反向核对得到的。' +
+          '若两个候选相等，可能存在多种最优方案。</div>';
+    }
+
+    panel.innerHTML = html;
+  }
+
+  /* =========================================================
+     渲染：总入口
+     ========================================================= */
+  function render() {
+    const steps = state.steps;
+    const idx = state.idx;
+    const step = steps[idx];
+
+    renderBoard(step);
+    renderPanel(step);
+
+    document.getElementById("stepLabel").textContent =
+      "步骤 " + (idx + 1) + " / " + steps.length;
+
+    document.getElementById("prevBtn").disabled = (idx === 0);
+    document.getElementById("nextBtn").disabled = (idx === steps.length - 1);
+
+    if (idx === steps.length - 1 && playTimer) stopPlay();
+  }
+
+  /* =========================================================
+     步骤控制
+     ========================================================= */
+  function goTo(index) {
+    if (index < 0 || index >= state.steps.length) return;
+    state.idx = index;
+    render();
+  }
+
+  function next() { goTo(state.idx + 1); }
+  function prev() { goTo(state.idx - 1); }
+
+  function reset() {
+    stopPlay();
+    state.idx = 0;
+    render();
+  }
+
+  /* =========================================================
+     自动播放
+     ========================================================= */
+  function stopPlay() {
+    if (playTimer) {
+      clearInterval(playTimer);
+      playTimer = null;
+    }
+    document.getElementById("playBtn").textContent = "▶ 自动播放";
+  }
+
+  function togglePlay() {
+    if (playTimer) {
+      stopPlay();
+      return;
+    }
+    if (state.idx >= state.steps.length - 1) {
+      state.idx = 0;
+      render();
+    }
+    document.getElementById("playBtn").textContent = "⏸ 暂停";
+    playTimer = setInterval(function () {
+      if (state.idx < state.steps.length - 1) {
+        state.idx += 1;
+        render();
+      } else {
+        stopPlay();
+      }
+    }, 1150);
+  }
+
+  /* =========================================================
+     输入处理
+     ========================================================= */
+  function parseInput(str) {
+    const raw = String(str).trim();
+    if (!raw) return [];
+    const parts = raw.split(/[,，\s]+/);
+    if (parts.length > MAX_HOUSES || parts.some(p => !/^\d+$/.test(p))) {
+      throw new Error("请输入最多10个非负整数，不要输入小数、负数或其他字符。");
+    }
+    const nums = parts.map(Number);
+    if (nums.some(v => !Number.isSafeInteger(v) || v > 1000000000)) {
+      throw new Error("每个金额须在0到1000000000之间。");
+    }
+    return nums;
+  }
+
+  function applyInput() {
+    stopPlay();
+    try { apply(parseInput(document.getElementById("numsInput").value)); }
+    catch (error) {
+      const message = document.getElementById("inputError");
+      message.textContent = error.message;
+      message.hidden = false;
+      document.getElementById("numsInput").setAttribute("aria-invalid", "true");
+    }
+  }
+
+  function apply(nums) {
+    document.getElementById("inputError").hidden = true;
+    document.getElementById("inputError").textContent = "";
+    document.getElementById("numsInput").removeAttribute("aria-invalid");
+    stopPlay();
+    state.nums = nums;
+    state.steps = buildSteps(nums);
+    state.idx = 0;
+
+    // 同步输入框与预设按钮状态
+    document.getElementById("numsInput").value = nums.join(", ");
+    syncPresets(nums);
+
+    render();
+  }
+
+  function syncPresets(nums) {
+    const chips = document.querySelectorAll("#presets .chip");
+    chips.forEach(function (chip) {
+      const p = PRESETS[Number(chip.dataset.idx)];
+      const same = p.nums.length === nums.length &&
+                   p.nums.every(function (v, k) { return v === nums[k]; });
+      chip.classList.toggle("active", same);
+    });
+  }
+
+  /* =========================================================
+     初始化
+     ========================================================= */
+  function init() {
+    // 预设按钮
+    const presetsBox = document.getElementById("presets");
+    PRESETS.forEach(function (p, i) {
+      const btn = document.createElement("button");
+      btn.className = "chip";
+      btn.textContent = p.label;
+      btn.dataset.idx = i;
+      btn.addEventListener("click", function () {
+        document.getElementById("numsInput").value = p.nums.join(", ");
+        apply(p.nums.slice());
+      });
+      presetsBox.appendChild(btn);
+    });
+
+    // 事件绑定
+    document.getElementById("applyBtn").addEventListener("click", function () {
+      applyInput();
+    });
+
+    document.getElementById("numsInput").addEventListener("keydown", function (e) {
+      if (e.key === "Enter") {
+        applyInput();
+      }
+    });
+
+    document.getElementById("prevBtn").addEventListener("click", function () {
+      stopPlay();
+      prev();
+    });
+
+    document.getElementById("nextBtn").addEventListener("click", function () {
+      stopPlay();
+      next();
+    });
+
+    document.getElementById("playBtn").addEventListener("click", togglePlay);
+
+    document.getElementById("resetBtn").addEventListener("click", reset);
+
+    // 键盘方向键
+    document.addEventListener("keydown", function (e) {
+      if (e.target && e.target.tagName === "INPUT") return;
+      if (e.key === "ArrowRight") { stopPlay(); next(); e.preventDefault(); }
+      if (e.key === "ArrowLeft")  { stopPlay(); prev(); e.preventDefault(); }
+    });
+
+    // 首次渲染
+    state.steps = buildSteps(state.nums);
+    state.idx = 0;
+    syncPresets(state.nums);
+    render();
+  }
+
+  document.addEventListener("visibilitychange", function () { if (document.hidden) stopPlay(); });
+  document.addEventListener("DOMContentLoaded", init);
+})();
+</script>
+</body>
+</html>

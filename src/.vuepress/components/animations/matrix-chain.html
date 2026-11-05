@@ -1,0 +1,1075 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>矩阵连乘 · 区间动态规划演示</title>
+<style>
+  * { box-sizing: border-box; }
+
+  :root {
+    --blue: #2563eb;
+    --violet: #8b5cf6;
+    --green: #10b981;
+    --amber: #f59e0b;
+    --ink: #1e293b;
+    --muted: #64748b;
+    --line: #e2e8f0;
+  }
+
+  body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC",
+                 "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+    background: #f1f5f9;
+    color: var(--ink);
+    line-height: 1.65;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ============ 顶部 ============ */
+  .hero {
+    background: linear-gradient(135deg, #b45309 0%, #7c3aed 50%, #2563eb 100%);
+    color: #fff;
+    padding: 44px 24px 38px;
+    text-align: center;
+    box-shadow: 0 6px 24px rgba(124, 58, 237, .24);
+  }
+  .hero h1 {
+    margin: 0 0 8px;
+    font-size: clamp(25px, 4.4vw, 37px);
+    letter-spacing: 2px;
+    font-weight: 800;
+  }
+  .hero p { margin: 0; opacity: .9; font-size: 15px; letter-spacing: .5px; }
+
+  main {
+    max-width: 1020px;
+    margin: 0 auto;
+    padding: 26px 18px 60px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  /* ============ 卡片 ============ */
+  .card {
+    background: #fff;
+    border-radius: 16px;
+    padding: 22px 24px;
+    box-shadow: 0 2px 14px rgba(15, 23, 42, .07);
+    border: 1px solid #e8eef5;
+  }
+  .card h2 {
+    margin: 0 0 14px;
+    font-size: 17px;
+    display: flex;
+    align-items: center;
+    gap: 9px;
+  }
+  .card h2::before {
+    content: "";
+    width: 4px;
+    height: 17px;
+    border-radius: 3px;
+    background: linear-gradient(180deg, #7c3aed, #2563eb);
+  }
+  .desc { margin: 0 0 14px; color: #475569; font-size: 14.5px; }
+
+  code {
+    background: #eef2ff;
+    color: #4338ca;
+    padding: 1px 6px;
+    border-radius: 5px;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-size: .92em;
+  }
+
+  /* ============ 输入 ============ */
+  .input-row { display: flex; gap: 10px; flex-wrap: wrap; }
+  #dimInput {
+    flex: 1;
+    min-width: 220px;
+    font: inherit;
+    font-family: ui-monospace, monospace;
+    padding: 10px 14px;
+    border-radius: 10px;
+    border: 1.5px solid #cbd5e1;
+    outline: none;
+    transition: all .18s;
+    background: #f8fafc;
+  }
+  #dimInput:focus {
+    border-color: var(--blue);
+    background: #fff;
+    box-shadow: 0 0 0 4px rgba(37, 99, 235, .13);
+  }
+  #dimInput.err { border-color: #ef4444; background: #fef2f2; }
+
+  .presets { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+  .chip {
+    font: inherit;
+    font-size: 13px;
+    padding: 6px 13px;
+    border-radius: 999px;
+    border: 1.5px solid #dbe3ee;
+    background: #f8fafc;
+    color: #475569;
+    cursor: pointer;
+    transition: all .18s;
+  }
+  .chip:hover { border-color: var(--blue); color: #1d4ed8; background: #eff6ff; }
+  .chip.active { background: var(--blue); border-color: var(--blue); color: #fff; }
+
+  .err-msg {
+    margin-top: 10px;
+    font-size: 13.5px;
+    color: #b91c1c;
+    background: #fef2f2;
+    border-left: 4px solid #ef4444;
+    padding: 8px 12px;
+    border-radius: 7px;
+    display: none;
+  }
+  .err-msg.show { display: block; }
+
+  /* ============ 公式 ============ */
+  .formula { display: flex; flex-direction: column; gap: 10px; }
+  .f-line { color: #334155; font-size: 15px; }
+  .f-line.big {
+    font-family: ui-monospace, monospace;
+    font-size: 15px;
+    font-weight: 700;
+    background: #f5f3ff;
+    color: #5b21b6;
+    padding: 12px 16px;
+    border-radius: 10px;
+    border-left: 4px solid var(--violet);
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+  .f-line.big.green {
+    background: #ecfdf5;
+    color: #047857;
+    border-left-color: var(--green);
+  }
+  .f-sub { font-size: 13.5px; color: var(--muted); display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+  .tag {
+    display: inline-block;
+    padding: 2px 9px;
+    border-radius: 6px;
+    font-size: 12.5px;
+    font-weight: 700;
+    white-space: nowrap;
+  }
+  .tag.blue   { background: #dbeafe; color: #1d4ed8; }
+  .tag.amber  { background: #fef3c7; color: #b45309; }
+  .tag.green  { background: #d1fae5; color: #047857; }
+  .tag.violet { background: #ede9fe; color: #6d28d9; }
+
+  /* ============ 维度展示 ============ */
+  .dim-box {
+    background: #f8fafc;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 14px 16px;
+    margin-bottom: 16px;
+  }
+  .dim-label {
+    font-size: 12px;
+    font-weight: 700;
+    color: #94a3b8;
+    letter-spacing: .5px;
+    margin-bottom: 8px;
+  }
+  .dim-seq {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 5px;
+    margin-bottom: 12px;
+  }
+  .dim-chip {
+    font-family: ui-monospace, monospace;
+    font-size: 13px;
+    font-weight: 700;
+    background: #e0f2fe;
+    color: #0369a1;
+    padding: 4px 10px;
+    border-radius: 7px;
+  }
+  .dim-arrow { color: #cbd5e1; font-weight: 700; font-size: 13px; }
+
+  .mat-seq { display: flex; flex-wrap: wrap; gap: 8px; }
+  .mat-card {
+    background: #fff;
+    border: 1.5px solid #ddd6fe;
+    border-radius: 10px;
+    padding: 7px 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: all .22s;
+  }
+  .mat-card .mname {
+    font-weight: 800;
+    color: #6d28d9;
+    font-size: 13.5px;
+  }
+  .mat-card .mdim {
+    font-family: ui-monospace, monospace;
+    font-size: 12.5px;
+    color: var(--muted);
+  }
+  .mat-card.hl {
+    border-color: var(--amber);
+    background: #fffbeb;
+    box-shadow: 0 4px 12px rgba(245, 158, 11, .18);
+  }
+
+  /* ============ 表 ============ */
+  .tables {
+    display: flex;
+    gap: 22px;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: flex-start;
+  }
+  .table-block { overflow-x: auto; max-width: 100%; }
+  .table-block h3 {
+    margin: 0 0 10px;
+    font-size: 13.5px;
+    color: #475569;
+    font-weight: 700;
+    text-align: center;
+  }
+  .grid { display: grid; gap: 4px; }
+
+  .gcell {
+    height: 42px;
+    min-width: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    font-family: ui-monospace, monospace;
+    font-size: 12.5px;
+    font-weight: 700;
+    transition: background .22s, color .22s, box-shadow .22s;
+    overflow: hidden;
+    white-space: nowrap;
+  }
+  .gcell.head {
+    background: transparent;
+    color: #94a3b8;
+    font-size: 11.5px;
+    font-weight: 600;
+  }
+  .gcell.corner {
+    background: transparent;
+    color: #cbd5e1;
+    font-size: 10px;
+  }
+  .gcell.blank {
+    background: transparent;
+    color: #f1f5f9;
+  }
+  .gcell.diag {
+    background: #f1f5f9;
+    color: #94a3b8;
+  }
+  .gcell.pending {
+    background: #f8fafc;
+    color: #cbd5e1;
+    box-shadow: inset 0 0 0 1.5px #eef2f6;
+  }
+  .gcell.val {
+    background: #eef2ff;
+    color: #3730a3;
+  }
+  .gcell.small { font-size: 10px; }
+
+  /* 高亮层级放在 val 之后 */
+  .gcell.srcL {
+    background: #fffbeb;
+    color: #b45309;
+    box-shadow: 0 0 0 2px var(--amber);
+  }
+  .gcell.srcR {
+    background: #f5f3ff;
+    color: #6d28d9;
+    box-shadow: 0 0 0 2px var(--violet);
+  }
+  .gcell.cur {
+    background: #dbeafe;
+    color: #1d4ed8;
+    box-shadow: 0 0 0 2.5px var(--blue), 0 4px 12px rgba(37, 99, 235, .22);
+    position: relative;
+    z-index: 2;
+  }
+
+  /* ============ 计算面板 ============ */
+  .calc {
+    background: #f8fafc;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 16px 18px;
+    margin-top: 18px;
+    min-height: 130px;
+  }
+  .line { margin: 5px 0; font-size: 14.5px; color: #334155; }
+  .line.title { font-weight: 700; color: #0f172a; font-size: 15px; margin-bottom: 10px; }
+  .line.note { font-size: 13px; color: var(--muted); }
+  .line b { color: #0f172a; }
+  .line.result {
+    margin-top: 12px;
+    background: #ecfdf5;
+    border-left: 4px solid var(--green);
+    padding: 9px 14px;
+    border-radius: 8px;
+    font-size: 15px;
+    color: #065f46;
+  }
+  .line.result b { color: #047857; font-size: 18px; }
+  .line.keep {
+    margin-top: 12px;
+    background: #f1f5f9;
+    border-left: 4px solid #94a3b8;
+    padding: 9px 14px;
+    border-radius: 8px;
+    font-size: 14px;
+    color: #475569;
+  }
+  .line.answer {
+    margin-top: 14px;
+    background: linear-gradient(135deg, #ecfdf5, #eff6ff);
+    border: 1.5px solid #a7f3d0;
+    padding: 14px 18px;
+    border-radius: 11px;
+  }
+  .line.answer .lbl { font-size: 13px; color: var(--muted); font-weight: 600; }
+  .line.answer .big {
+    font-size: 24px;
+    font-weight: 800;
+    color: #047857;
+    font-family: ui-monospace, monospace;
+  }
+  .line.answer .order {
+    font-size: 20px;
+    font-weight: 800;
+    color: #6d28d9;
+    font-family: ui-monospace, monospace;
+    letter-spacing: .5px;
+  }
+
+  .cmp { display: flex; gap: 9px; align-items: stretch; margin: 12px 0; flex-wrap: wrap; }
+  .opt {
+    flex: 1;
+    min-width: 130px;
+    background: #fff;
+    border: 2px solid var(--line);
+    border-radius: 11px;
+    padding: 9px 13px;
+    transition: all .22s;
+  }
+  .opt-label { font-size: 12px; color: var(--muted); font-weight: 600; }
+  .opt-expr {
+    font-family: ui-monospace, monospace;
+    font-size: 12px;
+    color: var(--muted);
+    margin: 3px 0;
+    word-break: break-all;
+  }
+  .opt-val { font-size: 22px; font-weight: 800; color: #334155; line-height: 1.2; }
+  .plus {
+    align-self: center;
+    font-size: 18px;
+    font-weight: 800;
+    color: #cbd5e1;
+  }
+  .plus-slot { align-self: center; }
+
+  /* ============ 控制条 ============ */
+  .controls {
+    display: flex;
+    gap: 9px;
+    flex-wrap: wrap;
+    align-items: center;
+    margin-top: 16px;
+  }
+  button {
+    font: inherit;
+    font-weight: 600;
+    padding: 9px 17px;
+    border-radius: 9px;
+    border: 1.5px solid #cbd5e1;
+    background: #fff;
+    color: #334155;
+    cursor: pointer;
+    transition: all .18s;
+  }
+  button:hover:not(:disabled) {
+    border-color: var(--blue);
+    color: #1d4ed8;
+    background: #eff6ff;
+  }
+  button:disabled { opacity: .38; cursor: not-allowed; }
+  button.primary { background: var(--blue); border-color: var(--blue); color: #fff; }
+  button.primary:hover:not(:disabled) { background: #1d4ed8; border-color: #1d4ed8; color: #fff; }
+  .step-label {
+    margin-left: auto;
+    font-size: 13px;
+    color: var(--muted);
+    font-family: ui-monospace, monospace;
+    background: #f1f5f9;
+    padding: 6px 12px;
+    border-radius: 8px;
+  }
+
+  /* ============ 图例 ============ */
+  .legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    justify-content: center;
+    font-size: 12.5px;
+    color: var(--muted);
+    margin-top: 14px;
+  }
+  .legend span { display: inline-flex; align-items: center; gap: 6px; }
+  .legend i { width: 14px; height: 14px; border-radius: 4px; display: inline-block; }
+  .lg-cur  { background: #dbeafe; box-shadow: 0 0 0 2px var(--blue); }
+  .lg-l    { background: #fffbeb; box-shadow: 0 0 0 2px var(--amber); }
+  .lg-r    { background: #f5f3ff; box-shadow: 0 0 0 2px var(--violet); }
+
+  /* ============ 提示 ============ */
+  .tips { margin: 0; padding-left: 20px; color: #475569; font-size: 14.5px; }
+  .tips li { margin: 8px 0; }
+  .tips b { color: #0f172a; }
+
+  @media (max-width: 620px) {
+    .card { padding: 18px 15px; }
+    .gcell { height: 38px; font-size: 11.5px; }
+    .step-label { margin-left: 0; width: 100%; text-align: center; }
+    .tables { gap: 16px; }
+  }
+
+  main,.card,.tables,.table-block { min-width:0; }
+  #dimInput { min-width:0; width:100%; }
+  #inputHelp { margin-top:12px; font-size:13px; }
+  button:focus-visible,input:focus-visible { outline:2px solid var(--blue); outline-offset:3px; }
+  @media(max-width:620px) { main { padding:16px 10px 30px; } .hero { padding:26px 16px; } .cmp { flex-direction:column; } .opt { min-width:0; } }
+  @media(prefers-reduced-motion:reduce) { *,*::before,*::after { transition:none!important; animation:none!important; } }
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <h1>矩阵连乘</h1>
+  <p>区间动态规划 · 按长度填表 · 切分表恢复最优括号</p>
+</header>
+
+<main>
+
+  <!-- 输入 -->
+  <section class="card">
+    <h2>题目与输入</h2>
+    <p class="desc">
+      给定按固定顺序相乘的 <b>n</b> 个矩阵（维度列表长度 <code>n+1</code>），
+      只通过改变括号调整计算顺序，求最少标量乘法次数，并给出一种完全加括号方案。<br>
+      维度 <code>p = [p₀, p₁, …, pₙ]</code> 表示第 <b>i</b> 个矩阵是 <code>p[i-1] × p[i]</code>。
+    </p>
+    <div class="input-row">
+      <input id="dimInput" aria-label="矩阵维度列表" aria-describedby="inputHelp" type="text" spellcheck="false" autocomplete="off"
+             value="10, 30, 5, 60">
+      <button id="applyBtn" class="primary">应用</button>
+    </div>
+    <p id="inputHelp" class="desc">输入2到9个正整数（1到8个矩阵），每个维度为1到10000，用逗号或空格分隔。</p>
+    <div class="err-msg" id="errMsg" role="alert"></div>
+    <div class="presets" id="presets"></div>
+  </section>
+
+  <!-- 核心思路 -->
+  <section class="card">
+    <h2>核心思路</h2>
+    <div class="formula">
+      <div class="f-line">
+        <b>dp[i][j]</b>：按原顺序计算 <b>Aᵢ…Aⱼ</b> 的最少标量乘法次数。
+      </div>
+      <div class="f-line big">
+        dp[i][j] = min<sub>i≤k&lt;j</sub> { dp[i][k] + dp[k+1][j] + p[i-1]·p[k]·p[j] }
+      </div>
+      <div class="f-sub">
+        <span class="tag amber">左链内部成本</span>
+        <span class="tag violet">右链内部成本</span>
+        <span class="tag blue">最后一次相乘成本</span>
+        &nbsp;·&nbsp; 单矩阵时 <code>dp[i][i] = 0</code>
+      </div>
+      <div class="f-line" style="margin-top:6px;">
+        按<b>区间长度</b>从 2 到 n 递增填表，保证依赖的更短区间已经求出。
+      </div>
+      <div class="f-line big green">
+        split[i][j] = 取得最小值的切分点 k &nbsp;→&nbsp; 据此恢复最优括号
+      </div>
+    </div>
+  </section>
+
+  <!-- 演示 -->
+  <section class="card">
+    <h2>求解过程</h2>
+
+    <div class="dim-box">
+      <div class="dim-label">维度链 p</div>
+      <div class="dim-seq" id="dimSeq"></div>
+      <div class="dim-label">矩阵</div>
+      <div class="mat-seq" id="matSeq"></div>
+    </div>
+
+    <div class="tables">
+      <div class="table-block">
+        <h3>成本表 dp[i][j]</h3>
+        <div class="grid" id="dpGrid"></div>
+      </div>
+      <div class="table-block">
+        <h3>切分表 split[i][j]</h3>
+        <div class="grid" id="splitGrid"></div>
+      </div>
+    </div>
+
+    <div class="legend">
+      <span><i class="lg-cur"></i>正在计算的区间 [i, j]</span>
+      <span><i class="lg-l"></i>左链 dp[i][k]</span>
+      <span><i class="lg-r"></i>右链 dp[k+1][j]</span>
+    </div>
+
+    <div class="calc" id="calcPanel"></div>
+
+    <div class="controls">
+      <button id="prevBtn">← 上一步</button>
+      <button id="nextBtn" class="primary">下一步 →</button>
+      <button id="playBtn">▶ 自动播放</button>
+      <button id="resetBtn">⟲ 重来</button>
+      <span class="step-label" id="stepLabel"></span>
+    </div>
+  </section>
+
+  <!-- 易错点 -->
+  <section class="card">
+    <h2>易错点提示</h2>
+    <ul class="tips">
+      <li><b>矩阵数量是 len(p) - 1：</b><code>[10,30,5,60]</code> 表示 3 个矩阵，不是 4 个。</li>
+      <li><b>不能排序或交换矩阵：</b>只允许改变括号，顺序必须保持不变。</li>
+      <li><b>单矩阵成本为 0：</b><code>dp[i][i] = 0</code>，不是元素个数。</li>
+      <li><b>不能只比较最后一次相乘：</b>还要加上左右子链各自的最优内部成本。</li>
+      <li><b>维度下标是 p[i-1]·p[k]·p[j]：</b>不是 <code>p[i]·p[k]·p[j]</code>，左链的行数是 p[i-1]。</li>
+      <li><b>切分点范围是 i ≤ k &lt; j：</b>取 k = j 会让右子链为空。</li>
+      <li><b>必须按区间长度递增填表：</b>随意按行填可能读到尚未计算的短区间。</li>
+      <li><b>不要用固定的"足够大"常量当初值：</b>最优成本可能超过它，用 <code>None</code> 更安全。</li>
+      <li><b>只求最优值不等于能恢复方案：</b>要同步保存 <code>split[i][j]</code>。</li>
+      <li><b>二维表 ≠ 平方时间：</b>每个区间还要枚举切分点，总时间是 O(n³)。</li>
+    </ul>
+  </section>
+
+</main>
+
+<script>
+(function () {
+  "use strict";
+
+  /* ================= 预设 ================= */
+  const PRESETS = [
+    { label: "主示例 [10,30,5,60]", dims: [10, 30, 5, 60] },
+    { label: "两矩阵 [10,20,30]",   dims: [10, 20, 30] },
+    { label: "单矩阵 [10,20]",      dims: [10, 20] },
+    { label: "相等维度 [5,5,5,5]",  dims: [5, 5, 5, 5] },
+    { label: "四矩阵 [5,10,3,12,5]", dims: [5, 10, 3, 12, 5] },
+    { label: "大成本 [1000,1000,1000]", dims: [1000, 1000, 1000] }
+  ];
+
+  const MAX_MATRIX = 8;
+
+  /* ================= 全局状态 ================= */
+  const state = {
+    p: [10, 30, 5, 60],
+    steps: [],
+    idx: 0
+  };
+
+  let playTimer = null;
+
+  /* =====================================================
+     一、构建步骤
+     ===================================================== */
+  function buildSteps(p) {
+    const n = p.length - 1;
+    const steps = [];
+
+    const dpMap = {};
+    const splitMap = {};
+
+    for (let i = 1; i <= n; i++) {
+      dpMap[i + "," + i] = 0;
+      splitMap[i + "," + i] = null;
+    }
+
+    function snap() {
+      return { dp: Object.assign({}, dpMap), split: Object.assign({}, splitMap) };
+    }
+
+    steps.push({ type: "init", state: snap(), i: 0, j: 0 });
+
+    for (let len = 2; len <= n; len++) {
+      for (let i = 1; i + len - 1 <= n; i++) {
+        const j = i + len - 1;
+        let best = null;
+        let bestK = null;
+
+        for (let k = i; k < j; k++) {
+          const leftCost  = dpMap[i + "," + k];
+          const rightCost = dpMap[(k + 1) + "," + j];
+          const mult      = p[i - 1] * p[k] * p[j];
+          const cost      = leftCost + rightCost + mult;
+
+          const prevBest  = best;
+          const prevBestK = bestK;
+          const updated   = (best === null || cost < best);
+
+          if (updated) { best = cost; bestK = k; }
+
+          dpMap[i + "," + j] = best;
+          splitMap[i + "," + j] = bestK;
+
+          steps.push({
+            type: "cand",
+            len: len, i: i, j: j, k: k,
+            leftCost: leftCost,
+            rightCost: rightCost,
+            mult: mult,
+            cost: cost,
+            prevBest: prevBest,
+            prevBestK: prevBestK,
+            best: best,
+            bestK: bestK,
+            updated: updated,
+            state: snap()
+          });
+        }
+      }
+    }
+
+    steps.push({
+      type: "done",
+      answer: dpMap["1," + n],
+      order: buildOrder(splitMap, 1, n),
+      state: snap(),
+      n: n
+    });
+
+    return steps;
+  }
+
+  /* 括号恢复：显式栈，避免递归 */
+  function buildOrder(splitMap, i, j) {
+    const parts = [];
+    const stack = [[i, j]];
+    while (stack.length) {
+      const task = stack.pop();
+      if (typeof task === "string") { parts.push(task); continue; }
+      const l = task[0], r = task[1];
+      if (l === r) {
+        parts.push("A" + l);
+      } else {
+        const k = splitMap[l + "," + r];
+        stack.push(")", [k + 1, r], [l, k], "(");
+      }
+    }
+    return parts.join("");
+  }
+
+  /* =====================================================
+     二、渲染：维度与矩阵
+     ===================================================== */
+  function renderDims(p) {
+    const n = p.length - 1;
+
+    const seqEl = document.getElementById("dimSeq");
+    let seqHTML = "";
+    for (let t = 0; t <= n; t++) {
+      seqHTML += '<span class="dim-chip">p' + t + ' = ' + p[t] + '</span>';
+      if (t < n) seqHTML += '<span class="dim-arrow">→</span>';
+    }
+    seqEl.innerHTML = seqHTML;
+
+    const matEl = document.getElementById("matSeq");
+    let matHTML = "";
+    for (let i = 1; i <= n; i++) {
+      matHTML +=
+        '<div class="mat-card" data-m="' + i + '">' +
+          '<span class="mname">A' + i + '</span>' +
+          '<span class="mdim">' + p[i - 1] + '×' + p[i] + '</span>' +
+        '</div>';
+    }
+    matEl.innerHTML = matHTML;
+  }
+
+  /* =====================================================
+     三、渲染：两张表
+     ===================================================== */
+  function renderGrids(step, p) {
+    const n = p.length - 1;
+    const dpGrid = document.getElementById("dpGrid");
+    const spGrid = document.getElementById("splitGrid");
+
+    let cur = null, srcL = null, srcR = null;
+    if (step.type === "cand") {
+      cur  = [step.i, step.j];
+      srcL = [step.i, step.k];
+      srcR = [step.k + 1, step.j];
+    }
+
+    function hl(i, j) {
+      if (cur && i === cur[0] && j === cur[1]) return " cur";
+      if (srcL && i === srcL[0] && j === srcL[1]) return " srcL";
+      if (srcR && i === srcR[0] && j === srcR[1]) return " srcR";
+      return "";
+    }
+
+    function buildGrid(kind) {
+      let h = '<div class="gcell corner">i\\j</div>';
+      for (let j = 1; j <= n; j++) {
+        h += '<div class="gcell head">' + j + '</div>';
+      }
+      for (let i = 1; i <= n; i++) {
+        h += '<div class="gcell head">' + i + '</div>';
+        for (let j = 1; j <= n; j++) {
+          if (i > j) {
+            h += '<div class="gcell blank"></div>';
+            continue;
+          }
+          const c = hl(i, j);
+
+          if (kind === "dp") {
+            if (i === j) {
+              h += '<div class="gcell diag' + c + '">0</div>';
+            } else {
+              const v = step.state.dp[i + "," + j];
+              if (v === undefined) {
+                h += '<div class="gcell pending' + c + '">?</div>';
+              } else {
+                const s = String(v);
+                h += '<div class="gcell val' + (s.length > 6 ? " small" : "") +
+                     c + '">' + s + '</div>';
+              }
+            }
+          } else {
+            if (i === j) {
+              h += '<div class="gcell diag' + c + '">–</div>';
+            } else {
+              const v = step.state.split[i + "," + j];
+              if (v === null || v === undefined) {
+                h += '<div class="gcell pending' + c + '">?</div>';
+              } else {
+                h += '<div class="gcell val' + c + '">k=' + v + '</div>';
+              }
+            }
+          }
+        }
+      }
+      return h;
+    }
+
+    dpGrid.innerHTML = buildGrid("dp");
+    spGrid.innerHTML = buildGrid("split");
+
+    const cols = "42px repeat(" + n + ", minmax(110px, 1fr))";
+    dpGrid.style.gridTemplateColumns = cols;
+    spGrid.style.gridTemplateColumns = cols;
+
+    // 高亮当前参与相乘的矩阵卡片
+    document.querySelectorAll(".mat-card").forEach(function (el) { el.classList.remove("hl"); });
+    if (step.type === "cand") {
+      for (let m = step.i; m <= step.j; m++) {
+        const el = document.querySelector('.mat-card[data-m="' + m + '"]');
+        if (el) el.classList.add("hl");
+      }
+    } else if (step.type === "done") {
+      document.querySelectorAll(".mat-card").forEach(function (el) { el.classList.add("hl"); });
+    }
+  }
+
+  /* =====================================================
+     四、渲染：计算面板
+     ===================================================== */
+  function renderCalc(step, p) {
+    const el = document.getElementById("calcPanel");
+    let h = "";
+
+    if (step.type === "init") {
+      const n = p.length - 1;
+      h += '<div class="line title">初始化 · 区间长度为 1</div>';
+      h += '<div class="line">对每个 i，令 <code>dp[i][i] = 0</code> —— 单个矩阵不需要相乘。</div>';
+      h += '<div class="line">切分表对角线上记为 <b>None</b>（没有切分点）。</div>';
+      if (n === 1) {
+        h += '<div class="line result">只有一个矩阵，最优成本直接是 <b>0</b>。</div>';
+      } else {
+        h += '<div class="line note">接下来按区间长度 2, 3, …, ' + n +
+             ' 逐层填表，保证依赖的更短区间都已求出。</div>';
+      }
+
+    } else if (step.type === "cand") {
+      const i = step.i, j = step.j, k = step.k;
+
+      h += '<div class="line title">计算区间 [' + i + ', ' + j + ']（长度 ' +
+           (j - i + 1) + '），尝试切分点 k = ' + k + '</div>';
+
+      h += '<div class="cmp">' +
+             '<div class="opt">' +
+               '<div class="opt-label">左链 dp[' + i + '][' + k + ']</div>' +
+               '<div class="opt-expr">A' + i + '…A' + k + '</div>' +
+               '<div class="opt-val">' + step.leftCost + '</div>' +
+             '</div>' +
+             '<div class="plus">+</div>' +
+             '<div class="opt">' +
+               '<div class="opt-label">右链 dp[' + (k + 1) + '][' + j + ']</div>' +
+               '<div class="opt-expr">A' + (k + 1) + '…A' + j + '</div>' +
+               '<div class="opt-val">' + step.rightCost + '</div>' +
+             '</div>' +
+             '<div class="plus">+</div>' +
+             '<div class="opt">' +
+               '<div class="opt-label">最后一次相乘</div>' +
+               '<div class="opt-expr">p' + (i - 1) + ' × p' + k + ' × p' + j +
+                 ' = ' + p[i - 1] + '×' + p[k] + '×' + p[j] + '</div>' +
+               '<div class="opt-val">' + step.mult + '</div>' +
+             '</div>' +
+           '</div>';
+
+      h += '<div class="line">候选成本 = ' + step.leftCost + ' + ' +
+           step.rightCost + ' + ' + step.mult + ' = <b>' + step.cost + '</b></div>';
+
+      if (step.prevBest === null) {
+        h += '<div class="line result">区间 [' + i + ',' + j +
+             '] 的第一个候选，直接成为当前最优：<b>' + step.best +
+             '</b>（k = ' + step.bestK + '）</div>';
+      } else if (step.updated) {
+        h += '<div class="line result">候选 ' + step.cost + ' &lt; 当前最优 ' +
+             step.prevBest + '，<b>更新</b>为 ' + step.best +
+             '（k = ' + step.bestK + '）</div>';
+      } else {
+        h += '<div class="line keep">候选 ' + step.cost + ' ≥ 当前最优 ' +
+             step.prevBest + '，保持 <b>' + step.best + '</b>（k = ' +
+             step.bestK + '）不变</div>';
+      }
+
+    } else {
+      const n = step.n;
+      h += '<div class="line title">全部区间计算完成</div>';
+      h += '<div class="line">最优成本 <code>dp[1][' + n + ']</code> = <b>' +
+           step.answer + '</b> 次标量乘法</div>';
+
+      h += '<div class="line answer">' +
+             '<div class="lbl">一种最优完全加括号方案</div>' +
+             '<div class="order">' + escapeHTML(step.order) + '</div>' +
+             '<div class="lbl" style="margin-top:8px;">最少标量乘法次数</div>' +
+             '<div class="big">' + step.answer + '</div>' +
+           '</div>';
+
+      h += '<div class="line note" style="margin-top:12px;">' +
+           '恢复方式：从 [1, ' + n + '] 出发，读取 split 得到切分点，' +
+           '用显式栈展开左右子区间，单矩阵输出 Aᵢ。' +
+           '若有多个并列最优切分点，本文保留最小的 k。</div>';
+    }
+
+    el.innerHTML = h;
+  }
+
+  function escapeHTML(s) {
+    return String(s).replace(/[&<>"']/g, function (c) {
+      return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c];
+    });
+  }
+
+  /* =====================================================
+     五、总渲染
+     ===================================================== */
+  function render() {
+    const p = state.p;
+    const step = state.steps[state.idx];
+
+    renderDims(p);
+    renderGrids(step, p);
+    renderCalc(step, p);
+
+    const label = document.getElementById("stepLabel");
+    label.textContent = "步骤 " + (state.idx + 1) + " / " + state.steps.length;
+
+    document.getElementById("prevBtn").disabled = (state.idx === 0);
+    document.getElementById("nextBtn").disabled = (state.idx === state.steps.length - 1);
+
+    if (state.idx === state.steps.length - 1) stopPlay();
+  }
+
+  /* =====================================================
+     六、控制
+     ===================================================== */
+  function goTo(idx) {
+    if (idx < 0 || idx >= state.steps.length) return;
+    state.idx = idx;
+    render();
+  }
+
+  function stopPlay() {
+    if (playTimer) {
+      clearInterval(playTimer);
+      playTimer = null;
+    }
+    document.getElementById("playBtn").textContent = "▶ 自动播放";
+  }
+
+  function togglePlay() {
+    if (playTimer) { stopPlay(); return; }
+    if (state.idx >= state.steps.length - 1) {
+      state.idx = 0;
+      render();
+    }
+    document.getElementById("playBtn").textContent = "⏸ 暂停";
+    playTimer = setInterval(function () {
+      if (state.idx < state.steps.length - 1) {
+        state.idx += 1;
+        render();
+      } else {
+        stopPlay();
+      }
+    }, 950);
+  }
+
+  /* =====================================================
+     七、输入处理
+     ===================================================== */
+  function parseInput(str) {
+    const parts = String(str).split(/[,，\s]+/).filter(function (s) {
+      return s.length > 0;
+    });
+    const out = [];
+    for (let k = 0; k < parts.length; k++) {
+      const v = Number(parts[k]);
+      if (!/^\d+$/.test(parts[k]) || !Number.isSafeInteger(v) || v <= 0 || v > 10000) {
+        return { ok: false, msg: "维度必须是1到10000的正整数，请检查输入。" };
+      }
+      out.push(v);
+      if (out.length > MAX_MATRIX + 1) {
+        return { ok: false, msg: "维度数量过多，最多支持 " + MAX_MATRIX + " 个矩阵（" + (MAX_MATRIX + 1) + " 个维度）。" };
+      }
+    }
+    if (out.length < 2) {
+      return { ok: false, msg: "至少需要 2 个维度值才能表示 1 个矩阵（如 [10, 20]）。" };
+    }
+    return { ok: true, dims: out };
+  }
+
+  function showError(msg) {
+    const el = document.getElementById("errMsg");
+    const input = document.getElementById("dimInput");
+    if (msg) {
+      el.textContent = "⚠ " + msg;
+      el.classList.add("show");
+      input.classList.add("err");
+      input.setAttribute("aria-invalid", "true");
+    } else {
+      el.classList.remove("show");
+      input.classList.remove("err");
+      input.removeAttribute("aria-invalid");
+    }
+  }
+
+  function applyDims(dims) {
+    stopPlay();
+    showError(null);
+
+    state.p = dims.slice();
+    state.steps = buildSteps(state.p);
+    state.idx = 0;
+
+    document.getElementById("dimInput").value = dims.join(", ");
+    syncPresets();
+    render();
+  }
+
+  function syncPresets() {
+    document.querySelectorAll("#presets .chip").forEach(function (chip) {
+      const pr = PRESETS[Number(chip.dataset.idx)];
+      const same = pr.dims.length === state.p.length &&
+                   pr.dims.every(function (v, k) { return v === state.p[k]; });
+      chip.classList.toggle("active", same);
+    });
+  }
+
+  /* =====================================================
+     八、初始化
+     ===================================================== */
+  function init() {
+    // 预设
+    const box = document.getElementById("presets");
+    PRESETS.forEach(function (pr, i) {
+      const btn = document.createElement("button");
+      btn.className = "chip";
+      btn.textContent = pr.label;
+      btn.dataset.idx = i;
+      btn.addEventListener("click", function () {
+        applyDims(pr.dims.slice());
+      });
+      box.appendChild(btn);
+    });
+
+    // 应用按钮
+    document.getElementById("applyBtn").addEventListener("click", function () {
+      stopPlay();
+      const res = parseInput(document.getElementById("dimInput").value);
+      if (!res.ok) { showError(res.msg); return; }
+      applyDims(res.dims);
+    });
+
+    document.getElementById("dimInput").addEventListener("keydown", function (e) {
+      if (e.key === "Enter") {
+        stopPlay();
+        const res = parseInput(this.value);
+        if (!res.ok) { showError(res.msg); return; }
+        applyDims(res.dims);
+      }
+    });
+
+    document.getElementById("dimInput").addEventListener("input", function () {
+      showError(null);
+    });
+
+    // 控制
+    document.getElementById("prevBtn").addEventListener("click", function () {
+      stopPlay(); goTo(state.idx - 1);
+    });
+    document.getElementById("nextBtn").addEventListener("click", function () {
+      stopPlay(); goTo(state.idx + 1);
+    });
+    document.getElementById("playBtn").addEventListener("click", togglePlay);
+    document.getElementById("resetBtn").addEventListener("click", function () {
+      stopPlay(); goTo(0);
+    });
+
+    // 键盘
+    document.addEventListener("keydown", function (e) {
+      if (e.target && e.target.tagName === "INPUT") return;
+      if (e.key === "ArrowRight") { stopPlay(); goTo(state.idx + 1); e.preventDefault(); }
+      if (e.key === "ArrowLeft")  { stopPlay(); goTo(state.idx - 1); e.preventDefault(); }
+    });
+
+    // 首次渲染
+    state.steps = buildSteps(state.p);
+    state.idx = 0;
+    syncPresets();
+    render();
+  }
+
+  document.addEventListener("visibilitychange",function(){if(document.hidden)stopPlay();});
+  document.addEventListener("DOMContentLoaded", init);
+})();
+</script>
+</body>
+</html>
