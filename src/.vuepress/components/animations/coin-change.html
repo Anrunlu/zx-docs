@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>硬币找零 · 动态规划求解演示</title>
+<style>
+  :root{
+    --bg:#0f172a; --panel:#1e293b; --panel2:#273449;
+    --text:#e2e8f0; --muted:#94a3b8;
+    --ok:#22c55e; --no:#ef4444; --accent:#38bdf8;
+    --gold:#fbbf24; --line:#334155; --purple:#a78bfa;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0; font-family:"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;
+    background:radial-gradient(1200px 600px at 20% -10%, #1e3a5f 0%, var(--bg) 60%);
+    color:var(--text); min-height:0; padding:24px;
+  }
+  h1{font-size:22px; margin:0 0 4px;}
+  .sub{color:var(--muted); font-size:13px; margin-bottom:18px;}
+  .wrap{max-width:1150px; margin:0 auto;}
+  .panel{
+    background:linear-gradient(180deg,var(--panel),var(--panel2));
+    border:1px solid var(--line); border-radius:14px;
+    padding:18px; margin-bottom:16px;
+    box-shadow:0 10px 30px rgba(0,0,0,.35);
+  }
+  .row{display:flex; gap:14px; flex-wrap:wrap; align-items:center;}
+  label{font-size:14px; color:var(--muted);}
+  input[type=text]{
+    background:#0b1220; color:var(--text); border:1px solid var(--line);
+    border-radius:8px; padding:9px 12px; font-size:15px; width:220px;
+    outline:none; transition:.2s;
+  }
+  input[type=text]:focus{border-color:var(--accent); box-shadow:0 0 0 3px rgba(56,189,248,.15);}
+  button{
+    cursor:pointer; border:none; border-radius:8px; padding:9px 16px;
+    font-size:14px; font-weight:600; color:#06202f;
+    background:linear-gradient(180deg,#7dd3fc,#38bdf8);
+    transition:transform .08s, filter .2s;
+  }
+  button:hover{filter:brightness(1.08);}
+  button:active{transform:scale(.97);}
+  button.ghost{background:#0b1220; color:var(--text); border:1px solid var(--line);}
+  button:disabled{opacity:.45; cursor:not-allowed;}
+
+  /* ===== 静态状态转移方程面板 ===== */
+  .formula-panel{
+    background:linear-gradient(135deg, rgba(56,189,248,.09), rgba(167,139,250,.09));
+    border:1px solid rgba(56,189,248,.35);
+  }
+  .fp-title{
+    font-size:15px; font-weight:700; color:var(--accent);
+    margin-bottom:14px; display:flex; align-items:center; gap:8px;
+  }
+  .fp-grid{
+    display:grid; gap:12px;
+    grid-template-columns:repeat(auto-fit,minmax(230px,1fr));
+  }
+  .fp-item{
+    background:rgba(11,18,32,.7); border:1px solid var(--line);
+    border-radius:10px; padding:12px 14px;
+  }
+  .fp-item.main{
+    grid-column:1 / -1;
+    background:rgba(251,191,36,.07);
+    border-color:rgba(251,191,36,.4);
+  }
+  .fp-label{
+    font-size:11px; letter-spacing:1px; color:var(--muted);
+    text-transform:uppercase; margin-bottom:8px;
+  }
+  .fp-formula{
+    font-family:ui-monospace,Consolas,monospace;
+    font-size:15px; line-height:1.9; color:var(--text);
+  }
+  .fp-item.main .fp-formula{font-size:17px;}
+  .fn-min{color:var(--gold); font-weight:700;}
+  .fn-sub{font-size:11px; color:var(--accent);}
+  .fn-sym{color:var(--purple);}
+  .fn-kw{color:var(--ok);}
+  .fn-inf{color:var(--no);}
+
+  /* ===== 每步代入方程 ===== */
+  .eq-box{
+    min-height:190px; background:#0b1220; border:1px solid var(--line);
+    border-radius:12px; padding:16px 20px; margin-bottom:14px;
+    font-family:ui-monospace,Consolas,monospace;
+    font-size:15px; line-height:2; overflow-x:auto;
+  }
+  .eq-line{
+    opacity:0; transform:translateX(-8px);
+    animation:eqIn .3s forwards;
+    white-space:nowrap; color:var(--muted);
+  }
+  .eq-line.head{color:var(--text);}
+  @keyframes eqIn{to{opacity:1; transform:none;}}
+  .eq-line .term{
+    display:inline-block; padding:0 5px; border-radius:5px;
+    color:var(--text); transition:.2s;
+  }
+  .eq-line .term.best{
+    background:rgba(34,197,94,.2); color:#86efac; font-weight:700;
+    box-shadow:0 0 0 1px rgba(34,197,94,.4) inset;
+  }
+  .eq-line .term.inf{color:var(--no);}
+  .eq-line .res{color:var(--gold); font-weight:700; font-size:17px;}
+  .eq-line .res.inf{color:var(--no);}
+  .eq-line .note{color:var(--muted); font-size:12px; margin-left:10px;}
+
+  /* ===== DP 表 ===== */
+  .dp-table{
+    display:grid; gap:6px; margin-top:14px;
+    grid-template-columns:repeat(auto-fill,minmax(70px,1fr));
+  }
+  .dp-cell{
+    position:relative; border-radius:10px; background:#0b1220;
+    border:1px solid var(--line); padding:8px 4px; text-align:center;
+    transition:all .2s ease; min-height:64px;
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+  }
+  .dp-cell .idx{font-size:11px; color:var(--muted);}
+  .dp-cell .val{font-size:18px; font-weight:700; margin-top:2px;}
+  .dp-cell.filled .val{color:var(--text);}
+  .dp-cell.inf .val{color:var(--no); font-size:13px;}
+  .dp-cell.current{
+    border-color:var(--gold);
+    box-shadow:0 0 18px rgba(251,191,36,.45);
+    transform:translateY(-3px) scale(1.05); z-index:2;
+  }
+  .dp-cell.updated{
+    border-color:rgba(34,197,94,.7);
+    background:linear-gradient(180deg,#14532d,#166534);
+  }
+  .dp-cell .badge{
+    position:absolute; top:-7px; right:-4px;
+    font-size:10px; background:var(--gold); color:#1c1917;
+    padding:1px 5px; border-radius:999px; font-weight:700;
+    opacity:0; transition:.2s;
+  }
+  .dp-cell.updated .badge{opacity:1;}
+
+  /* ===== 状态条 / 芯片 ===== */
+  .status{display:flex; gap:12px; flex-wrap:wrap; margin-top:14px;}
+  .chip{
+    font-size:13px; padding:7px 12px; border-radius:999px;
+    background:#0b1220; border:1px solid var(--line); color:var(--muted);
+  }
+  .chip b{color:var(--text);}
+  .chip.ok{border-color:rgba(34,197,94,.5); color:#bbf7d0;}
+  .chip.warn{border-color:rgba(251,191,36,.5); color:#fde68a;}
+
+  /* ===== 候选卡片 ===== */
+  .candidates{display:flex; gap:10px; flex-wrap:wrap;}
+  .cand{
+    flex:1; min-width:150px; background:#0b1220; border:1px solid var(--line);
+    border-radius:10px; padding:10px 12px; opacity:0; transform:translateY(6px);
+    animation:in .25s forwards; font-size:13px;
+  }
+  @keyframes in{to{opacity:1; transform:none;}}
+  .cand.best{border-color:rgba(34,197,94,.7); background:rgba(34,197,94,.08);}
+  .cand .coin{color:var(--accent); font-weight:700;}
+  .cand .calc{color:var(--muted); margin-top:4px; font-family:ui-monospace,monospace;}
+  .cand .res{font-size:16px; font-weight:700; margin-top:4px;}
+  .cand.best .res{color:var(--ok);}
+
+  /* ===== 日志 ===== */
+  .log{
+    height:130px; overflow-y:auto; background:#0b1220;
+    border:1px solid var(--line); border-radius:10px; padding:12px;
+    font-family:ui-monospace,Consolas,monospace; font-size:13px; line-height:1.7;
+  }
+  .log div{opacity:0; transform:translateY(4px); animation:in .25s forwards;}
+  .log .g{color:#86efac;} .log .r{color:#fca5a5;} .log .y{color:#fde68a;} .log .b{color:#7dd3fc;}
+
+  /* ===== 结果 ===== */
+  .answer{
+    padding:16px; border-radius:12px; text-align:center;
+    background:linear-gradient(180deg,rgba(56,189,248,.12),rgba(56,189,248,.04));
+    border:1px dashed rgba(56,189,248,.4); font-size:15px; color:var(--muted);
+  }
+  .answer b{color:var(--accent); font-size:24px; margin:0 6px;}
+  .answer.fail{border-color:rgba(239,68,68,.5); background:rgba(239,68,68,.08);}
+  .answer.fail b{color:var(--no); font-size:20px;}
+  .legend{display:flex; gap:16px; flex-wrap:wrap; margin-top:10px; font-size:12px; color:var(--muted);}
+  .dot{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:6px;vertical-align:middle;}
+
+  .wrap, .panel, .fp-item { min-width:0; }
+  input[type=text] { max-width:100%; }
+  .fp-grid { grid-template-columns:repeat(auto-fit,minmax(min(230px,100%),1fr)); }
+  .fp-formula { overflow-wrap:anywhere; }
+  .cand { min-width:min(150px,100%); }
+  select { background:#0b1220; color:var(--text); padding:8px; border:1px solid var(--line); border-radius:8px; }
+  button:focus-visible, select:focus-visible { outline:2px solid var(--gold); outline-offset:3px; }
+  @media(max-width:600px) { body{padding:12px;} .panel{padding:12px;} .eq-box{padding:12px;} }
+  @media(prefers-reduced-motion:reduce) { *, *::before, *::after { animation-duration:.01ms !important; transition:none !important; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>🪙 硬币找零 · 动态规划求解演示</h1>
+  <div class="sub">完全背包 · 求恰好凑出目标金额所需的<b>最少硬币枚数</b>。逐金额演示状态转移方程的代入与求值。</div>
+
+  <!-- 输入 -->
+  <div class="panel">
+    <div class="row">
+      <label for="coinsInput">硬币面额：</label>
+      <input id="coinsInput" aria-describedby="inputHelp" type="text" value="1, 2, 5" placeholder="例如：1, 2, 5">
+      <label for="amountInput">目标金额：</label>
+      <input id="amountInput" aria-describedby="inputHelp" type="text" value="11" placeholder="例如：11" style="width:100px;">
+      <button id="run">▶ 开始演示</button>
+      <button id="reset" class="ghost">↺ 重置</button>
+      <label for="speedInput">速度：</label>
+      <select id="speedInput"><option value="1">正常</option><option value="4">快速</option><option value="12">12倍速</option></select>
+    </div>
+    <p id="inputHelp" class="sub" style="margin:12px 0 0;">1至12个正整数面额（最多2147483647），目标金额0至200；逗号或空格分隔。金额上限仅用于清晰演示。</p>
+    <p id="inputError" role="alert" style="color:#fca5a5;" hidden></p>
+    <div class="status">
+      <span class="chip">不可达标记：<b>∞ = <span id="infLabel">amount + 1</span></b></span>
+      <span class="chip" id="stepChip" role="status">等待开始…</span>
+    </div>
+  </div>
+
+  <!-- ★ 状态转移方程（静态） -->
+  <div class="panel formula-panel">
+    <div class="fp-title">📐 状态转移方程</div>
+    <div class="fp-grid">
+      <div class="fp-item">
+        <div class="fp-label">状态定义</div>
+        <div class="fp-formula"><span class="fn-sym">dp[s]</span> = 凑出金额 <span class="fn-sym">s</span> 所需的最少硬币枚数</div>
+      </div>
+      <div class="fp-item main">
+        <div class="fp-label">状态转移</div>
+        <div class="fp-formula">
+          <span class="fn-sym">dp[s]</span> =
+          <span class="fn-min">min</span><span class="fn-sub"> c ∈ coins, c ≤ s</span>
+          { <span class="fn-sym">dp[s − c]</span> + 1 }
+        </div>
+      </div>
+      <div class="fp-item">
+        <div class="fp-label">初始条件</div>
+        <div class="fp-formula"><span class="fn-sym">dp[0]</span> = <span class="fn-kw">0</span></div>
+      </div>
+      <div class="fp-item">
+        <div class="fp-label">不可达 / 返回</div>
+        <div class="fp-formula"><span class="fn-sym">dp[amount]</span> = <span class="fn-inf">∞</span> → 返回 <span class="fn-inf">−1</span></div>
+      </div>
+      <div class="fp-item">
+        <div class="fp-label">最终答案</div>
+        <div class="fp-formula"><span class="fn-sym">dp[amount]</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- DP 表 -->
+  <div class="panel">
+    <div class="row" style="justify-content:space-between;">
+      <div style="font-size:14px;color:var(--muted);">dp 状态表（下标 = 金额，值 = 最少枚数）</div>
+      <div class="legend">
+        <span><span class="dot" style="background:#166534"></span>本轮更新</span>
+        <span><span class="dot" style="background:#fbbf24"></span>当前计算</span>
+        <span><span class="dot" style="background:#7f1d1d"></span>不可达</span>
+      </div>
+    </div>
+    <div class="dp-table" id="dpTable"></div>
+  </div>
+
+  <!-- ★ 每步方程代入 + 候选卡片 -->
+  <div class="panel">
+    <div style="font-size:14px;color:var(--muted);margin-bottom:12px;">📝 当前步骤 · 状态转移方程代入</div>
+    <div class="eq-box" id="eqBox">
+      <div style="color:var(--muted);font-size:14px;padding:6px 0;">等待开始…</div>
+    </div>
+    <div class="candidates" id="candidates"></div>
+    <div class="log" id="log" style="margin-top:12px;"></div>
+  </div>
+
+  <!-- 结果 -->
+  <div class="panel">
+    <div class="answer" id="answer" role="status">点击「开始演示」查看最少硬币数</div>
+  </div>
+</div>
+
+<script>
+const $ = s => document.querySelector(s);
+const coinsInput = $('#coinsInput'), amountInput = $('#amountInput');
+const dpTable = $('#dpTable'), candidatesEl = $('#candidates');
+const eqBox = $('#eqBox');
+const logEl = $('#log'), ansEl = $('#answer'), stepChip = $('#stepChip');
+const infLabel = $('#infLabel');
+
+let runId = 0;
+class CancelledRun extends Error {}
+const sleep = (ms, id) => new Promise(resolve => {
+  setTimeout(resolve, ms / Number($('#speedInput').value));
+}).then(() => {
+  if(id !== runId) throw new CancelledRun();
+});
+
+function parseInputs(coinsText, amountText){
+  const tokens = coinsText.trim().split(/[,，\s]+/).filter(Boolean);
+  if(tokens.length < 1 || tokens.length > 12 || tokens.some(t => !/^\d+$/.test(t))){
+    throw new Error('请输入1至12个正整数面额，用逗号或空格分隔。');
+  }
+  const coins = tokens.map(Number);
+  if(coins.some(c => !Number.isSafeInteger(c) || c < 1 || c > 2147483647)){
+    throw new Error('每个面额必须为1至2147483647的整数。');
+  }
+  const text = amountText.trim();
+  const amount = Number(text);
+  if(!/^\d+$/.test(text) || !Number.isSafeInteger(amount) || amount > 200){
+    throw new Error('目标金额必须为0至200的整数。');
+  }
+  return { coins, amount };
+}
+
+function log(msg, cls=''){
+  const d = document.createElement('div');
+  d.className = cls;
+  d.innerHTML = msg;
+  logEl.appendChild(d);
+  logEl.scrollTop = logEl.scrollHeight;
+}
+
+/* ========== 构建 DP 表 ========== */
+function buildTable(amount, dp, infMark){
+  dpTable.innerHTML = '';
+  for(let s = 0; s <= amount; s++){
+    const cell = document.createElement('div');
+    cell.className = 'dp-cell';
+    cell.id = 'dp'+s;
+    const isInf = dp[s] >= infMark;
+    cell.classList.add(isInf ? 'inf' : 'filled');
+    cell.innerHTML = `
+      <span class="badge">✓</span>
+      <div class="idx">金额 ${s}</div>
+      <div class="val">${isInf ? '∞' : dp[s]}</div>
+    `;
+    dpTable.appendChild(cell);
+  }
+}
+
+function updateCell(s, val, infMark){
+  const cell = $('#dp'+s);
+  if(!cell) return;
+  const isInf = val >= infMark;
+  cell.className = 'dp-cell ' + (isInf ? 'inf' : 'filled');
+  cell.querySelector('.val').textContent = isInf ? '∞' : val;
+}
+
+/* ========== ★ 状态转移方程逐行代入 ========== */
+async function showEquation(s, coins, dp, infMark, id){
+  eqBox.innerHTML = '';
+
+  const validTerms = coins.filter(c => c <= s);
+
+  // 无合法面额
+  if(validTerms.length === 0){
+    const line = document.createElement('div');
+    line.className = 'eq-line head';
+    line.innerHTML = `dp[${s}] = <span class="res inf">∞</span>
+      <span class="note">（金额 ${s} 小于所有面额，无可选硬币）</span>`;
+    eqBox.appendChild(line);
+    await sleep(250, id);
+    return { best: Infinity, items: [] };
+  }
+
+  // 计算每项的 dp[s-c] 与候选值
+  const items = validTerms.map(c => {
+    const prev = dp[s - c];
+    const inf = prev >= infMark;
+    return { c, prev, inf, cand: inf ? Infinity : prev + 1 };
+  });
+
+  const best = Math.min(...items.map(it => it.cand));
+
+  const appendLine = (html, isHead=false) => {
+    const d = document.createElement('div');
+    d.className = 'eq-line' + (isHead ? ' head' : '');
+    d.innerHTML = html;
+    eqBox.appendChild(d);
+    eqBox.scrollTop = eqBox.scrollHeight;
+  };
+
+  // 行1：符号形式
+  appendLine(`dp[${s}] = min{ ` +
+    items.map(it => `dp[${s}−${it.c}]+1`).join(' , ') + ` }`, true);
+  await sleep(220, id);
+
+  // 行2：下标代入
+  appendLine(`&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;= min{ ` +
+    items.map(it => `dp[${s - it.c}]+1`).join(' , ') + ` }`);
+  await sleep(220, id);
+
+  // 行3：dp 值代入
+  appendLine(`&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;= min{ ` +
+    items.map(it => it.inf
+      ? `<span class="term inf">∞+1</span>`
+      : `<span class="term">${it.prev}+1</span>`
+    ).join(' , ') + ` }`);
+  await sleep(220, id);
+
+  // 行4：每项结果（高亮最优）
+  appendLine(`&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;= min{ ` +
+    items.map(it => {
+      if(it.inf) return `<span class="term inf">∞</span>`;
+      const isBest = it.cand === best;
+      return `<span class="term ${isBest ? 'best' : ''}">${it.cand}</span>`;
+    }).join(' , ') + ` }`);
+  await sleep(220, id);
+
+  // 行5：最终值
+  appendLine(`&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;= ` +
+    (best === Infinity
+      ? `<span class="res inf">∞</span>`
+      : `<span class="res">${best}</span>`), true);
+  await sleep(200, id);
+
+  return { best, items };
+}
+
+/* ========== 主流程 ========== */
+async function run(){
+  const id = ++runId;
+  let input;
+  try {
+    input = parseInputs(coinsInput.value, amountInput.value);
+  } catch(error) {
+    $('#inputError').textContent = error.message;
+    $('#inputError').hidden = false;
+    stepChip.textContent = '已停止，请修正输入后重新开始';
+    return;
+  }
+  $('#inputError').hidden = true;
+  try {
+    await animate(input.coins, input.amount, id);
+  } catch(error) {
+    if(!(error instanceof CancelledRun)) {
+      console.error(error);
+      stepChip.textContent = '演示中断，请重置后重试';
+    }
+  }
+}
+
+async function animate(coins, amount, id){
+  logEl.innerHTML = '';
+  candidatesEl.innerHTML = '';
+  eqBox.innerHTML = '<div style="color:var(--muted);font-size:14px;padding:6px 0;">计算中…</div>';
+  ansEl.className = 'answer';
+  ansEl.textContent = '计算中…';
+  stepChip.textContent = '开始…';
+
+  const infMark = amount + 1;
+  infLabel.textContent = infMark;
+
+  log(`<span class="b">▶</span> coins = [${coins.join(', ')}], amount = ${amount}`);
+  log(`<span class="b">▶</span> 初始化：dp[0] = 0，其余 dp[s] = ${infMark}（∞）`);
+
+  const dp = new Array(amount + 1).fill(infMark);
+  dp[0] = 0;
+  buildTable(amount, dp, infMark);
+  await sleep(280, id);
+
+  const baseDelay = amount > 40 ? 60 : 120;
+
+  for(let s = 1; s <= amount; s++){
+    stepChip.textContent = `正在计算 dp[${s}] …`;
+    const currentCell = $('#dp'+s);
+    currentCell.classList.add('current');
+
+    candidatesEl.innerHTML = '';
+    log(`<span class="y">→</span> 计算 dp[${s}]：`);
+
+    // ★ 展示方程代入
+    const { best, items } = await showEquation(s, coins, dp, infMark, id);
+
+    // 候选卡片（每项来源说明）
+    for(const it of items){
+      const el = document.createElement('div');
+      el.className = 'cand' + (!it.inf && it.cand === best ? ' best' : '');
+      if(it.inf){
+        el.innerHTML = `
+          <div><span class="coin">面额 ${it.c}</span></div>
+          <div class="calc">dp[${s - it.c}] = ∞，不可达</div>
+          <div class="res" style="color:var(--muted);">∞</div>`;
+      }else{
+        el.innerHTML = `
+          <div><span class="coin">面额 ${it.c}</span></div>
+          <div class="calc">dp[${s - it.c}] + 1 = ${it.prev} + 1</div>
+          <div class="res">${it.cand} 枚</div>`;
+      }
+      candidatesEl.appendChild(el);
+      await sleep(baseDelay / 2, id);
+    }
+
+    // 写入 dp
+    dp[s] = best === Infinity ? infMark : best;
+    updateCell(s, dp[s], infMark);
+
+    if(best !== Infinity){
+      $('#dp'+s).classList.add('updated');
+      log(`&nbsp;&nbsp;取 min → <b>dp[${s}] = ${best}</b> ✅`);
+    }else{
+      log(`&nbsp;&nbsp;所有候选均不可达 → <b>dp[${s}] = ∞</b> ❌`, 'r');
+    }
+
+    await sleep(baseDelay, id);
+    currentCell.classList.remove('current');
+  }
+
+  // 结果
+  const ans = dp[amount];
+  stepChip.textContent = '计算完成';
+  if(ans >= infMark){
+    ansEl.className = 'answer fail';
+    ansEl.innerHTML = `结果：<b>无法凑出</b>（返回 −1）<br>
+      <span style="font-size:13px;">dp[${amount}] = ∞</span>`;
+    log(`<span class="r">✗</span> dp[${amount}] = ∞ → 无法凑出，返回 −1`);
+  }else{
+    ansEl.className = 'answer';
+    ansEl.innerHTML = `结果：最少需要 <b>${ans}</b> 枚硬币<br>
+      <span style="font-size:13px;">dp[${amount}] = ${ans}</span>`;
+    log(`<span class="g">✓</span> dp[${amount}] = <b>${ans}</b>，最少需要 ${ans} 枚硬币`);
+  }
+}
+
+/* ========== 事件 ========== */
+$('#run').addEventListener('click', run);
+$('#reset').addEventListener('click', () => {
+  ++runId;
+  $('#inputError').hidden = true;
+  infLabel.textContent = 'amount + 1';
+  dpTable.innerHTML = '';
+  candidatesEl.innerHTML = '';
+  logEl.innerHTML = '';
+  eqBox.innerHTML = '<div style="color:var(--muted);font-size:14px;padding:6px 0;">等待开始…</div>';
+  stepChip.textContent = '等待开始…';
+  ansEl.className = 'answer';
+  ansEl.textContent = '点击「开始演示」查看最少硬币数';
+});
+coinsInput.addEventListener('keydown', e => { if(e.key === 'Enter') run(); });
+amountInput.addEventListener('keydown', e => { if(e.key === 'Enter') run(); });
+</script>
+</body>
+</html>

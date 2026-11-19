@@ -18,6 +18,8 @@ export default defineClientConfig({
     app.component("HouseRobberAnimation", defineAsyncComponent(() => import("./components/HouseRobberAnimation.vue")));
     app.component("MaxSubarrayAnimation", defineAsyncComponent(() => import("./components/MaxSubarrayAnimation.vue")));
     app.component("MatrixChainAnimation", defineAsyncComponent(() => import("./components/MatrixChainAnimation.vue")));
+    app.component("CoinChangeAnimation", defineAsyncComponent(() => import("./components/CoinChangeAnimation.vue")));
+    app.component("Knapsack01Animation", defineAsyncComponent(() => import("./components/Knapsack01Animation.vue")));
     app.component("MinCostClimbingStairsAnimation", defineAsyncComponent(() => import("./components/MinCostClimbingStairsAnimation.vue")));
   },
 });
