@@ -3,14 +3,13 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>01背包问题 · 动态规划交互演示</title>
+<title>01背包 · 单步执行动画演示</title>
 <style>
   :root{
     --bg:#0f172a; --panel:#1e293b; --panel2:#273449;
     --text:#e2e8f0; --muted:#94a3b8;
     --ok:#22c55e; --no:#ef4444; --accent:#38bdf8;
     --gold:#fbbf24; --line:#334155; --purple:#a78bfa;
-    --select:#166534; --skip:#1e293b;
   }
   *{box-sizing:border-box;}
   body{
@@ -41,12 +40,46 @@
     background:linear-gradient(180deg,#7dd3fc,#38bdf8);
     transition:transform .08s, filter .2s;
   }
-  button:hover{filter:brightness(1.08);}
-  button:active{transform:scale(.97);}
+  button:hover:not(:disabled){filter:brightness(1.08);}
+  button:active:not(:disabled){transform:scale(.97);}
+  button:disabled{opacity:.4; cursor:not-allowed;}
   button.ghost{background:#0b1220; color:var(--text); border:1px solid var(--line);}
-  button:disabled{opacity:.45; cursor:not-allowed;}
+  button.primary{background:linear-gradient(180deg,#fbbf24,#f59e0b); color:#1c1917;}
+  button.green{background:linear-gradient(180deg,#4ade80,#22c55e); color:#052e16;}
 
-  /* ===== 物品卡片 ===== */
+  /* 速度滑杆 */
+  .speed-wrap{display:flex; align-items:center; gap:8px; margin-left:auto;}
+  .speed-wrap input[type=range]{width:120px; accent-color:var(--accent);}
+  .speed-wrap span{font-size:12px; color:var(--muted); min-width:36px;}
+
+  /* 进度条 */
+  .progress-wrap{margin-top:12px;}
+  .progress-bar{
+    height:8px; background:#0b1220; border-radius:999px;
+    border:1px solid var(--line); overflow:hidden;
+  }
+  .progress-fill{
+    height:100%; width:0%;
+    background:linear-gradient(90deg,#38bdf8,#a78bfa);
+    transition:width .25s ease; border-radius:999px;
+  }
+  .progress-meta{
+    display:flex; justify-content:space-between;
+    font-size:12px; color:var(--muted); margin-top:6px;
+  }
+
+  /* 状态胶囊 */
+  .status{display:flex; gap:12px; flex-wrap:wrap; margin-top:12px;}
+  .chip{
+    font-size:13px; padding:7px 12px; border-radius:999px;
+    background:#0b1220; border:1px solid var(--line); color:var(--muted);
+  }
+  .chip b{color:var(--text);}
+  .chip.ok{border-color:rgba(34,197,94,.5); color:#bbf7d0;}
+  .chip.warn{border-color:rgba(251,191,36,.5); color:#fde68a;}
+  .chip.playing{border-color:rgba(56,189,248,.6); color:#bae6fd;}
+
+  /* 物品卡片 */
   .items-bar{display:flex; gap:10px; flex-wrap:wrap; margin-top:10px;}
   .item-card{
     background:#0b1220; border:1px solid var(--line); border-radius:10px;
@@ -56,44 +89,37 @@
   .item-card .name{color:var(--accent); font-weight:700;}
   .item-card .meta{color:var(--muted); margin-top:2px;}
 
-  /* ===== 状态转移方程 ===== */
+  /* 方程 */
   .formula-panel{
     background:linear-gradient(135deg, rgba(56,189,248,.09), rgba(167,139,250,.09));
     border:1px solid rgba(56,189,248,.35);
   }
-  .fp-title{
-    font-size:15px; font-weight:700; color:var(--accent);
-    margin-bottom:14px; display:flex; align-items:center; gap:8px;
-  }
-  .fp-grid{
-    display:grid; gap:12px;
-    grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
-  }
-  .fp-item{
-    background:rgba(11,18,32,.7); border:1px solid var(--line);
-    border-radius:10px; padding:12px 14px;
-  }
-  .fp-item.main{
-    grid-column:1 / -1;
-    background:rgba(251,191,36,.07);
-    border-color:rgba(251,191,36,.4);
-  }
-  .fp-label{
-    font-size:11px; letter-spacing:1px; color:var(--muted);
-    text-transform:uppercase; margin-bottom:8px;
-  }
+  .fp-title{font-size:15px; font-weight:700; color:var(--accent); margin-bottom:12px;}
   .fp-formula{
     font-family:ui-monospace,Consolas,monospace;
     font-size:15px; line-height:1.9; color:var(--text);
+    background:rgba(11,18,32,.7); border:1px solid var(--line);
+    border-radius:10px; padding:10px 14px;
   }
-  .fp-item.main .fp-formula{font-size:16px;}
   .fn-max{color:var(--gold); font-weight:700;}
-  .fn-sub{font-size:11px; color:var(--accent);}
   .fn-sym{color:var(--purple);}
   .fn-kw{color:var(--ok);}
 
-  /* ===== 二维 DP 表 ===== */
-  .table-wrap{overflow-x:auto; margin-top:14px;}
+  /* 当前步骤信息 */
+  .step-info{
+    background:rgba(251,191,36,.06); border:1px dashed rgba(251,191,36,.4);
+    border-radius:10px; padding:12px 16px; margin-top:12px;
+    font-size:14px; color:var(--muted); min-height:52px;
+    display:flex; align-items:center; gap:12px;
+  }
+  .step-info .badge{
+    background:var(--gold); color:#1c1917; padding:3px 10px;
+    border-radius:999px; font-size:12px; font-weight:700; white-space:nowrap;
+  }
+  .step-info .detail{font-family:ui-monospace,Consolas,monospace; font-size:13px;}
+
+  /* 二维表 */
+  .table-wrap{overflow-x:auto; margin-top:12px;}
   .dp-table{
     display:grid; gap:4px;
     grid-template-columns:90px repeat(var(--cols), minmax(52px,1fr));
@@ -102,9 +128,10 @@
   .dp-th{
     background:#0b1220; border:1px solid var(--line); border-radius:6px;
     padding:6px 4px; text-align:center; font-size:11px; color:var(--muted);
-    font-weight:600;
+    font-weight:600; transition:.2s;
   }
   .dp-th.row-label{text-align:left; padding-left:10px; font-size:12px;}
+  .dp-th.row-active{color:var(--gold); border-color:rgba(251,191,36,.6);}
   .dp-th.col-active{color:var(--gold); border-color:rgba(251,191,36,.6);}
   .dp-cell{
     background:#0b1220; border:1px solid var(--line); border-radius:6px;
@@ -113,51 +140,49 @@
     display:flex; align-items:center; justify-content:center;
     flex-direction:column;
   }
-  .dp-cell .val{font-size:15px;}
+  .dp-cell .val{font-size:15px; transition:.2s;}
+  .dp-cell.empty .val{color:#334155;}
   .dp-cell .tag{
     font-size:9px; margin-top:1px; opacity:0; transition:.2s;
+    color:var(--muted);
   }
   .dp-cell.up .tag{opacity:1;}
   .dp-cell.current{
     border-color:var(--gold);
-    box-shadow:0 0 14px rgba(251,191,36,.45);
-    transform:scale(1.06); z-index:3;
+    box-shadow:0 0 14px rgba(251,191,36,.55);
+    transform:scale(1.08); z-index:3;
   }
-  .dp-cell.updated{
-    border-color:rgba(34,197,94,.7);
+  .dp-cell.current .val{color:var(--gold);}
+  .dp-cell.filled{
     background:linear-gradient(180deg,#14532d,#166534);
+    border-color:rgba(34,197,94,.7);
   }
-  .dp-cell.changed{
-    border-color:rgba(34,197,94,.8);
-    background:rgba(34,197,94,.15);
-    animation:pulse .4s;
+  .dp-cell.just-filled{
+    animation:pulse .5s;
+    border-color:rgba(34,197,94,.9);
   }
-  @keyframes pulse{50%{transform:scale(1.1);}}
-  .dp-cell .from{
-    position:absolute; top:-6px; right:-4px;
-    font-size:9px; background:var(--gold); color:#1c1917;
-    padding:0 4px; border-radius:999px; font-weight:700;
-    opacity:0; transition:.2s;
+  @keyframes pulse{
+    0%{box-shadow:0 0 0 0 rgba(34,197,94,.7);}
+    100%{box-shadow:0 0 0 12px rgba(34,197,94,0);}
   }
-  .dp-cell.current .from{opacity:1;}
 
-  /* ===== 方程代入 ===== */
+  /* 方程逐行代入 */
   .eq-box{
-    min-height:170px; background:#0b1220; border:1px solid var(--line);
-    border-radius:12px; padding:16px 20px; margin-bottom:14px;
+    min-height:160px; background:#0b1220; border:1px solid var(--line);
+    border-radius:12px; padding:14px 18px; margin-top:12px;
     font-family:ui-monospace,Consolas,monospace;
     font-size:14px; line-height:2; overflow-x:auto;
   }
   .eq-line{
     opacity:0; transform:translateX(-8px);
-    animation:eqIn .28s forwards;
+    animation:eqIn .25s forwards;
     white-space:nowrap; color:var(--muted);
   }
   .eq-line.head{color:var(--text);}
   @keyframes eqIn{to{opacity:1; transform:none;}}
   .eq-line .term{
     display:inline-block; padding:0 5px; border-radius:5px;
-    color:var(--text); transition:.2s;
+    color:var(--text);
   }
   .eq-line .term.best{
     background:rgba(34,197,94,.2); color:#86efac; font-weight:700;
@@ -167,7 +192,7 @@
   .eq-line .res{color:var(--gold); font-weight:700; font-size:16px;}
   .eq-line .note{color:var(--muted); font-size:12px; margin-left:10px;}
 
-  /* ===== 一维滚动数组对比 ===== */
+  /* 一维数组 */
   .rolling-bar{
     display:flex; gap:8px; flex-wrap:wrap; margin-top:12px;
   }
@@ -177,12 +202,15 @@
   }
   .roll-cell .idx{font-size:10px; color:var(--muted);}
   .roll-cell .val{font-size:16px; font-weight:700; margin-top:2px;}
-  .roll-cell.up{border-color:rgba(34,197,94,.6); background:rgba(34,197,94,.1);}
-  .roll-cell.old{opacity:.5;}
+  .roll-cell.up{
+    border-color:rgba(34,197,94,.6);
+    background:rgba(34,197,94,.12);
+    animation:pulse .5s;
+  }
 
-  /* ===== 日志 ===== */
+  /* 日志 */
   .log{
-    height:140px; overflow-y:auto; background:#0b1220;
+    height:130px; overflow-y:auto; background:#0b1220;
     border:1px solid var(--line); border-radius:10px; padding:12px;
     font-family:ui-monospace,Consolas,monospace; font-size:13px; line-height:1.7;
   }
@@ -190,7 +218,7 @@
   @keyframes in{to{opacity:1; transform:none;}}
   .log .g{color:#86efac;} .log .r{color:#fca5a5;} .log .y{color:#fde68a;} .log .b{color:#7dd3fc;}
 
-  /* ===== 结果 ===== */
+  /* 结果 */
   .answer{
     padding:16px; border-radius:12px; text-align:center;
     background:linear-gradient(180deg,rgba(56,189,248,.12),rgba(56,189,248,.04));
@@ -205,166 +233,148 @@
     background:rgba(34,197,94,.15); border:1px solid rgba(34,197,94,.4);
     color:#bbf7d0;
   }
-  .legend{display:flex; gap:16px; flex-wrap:wrap; margin-top:10px; font-size:12px; color:var(--muted);}
-  .dot{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:6px;vertical-align:middle;}
-  .chip{
-    font-size:13px; padding:7px 12px; border-radius:999px;
-    background:#0b1220; border:1px solid var(--line); color:var(--muted);
-  }
-  .chip b{color:var(--text);}
-  .chip.ok{border-color:rgba(34,197,94,.5); color:#bbf7d0;}
-  .chip.warn{border-color:rgba(251,191,36,.5); color:#fde68a;}
 
-  .wrap, .panel, .fp-item, .table-wrap { min-width:0; }
+  .wrap, .panel, .table-wrap, .fp-formula { min-width:0; }
   .table-wrap { max-width:100%; }
   input[type=text] { max-width:100%; }
-  .fp-grid { grid-template-columns:repeat(auto-fit,minmax(min(250px,100%),1fr)); }
   .fp-formula { overflow-wrap:anywhere; }
-  select { background:#0b1220; color:var(--text); padding:8px; border:1px solid var(--line); border-radius:8px; }
-  button:focus-visible, select:focus-visible { outline:2px solid var(--gold); outline-offset:3px; }
-  @media(max-width:600px) { body{padding:12px;} .panel{padding:12px;} .eq-box{padding:12px;} }
+  .dp-cell.empty .val { color:var(--muted); }
+  .step-info, .progress-meta { flex-wrap:wrap; }
+  .step-info .detail { overflow-wrap:anywhere; min-width:0; }
+  button:focus-visible, input[type=range]:focus-visible { outline:2px solid var(--gold); outline-offset:3px; }
+  @media(max-width:600px) { body{padding:12px;} .panel{padding:12px;} .eq-box{padding:12px;} .speed-wrap{margin-left:0; flex-wrap:wrap;} }
   @media(prefers-reduced-motion:reduce) { *, *::before, *::after { animation-duration:.01ms !important; transition:none !important; } }
 </style>
 </head>
 <body>
 <div class="wrap">
-  <h1>🎒 01背包问题 · 动态规划交互演示</h1>
-  <div class="sub">每件物品只能选一次（0/1）。逐格展示二维 DP 表的填充过程，同步对比状态转移方程代入与一维滚动数组的逆序更新。</div>
+  <h1>🎒 01背包 · 单步执行动画演示</h1>
+  <div class="sub">每点一次「下一步」只计算一个格子，方程逐行代入，可自动播放、暂停、调速。</div>
 
-  <!-- ===== 输入区 ===== -->
+  <!-- 输入 -->
   <div class="panel">
     <div class="row">
-      <label for="itemsInput">物品 (体积,价值) 列表：</label>
-      <input id="itemsInput" aria-describedby="inputHelp" type="text" value="(1,2), (2,4), (3,4), (4,5)" placeholder="例如：(1,2), (2,4), (3,4), (4,5)">
-      <label for="capInput">背包容量 V：</label>
-      <input id="capInput" aria-describedby="inputHelp" type="text" value="5" placeholder="例如：5" style="width:80px;">
-      <button id="run">▶ 开始演示</button>
-      <button id="reset" class="ghost">↺ 重置</button>
-      <label for="speedInput">速度：</label>
-      <select id="speedInput"><option value="1">正常</option><option value="4">快速</option><option value="12">12倍速</option></select>
+      <label for="itemsInput">物品 (体积,价值)：</label>
+      <input id="itemsInput" aria-describedby="inputHelp" type="text" value="(1,2), (2,4), (3,4), (4,5)" placeholder="例如：(1,2), (2,4)">
+      <label for="capInput">容量 V：</label>
+      <input id="capInput" aria-describedby="inputHelp" type="text" value="5" placeholder="5" style="width:80px;">
+      <button id="initBtn" class="green">▶ 初始化</button>
+      <button id="resetBtn" class="ghost">↺ 重置</button>
     </div>
-    <p id="inputHelp" class="sub" style="margin:12px 0 0;">1至8件物品，体积、价值为1至1000的整数，容量0至30。物品格式：(1,2), (2,4)。这些数量和容量限制仅用于清晰演示。</p>
+    <p id="inputHelp" class="sub" style="margin:12px 0 0;">1至6件物品，体积和价值为1至1000的整数，容量0至10。格式：(1,2), (2,4)，支持中文括号及逗号。这些限制仅用于清晰演示。</p>
     <p id="inputError" role="alert" style="color:#fca5a5;" hidden></p>
-    <div class="row" style="margin-top:10px;">
-      <span class="chip" id="stepChip" role="status">等待开始…</span>
-      <span class="chip">f[i][j]：前 i 件物品、容量上限 j 的最大价值</span>
-      <span class="chip ok">不要求装满 · 全 0 初始化</span>
-    </div>
     <div class="items-bar" id="itemsBar"></div>
   </div>
 
-  <!-- ===== 状态转移方程 ===== -->
-  <div class="panel formula-panel">
-    <div class="fp-title">📐 状态转移方程</div>
-    <div class="fp-grid">
-      <div class="fp-item">
-        <div class="fp-label">状态定义</div>
-        <div class="fp-formula"><span class="fn-sym">f[i][j]</span> = 只考虑前 <span class="fn-sym">i</span> 件物品、容量上限 <span class="fn-sym">j</span> 时的最大价值</div>
+  <!-- 单步控件 -->
+  <div class="panel">
+    <div class="row">
+      <button id="stepBtn" class="primary">⏭ 下一步</button>
+      <button id="playBtn">▶ 自动播放</button>
+      <button id="pauseBtn" class="ghost" disabled>⏸ 暂停</button>
+      <button id="finishBtn" class="ghost">⏩ 直接完成</button>
+      <div class="speed-wrap">
+        <label for="speedRange">间隔</label>
+        <input type="range" id="speedRange" min="50" max="1200" value="450" step="50">
+        <span id="speedLabel">450ms</span>
       </div>
-      <div class="fp-item main">
-        <div class="fp-label">状态转移（j ≥ vᵢ时比较两类；j &lt; vᵢ时继承上一行）</div>
-        <div class="fp-formula">
-          <span class="fn-sym">f[i][j]</span> =
-          <span class="fn-max">max</span>{
-          <span class="fn-sym">f[i−1][j]</span> ,
-          <span class="fn-sym">f[i−1][j−v<sub>i</sub>]</span> + <span class="fn-sym">w<sub>i</sub></span> }
-        </div>
+    </div>
+    <div class="progress-wrap">
+      <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+      <div class="progress-meta">
+        <span id="progressText">第 0 / 0 步</span>
+        <span id="stateText" role="status">未初始化</span>
       </div>
-      <div class="fp-item">
-        <div class="fp-label">不选第 i 件</div>
-        <div class="fp-formula">始终允许：<span class="fn-sym">f[i−1][j]</span></div>
-      </div>
-      <div class="fp-item">
-        <div class="fp-label">选择第 i 件</div>
-        <div class="fp-formula">需 <span class="fn-kw">j ≥ v<sub>i</sub></span>：<span class="fn-sym">f[i−1][j−v<sub>i</sub>]</span> + <span class="fn-sym">w<sub>i</sub></span></div>
-      </div>
-      <div class="fp-item">
-        <div class="fp-label">边界</div>
-        <div class="fp-formula"><span class="fn-sym">f[0][j] = 0</span>，<span class="fn-sym">f[i][0] = 0</span></div>
-      </div>
-      <div class="fp-item">
-        <div class="fp-label">一维滚动（逆序）</div>
-        <div class="fp-formula"><span class="fn-sym">dp[j]</span> = <span class="fn-max">max</span>(<span class="fn-sym">dp[j]</span>, <span class="fn-sym">dp[j−v<sub>i</sub>]</span> + <span class="fn-sym">w<sub>i</sub></span>)<br><span class="fn-sub">j 从 V 递减到 v<sub>i</sub></span></div>
-      </div>
+    </div>
+    <div class="status">
+      <span class="chip">f[i][j]：前 i 件物品、容量上限 j 的最大价值</span>
+      <span class="chip ok">不要求装满 · 全 0 初始化</span>
+      <span class="chip" id="playingChip">空闲</span>
     </div>
   </div>
 
-  <!-- ===== 二维 DP 表 ===== -->
-  <div class="panel">
-    <div class="row" style="justify-content:space-between;">
-      <div style="font-size:14px;color:var(--muted);">二维 DP 表 f[i][j]（行 = 考虑前 i 件，列 = 容量上限）</div>
-      <div class="legend">
-        <span><span class="dot" style="background:#166534"></span>已更新</span>
-        <span><span class="dot" style="background:#fbbf24"></span>当前格</span>
-        <span><span class="dot" style="background:#334155"></span>尚未计算</span>
-      </div>
+  <!-- 状态转移方程 -->
+  <div class="panel formula-panel">
+    <div class="fp-title">📐 状态转移方程</div>
+    <div class="fp-formula">
+      <span class="fn-sym">f[i][j]</span> =
+      <span class="fn-max">max</span>{
+      <span class="fn-sym">f[i−1][j]</span> ,
+      <span class="fn-sym">f[i−1][j−v<sub>i</sub>]</span> + <span class="fn-sym">w<sub>i</sub></span> }
+      &nbsp;&nbsp;<span style="color:var(--muted);">（当 <span class="fn-kw">j ≥ v<sub>i</sub></span>；否则只能取左边）</span>
     </div>
+    <div class="step-info" id="stepInfo">
+      <span class="badge">就绪</span>
+      <span class="detail">点击「下一步」开始单步计算 →</span>
+    </div>
+  </div>
+
+  <!-- 二维表 -->
+  <div class="panel">
+    <div style="font-size:14px;color:var(--muted);margin-bottom:8px;">二维 DP 表 f[i][j]（黄色 = 当前格，绿色 = 已填充）</div>
     <div class="table-wrap">
       <div class="dp-table" id="dpTable"></div>
     </div>
-  </div>
-
-  <!-- ===== 方程代入 ===== -->
-  <div class="panel">
-    <div style="font-size:14px;color:var(--muted);margin-bottom:12px;">📝 当前格 · 状态转移方程代入</div>
     <div class="eq-box" id="eqBox">
-      <div style="color:var(--muted);font-size:13px;padding:6px 0;">等待开始…</div>
+      <div style="color:var(--muted);font-size:13px;">方程代入将在这里展示…</div>
     </div>
   </div>
 
-  <!-- ===== 一维滚动数组 ===== -->
+  <!-- 一维滚动 -->
   <div class="panel">
-    <div class="row" style="justify-content:space-between;">
-      <div style="font-size:14px;color:var(--muted);">🔄 一维滚动数组（每处理完一件物品后更新）</div>
-      <span class="chip warn">容量倒序 j = V → v<sub>i</sub></span>
+    <div style="font-size:14px;color:var(--muted);margin-bottom:8px;">
+      🔄 当前行的一维同步视图（按二维表逐格同步，非独立倒序计算；绿色 = 本步被提升）
     </div>
-    <div class="rolling-bar" id="rollingBar">
-      <div style="color:var(--muted);font-size:13px;padding:8px;">等待开始…</div>
-    </div>
+    <div class="rolling-bar" id="rollingBar"></div>
   </div>
 
-  <!-- ===== 日志 + 结果 ===== -->
+  <!-- 日志 + 结果 -->
   <div class="panel">
-    <div style="font-size:14px;color:var(--muted);margin-bottom:10px;">执行日志</div>
+    <div style="font-size:14px;color:var(--muted);margin-bottom:8px;">执行日志</div>
     <div class="log" id="log"></div>
   </div>
 
   <div class="panel">
-    <div class="answer" id="answer" role="status">点击「开始演示」查看最大价值与最优物品组合</div>
+    <div class="answer" id="answer" role="status">初始化后点击「下一步」或「自动播放」</div>
   </div>
 </div>
 
 <script>
 const $ = s => document.querySelector(s);
-const itemsInput = $('#itemsInput'), capInput = $('#capInput');
-const itemsBar = $('#itemsBar'), dpTable = $('#dpTable');
-const eqBox = $('#eqBox'), rollingBar = $('#rollingBar');
-const logEl = $('#log'), ansEl = $('#answer'), stepChip = $('#stepChip');
 
-let runId = 0;
-class CancelledRun extends Error {}
-const sleep = (ms, id) => new Promise(resolve => {
-  setTimeout(resolve, ms / Number($('#speedInput').value));
-}).then(() => {
-  if(id !== runId) throw new CancelledRun();
+/* ================== 全局状态 ================== */
+let items = [];
+let cap = 0;
+let f = [];            // 二维 dp 数组
+let currentI = 1;      // 下一个待计算的格子行
+let currentJ = 1;      // 下一个待计算的格子列
+let playing = false;
+let busy = false;
+let delayMs = 450;
+let generation = 0;
+let initialized = false;
+let oneDim = [];       // 一维滚动数组（与当前 f 行同步）
+
+/* ================== 工具 ================== */
+class CancelledStep extends Error {}
+const sleep = (ms, token) => new Promise(resolve => setTimeout(resolve, ms)).then(() => {
+  if(token !== generation) throw new CancelledStep();
 });
-
 function log(msg, cls=''){
   const d = document.createElement('div');
   d.className = cls;
   d.innerHTML = msg;
+  const logEl = $('#log');
   logEl.appendChild(d);
   logEl.scrollTop = logEl.scrollHeight;
 }
-
-/* ========== 解析物品 ========== */
 function parseItems(raw){
   const text = raw.trim().replace(/（/g, '(').replace(/）/g, ')').replace(/，/g, ',').replace(/；/g, ';');
   const pair = String.raw`\(\s*\d+\s*,\s*\d+\s*\)`;
   const list = new RegExp(`^${pair}(?:(?:\\s*[,;]\\s*|\\s+)${pair})*\\s*$`);
   if(!list.test(text)) throw new Error('请完整输入 (体积,价值) 列表，以逗号、分号或空格分隔，不要包含其他文字。');
   const items = [...text.matchAll(/\(\s*(\d+)\s*,\s*(\d+)\s*\)/g)].map(m => ({v:Number(m[1]), w:Number(m[2])}));
-  if(items.length < 1 || items.length > 8) throw new Error('为便于观察，请输入1至8件物品。');
+  if(items.length < 1 || items.length > 6) throw new Error('为便于观察，请输入1至6件物品。');
   if(items.some(it => !Number.isSafeInteger(it.v) || !Number.isSafeInteger(it.w) || it.v < 1 || it.v > 1000 || it.w < 1 || it.w > 1000)){
     throw new Error('体积和价值必须为1至1000的整数。');
   }
@@ -374,90 +384,228 @@ function parseItems(raw){
 function parseInputs(itemsText, capText){
   const items = parseItems(itemsText);
   const text = capText.trim(), cap = Number(text);
-  if(!/^\d+$/.test(text) || !Number.isSafeInteger(cap) || cap > 30) throw new Error('容量必须为0至30的整数。');
+  if(!/^\d+$/.test(text) || !Number.isSafeInteger(cap) || cap > 10) throw new Error('容量必须为0至10的整数。');
   return {items, cap};
 }
 
-/* ========== 渲染物品栏 ========== */
-function renderItems(items, activeIdx=-1){
-  itemsBar.innerHTML = '';
+
+/* ================== 初始化 ================== */
+function init(){
+  ++generation;
+  playing = false;
+  busy = false;
+  initialized = false;
+  let input;
+  try {
+    input = parseInputs($('#itemsInput').value, $('#capInput').value);
+  } catch(error) {
+    $('#inputError').textContent = error.message;
+    $('#inputError').hidden = false;
+    updateControls();
+    $('#stateText').textContent = '输入无效，请修改后初始化';
+    return false;
+  }
+  $('#inputError').hidden = true;
+  initialized = true;
+  const parsed = input.items, c = input.cap;
+
+  items = parsed;
+  cap = c;
+  currentI = cap === 0 ? items.length + 1 : 1;
+  currentJ = 1;
+  busy = false;
+
+  // dp 数组
+  f = Array.from({length: items.length + 1}, () => new Array(cap + 1).fill(0));
+
+  // 一维数组初始为 0（对应 f[0][*]）
+  oneDim = new Array(cap + 1).fill(0);
+
+  // 清空日志
+  $('#log').innerHTML = '';
+  $('#eqBox').innerHTML = '<div style="color:var(--muted);font-size:13px;">方程代入将在这里展示…</div>';
+  setAnswer('初始化完成，点击「下一步」开始单步计算');
+
+  // 渲染物品栏
+  renderItems(-1);
+
+  // 渲染二维表
+  renderTable();
+
+  // 渲染一维数组
+  renderOneDim(new Set());
+
+  // 重置按钮状态
+  updateControls();
+  updateProgress();
+  updateStepInfo();
+  if(isDone()) onFinish();
+  return true;
+}
+
+/* ================== 渲染物品栏 ================== */
+function renderItems(activeIdx){
+  const bar = $('#itemsBar');
+  bar.innerHTML = '';
   items.forEach((it, i) => {
     const el = document.createElement('div');
     el.className = 'item-card' + (i === activeIdx ? ' active' : '');
     el.innerHTML = `<div class="name">物品 ${i+1}</div>
       <div class="meta">体积 ${it.v} · 价值 ${it.w}</div>`;
-    itemsBar.appendChild(el);
+    bar.appendChild(el);
   });
 }
 
-/* ========== 构建二维表 ========== */
-function buildTable(items, cap){
-  const n = items.length;
-  dpTable.innerHTML = '';
-  dpTable.style.setProperty('--cols', cap + 1);
+/* ================== 渲染二维表 ================== */
+function renderTable(){
+  const tbl = $('#dpTable');
+  tbl.innerHTML = '';
+  tbl.style.setProperty('--cols', cap + 1);
 
-  // 表头行
+  // 表头
   const corner = document.createElement('div');
   corner.className = 'dp-th row-label';
   corner.textContent = 'f[i][j]';
-  dpTable.appendChild(corner);
+  tbl.appendChild(corner);
   for(let j = 0; j <= cap; j++){
     const th = document.createElement('div');
     th.className = 'dp-th';
     th.id = 'colh'+j;
     th.textContent = 'j='+j;
-    dpTable.appendChild(th);
+    tbl.appendChild(th);
   }
 
-  // 第 0 行
+  // 第 0 行（前 0 件物品，全 0）
   const row0Label = document.createElement('div');
   row0Label.className = 'dp-th row-label';
   row0Label.textContent = '0 件';
-  dpTable.appendChild(row0Label);
+  tbl.appendChild(row0Label);
   for(let j = 0; j <= cap; j++){
     const cell = document.createElement('div');
-    cell.className = 'dp-cell';
+    cell.className = 'dp-cell filled';
     cell.id = 'cell0_'+j;
     cell.innerHTML = `<span class="val">0</span>`;
-    dpTable.appendChild(cell);
+    tbl.appendChild(cell);
   }
 
   // 物品行
-  for(let i = 1; i <= n; i++){
+  for(let i = 1; i <= items.length; i++){
     const label = document.createElement('div');
     label.className = 'dp-th row-label';
     label.id = 'rowLabel'+i;
     label.innerHTML = `物品${i}<br><span style="font-size:10px;">(${items[i-1].v},${items[i-1].w})</span>`;
-    dpTable.appendChild(label);
+    tbl.appendChild(label);
 
     for(let j = 0; j <= cap; j++){
       const cell = document.createElement('div');
-      cell.className = 'dp-cell';
+      cell.className = 'dp-cell empty';
       cell.id = `cell${i}_${j}`;
-      cell.innerHTML = `<span class="from"></span><span class="val">${j === 0 ? 0 : "?"}</span><span class="tag"></span>`;
-      dpTable.appendChild(cell);
+      // j=0 列边界为 0，直接预填
+      if(j === 0){
+        cell.classList.remove('empty');
+        cell.classList.add('filled');
+        cell.innerHTML = `<span class="val">0</span>`;
+      }else{
+        cell.innerHTML = `<span class="val">?</span><span class="tag"></span>`;
+      }
+      tbl.appendChild(cell);
     }
   }
 }
 
-/* ========== 更新单元格 ========== */
-function setCell(i, j, val, changed=false, note=''){
-  const cell = $(`#cell${i}_${j}`);
-  if(!cell) return;
-  cell.querySelector('.val').textContent = val;
-  if(changed){
-    cell.classList.add('updated','changed');
-    setTimeout(() => cell.classList.remove('changed'), 450);
-  }
-  if(note){
-    const tag = cell.querySelector('.tag');
-    tag.textContent = note;
-    cell.classList.add('up');
+/* ================== 一维数组渲染 ================== */
+function renderOneDim(upSet){
+  const bar = $('#rollingBar');
+  bar.innerHTML = '';
+  for(let j = 0; j <= cap; j++){
+    const el = document.createElement('div');
+    el.className = 'roll-cell' + (upSet.has(j) ? ' up' : '');
+    el.innerHTML = `<div class="idx">j=${j}</div><div class="val">${oneDim[j]}</div>`;
+    bar.appendChild(el);
   }
 }
 
-/* ========== 方程逐行代入 ========== */
-async function showEquation(i, j, item, prevVal, takeVal, bestVal, id){
+/* ================== 控件状态 ================== */
+function isDone(){
+  return currentI > items.length;
+}
+function totalSteps(){
+  return items.length * cap;
+}
+function completedSteps(){
+  if(items.length === 0) return 0;
+  if(isDone()) return totalSteps();
+  return (currentI - 1) * cap + (currentJ - 1);
+}
+function updateControls(){
+  const unavailable = !initialized || isDone();
+  $('#stepBtn').disabled = unavailable || busy || playing;
+  $('#playBtn').disabled = unavailable || busy || playing;
+  $('#pauseBtn').disabled = !playing;
+  $('#finishBtn').disabled = unavailable || busy || playing;
+  $('#initBtn').disabled = false; // 重新初始化会取消旧任务。
+  $('#playingChip').className = playing ? 'chip playing' : 'chip';
+  $('#playingChip').textContent = playing ? '▶ 自动播放中' : (busy ? '当前格完成后暂停' : (isDone() ? '已完成' : '空闲'));
+}
+function updateProgress(){
+  const total = totalSteps();
+  const done = completedSteps();
+  const pct = total === 0 ? (isDone() ? 100 : 0) : Math.round(done / total * 100);
+  $('#progressFill').style.width = pct + '%';
+  $('#progressText').textContent = `第 ${done} / ${total} 步（${pct}%）`;
+  $('#stateText').textContent = isDone() ? '✓ 已完成' : (playing ? '自动播放中' : '就绪');
+}
+function updateStepInfo(){
+  const info = $('#stepInfo');
+  if(items.length === 0){
+    info.innerHTML = '<span class="badge">就绪</span><span class="detail">点击「初始化」先设置参数</span>';
+    return;
+  }
+  if(isDone()){
+    info.innerHTML = '<span class="badge" style="background:var(--ok);color:#052e16;">完成</span>'
+      + `<span class="detail">最终 f[${items.length}][${cap}] = ${f[items.length][cap]}</span>`;
+    return;
+  }
+  const item = items[currentI - 1];
+  info.innerHTML = `<span class="badge">下一步</span>
+    <span class="detail">计算 f[${currentI}][${currentJ}] &nbsp;·&nbsp; 物品 ${currentI}（体积 ${item.v}，价值 ${item.w}）</span>`;
+}
+
+/* ================== 单个格子的计算 + 动画 ================== */
+async function computeOneCell(token){
+  if(isDone()) return;
+
+  const i = currentI, j = currentJ;
+  const item = items[i - 1];
+  const cell = $(`#cell${i}_${j}`);
+  const rowLabel = $('#rowLabel'+i);
+  const colHead = $('#colh'+j);
+
+  // 高亮行/列
+  rowLabel.classList.add('row-active');
+  colHead.classList.add('col-active');
+
+  // 高亮当前格子
+  cell.classList.add('current');
+
+  // 计算
+  const prev = f[i - 1][j];
+  let take = null, best, note = '', takeInf = false;
+  if(j >= item.v){
+    take = f[i - 1][j - item.v] + item.w;
+    if(take > prev){ best = take; note = '选'; }
+    else { best = prev; note = '不选'; }
+  }else{
+    best = prev;
+    note = '不选';
+    takeInf = true;
+  }
+
+  // 展示物品高亮
+  renderItems(i - 1);
+
+  // ===== 方程逐行代入 =====
+  const eqBox = $('#eqBox');
   eqBox.innerHTML = '';
   const appendLine = (html, isHead=false) => {
     const d = document.createElement('div');
@@ -467,158 +615,134 @@ async function showEquation(i, j, item, prevVal, takeVal, bestVal, id){
     eqBox.scrollTop = eqBox.scrollHeight;
   };
 
-  const v = item.v, w = item.w;
+  const p1 = Math.max(90, delayMs * 0.25);
 
-  if(j < v){
-    appendLine(`f[${i}][${j}] = f[${i-1}][${j}]（容量 ${j} 小于体积 ${v}，不能选择当前物品）`, true);
-    appendLine(`&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;= max{ f[${i-1}][${j}] , <span class="term skip">装不下</span> }`);
-    await sleep(180, id);
-    appendLine(`&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;= max{ ${prevVal} , — } = <span class="res">${bestVal}</span>`, true);
+  appendLine(j < item.v
+    ? `f[${i}][${j}] = f[${i-1}][${j}]（容量 ${j} 小于体积 ${item.v}，只能不选）`
+    : `f[${i}][${j}] = max{ f[${i-1}][${j}] , f[${i-1}][${j}−${item.v}] + ${item.w} }`, true);
+  await sleep(p1, token);
+
+  if(j < item.v){
+    appendLine(`&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;= max{ f[${i-1}][${j}] , <span class="term skip">j < v<sub>${i}</sub>，装不下</span> }`);
+    await sleep(p1, token);
+    appendLine(`&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;= max{ ${prev} , — } = <span class="res">${best}</span>`, true);
   }else{
-    appendLine(`f[${i}][${j}] = max{ f[${i-1}][${j}] , f[${i-1}][${j}−${v}] + ${w} }`, true);
-    await sleep(180, id);
-    appendLine(`&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;= max{ f[${i-1}][${j}] , f[${i-1}][${j-v}] + ${w} }`);
-    await sleep(180, id);
-    appendLine(`&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;= max{ ${prevVal} , ${takeVal - w} + ${w} }`);
-    await sleep(180, id);
-    appendLine(`&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;= max{ ${prevVal} , ${takeVal} }`);
-    await sleep(180, id);
-    const bestIsTake = takeVal > prevVal;
-    const prevTerm = bestIsTake ? `<span class="term">${prevVal}</span>` : `<span class="term best">${prevVal}</span>`;
-    const takeTerm = bestIsTake ? `<span class="term best">${takeVal}</span>` : `<span class="term">${takeVal}</span>`;
-    appendLine(`&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;= max{ ${prevTerm} , ${takeTerm} } = <span class="res">${bestVal}</span>`, true);
+    appendLine(`&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;= max{ ${prev} , ${take - item.w} + ${item.w} }`);
+    await sleep(p1, token);
+    const bestIsTake = take > prev;
+    const pTerm = bestIsTake ? `<span class="term">${prev}</span>` : `<span class="term best">${prev}</span>`;
+    const tTerm = bestIsTake ? `<span class="term best">${take}</span>` : `<span class="term">${take}</span>`;
+    appendLine(`&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;= max{ ${pTerm} , ${tTerm} } = <span class="res">${best}</span>`, true);
   }
-  await sleep(160, id);
+  await sleep(p1, token);
+
+  // ===== 写入 f[i][j] =====
+  f[i][j] = best;
+  const wasEmpty = cell.classList.contains('empty');
+  cell.classList.remove('empty','current');
+  cell.classList.add('filled','just-filled');
+  cell.querySelector('.val').textContent = best;
+  const tag = cell.querySelector('.tag');
+  if(tag) tag.textContent = note;
+
+  // ===== 同步一维数组 =====
+  const upSet = new Set();
+  if(oneDim[j] !== best){
+    oneDim[j] = best;
+    upSet.add(j);
+    renderOneDim(upSet);
+  }else{
+    renderOneDim(upSet);
+  }
+
+  // 日志
+  log(`<span class="y">→</span> f[${i}][${j}] = ${best}（${note === '选' ? '拿物品'+i : '不拿物品'+i}）`);
+
+  await sleep(Math.max(80, delayMs * 0.2), token);
+
+  cell.classList.remove('just-filled');
+  rowLabel.classList.remove('row-active');
+  colHead.classList.remove('col-active');
+
+  // 推进指针
+  if(currentJ >= cap){
+    currentI++;
+    currentJ = 1;
+  }else{
+    currentJ++;
+  }
+
+  renderItems(-1);
+  updateProgress();
+  updateStepInfo();
+
+  if(isDone()){
+    onFinish();
+  }
 }
 
-/* ========== 渲染一维数组 ========== */
-function renderRolling(dp, cap, upSet=new Set()){
-  rollingBar.innerHTML = '';
-  for(let j = 0; j <= cap; j++){
-    const el = document.createElement('div');
-    el.className = 'roll-cell' + (upSet.has(j) ? ' up' : '');
-    el.innerHTML = `<div class="idx">j=${j}</div><div class="val">${dp[j]}</div>`;
-    rollingBar.appendChild(el);
-  }
-}
-
-/* ========== 主流程 ========== */
-async function run(){
-  const id = ++runId;
-  let input;
+/* ================== 单步与播放控制 ================== */
+async function drive(automatic){
+  if(!initialized || busy || playing || isDone()) return;
+  const token = generation;
+  busy = true;
+  playing = automatic;
+  updateControls(); updateProgress();
   try {
-    input = parseInputs(itemsInput.value, capInput.value);
+    do {
+      await computeOneCell(token);
+      if(!playing || isDone()) break;
+      await sleep(Math.max(30, delayMs * 0.4), token);
+    } while(playing && !isDone());
   } catch(error) {
-    $('#inputError').textContent = error.message;
-    $('#inputError').hidden = false;
-    stepChip.textContent = '已停止，请修正输入后重新开始';
-    return;
-  }
-  $('#inputError').hidden = true;
-  try {
-    await animate(input.items, input.cap, id);
-  } catch(error) {
-    if(!(error instanceof CancelledRun)) {
+    if(!(error instanceof CancelledStep)) {
       console.error(error);
-      stepChip.textContent = '演示中断，请重置后重试';
+      setAnswer('演示中断，请重新初始化。');
+    }
+  } finally {
+    if(token === generation){
+      busy = false;
+      playing = false;
+      updateControls(); updateProgress();
     }
   }
 }
+function stepForward(){ return drive(false); }
+function autoPlay(){ return drive(true); }
+function pausePlay(){
+  playing = false;
+  updateControls(); updateProgress();
+}
 
-async function animate(items, cap, id){
-  logEl.innerHTML = '';
-  eqBox.innerHTML = '<div style="color:var(--muted);font-size:13px;padding:6px 0;">计算中…</div>';
-  ansEl.className = 'answer';
-  ansEl.textContent = '计算中…';
-  stepChip.textContent = '开始…';
-
-  const n = items.length;
-  renderItems(items, -1);
-  buildTable(items, cap);
-  log(`<span class="b">▶</span> 物品：${items.map((it,k)=>`#${k+1}(${it.v},${it.w})`).join('  ')}  |  容量 V = ${cap}`);
-  log(`<span class="b">▶</span> 初始化：f[0][*] = 0，f[*][0] = 0`);
-
-  // 二维 DP 数组
-  const f = Array.from({length: n+1}, () => new Array(cap+1).fill(0));
-  const baseDelay = (n * (cap+1)) > 80 ? 45 : 90;
-
-  // 一维滚动数组
-  const dp1 = new Array(cap+1).fill(0);
-  renderRolling(dp1, cap);
-
-  // ===== 逐物品 =====
-  for(let i = 1; i <= n; i++){
-    const item = items[i-1];
-    renderItems(items, i-1);
-    log(`<span class="y">→</span> 处理物品 ${i}：体积 ${item.v}，价值 ${item.w}`);
-
-    // 标记当前行
-    const rowLabel = $('#rowLabel'+i);
-    if(rowLabel) rowLabel.style.color = 'var(--gold)';
-
-    for(let j = 0; j <= cap; j++){
-      const cell = $(`#cell${i}_${j}`);
-      cell.classList.add('current');
-      cell.querySelector('.from').textContent = j >= item.v ? '选?' : '';
-
-      const prevVal = f[i-1][j];
-      let takeVal = -Infinity, bestVal = prevVal, note = '';
-
-      if(j >= item.v){
-        takeVal = f[i-1][j - item.v] + item.w;
-        if(takeVal > prevVal){
-          bestVal = takeVal;
-          note = '选';
-        }else{
-          note = '不选';
-        }
-      }else{
-        note = '不选';
-      }
-
-      // 方程代入
-      await showEquation(i, j, item, prevVal, takeVal, bestVal, id);
-
-      // 写入
-      f[i][j] = bestVal;
-      setCell(i, j, bestVal, bestVal !== prevVal, note);
-
-      cell.classList.remove('current');
-      await sleep(baseDelay * 0.35, id);
-    }
-
-    // ===== 一维滚动：处理完该物品后，用倒序更新并对比 =====
-    const upSet = new Set();
-    const snapshots = [];
-    for(let j = cap; j >= item.v; j--){
-      const before = dp1[j];
-      dp1[j] = Math.max(dp1[j], dp1[j - item.v] + item.w);
-      if(dp1[j] !== before){
-        upSet.add(j);
-        snapshots.push({ j, before, after: dp1[j] });
-      }
-    }
-    if(upSet.size > 0){
-      renderRolling(dp1, cap, upSet);
-      await sleep(280, id);
-      log(`&nbsp;&nbsp;<span class="g">✓</span> 一维倒序更新 j=${[...upSet].sort((a,b)=>b-a).join(', ')}`);
-      for(const sn of snapshots){
-        log(`&nbsp;&nbsp;&nbsp;&nbsp;dp[${sn.j}]：${sn.before} → <b>${sn.after}</b>`);
-      }
-    }else{
-      log(`&nbsp;&nbsp;（本次无容量收益提升）`);
-    }
-    // 高亮对比结束后恢复
-    setTimeout(() => { if(id === runId) renderRolling(dp1, cap); }, 900 / Number($('#speedInput').value));
-
-    if(rowLabel) rowLabel.style.color = '';
-    await sleep(200, id);
+/* 直接完成剩余格子，不等待逐行动画。 */
+function finishAll(){
+  if(!initialized || busy || playing || isDone()) return;
+  while(!isDone()){
+    const i = currentI, j = currentJ, item = items[i - 1];
+    const prev = f[i - 1][j];
+    const take = j >= item.v ? f[i - 1][j - item.v] + item.w : -Infinity;
+    f[i][j] = Math.max(prev, take);
+    const cell = $(`#cell${i}_${j}`);
+    cell.classList.remove('empty', 'current');
+    cell.classList.add('filled');
+    cell.querySelector('.val').textContent = f[i][j];
+    const tag = cell.querySelector('.tag');
+    if(tag) tag.textContent = take > prev ? '选' : '不选';
+    if(currentJ >= cap){ currentI++; currentJ = 1; }
+    else currentJ++;
   }
+  oneDim = f[items.length].slice();
+  renderOneDim(new Set()); renderItems(-1);
+  $('#eqBox').textContent = '剩余格子已按同一二维递推完成，可重置后单步观察公式代入。';
+  updateControls(); updateProgress(); updateStepInfo(); onFinish();
+}
 
-  // ===== 回溯最优物品 =====
+/* ================== 结束处理 ================== */
+function onFinish(){
+  // 回溯找最优物品
   const selected = [];
   let remain = cap;
-  for(let i = n; i >= 1; i--){
+  for(let i = items.length; i >= 1; i--){
     if(f[i][remain] !== f[i-1][remain]){
       selected.push(i);
       remain -= items[i-1].v;
@@ -626,38 +750,52 @@ async function animate(items, cap, id){
   }
   selected.reverse();
 
-  // ===== 结果 =====
-  const ans = f[n][cap];
+  const ans = f[items.length][cap];
   const usedVolume = selected.reduce((sum, idx) => sum + items[idx - 1].v, 0);
-  const selectedInfo = selected.map(idx => {
+  const info = selected.map(idx => {
     const it = items[idx-1];
     return `<span>物品${idx} (体积${it.v}·价值${it.w})</span>`;
   }).join('');
 
-  ansEl.className = 'answer';
-  ansEl.innerHTML = `最大价值：<b>${ans}</b>
-    <div class="path">${selectedInfo || '<span style="border-color:var(--line);background:transparent;color:var(--muted);">未选择任何物品</span>'}</div>
-    <div style="font-size:12px;margin-top:8px;color:var(--muted);">f[${n}][${cap}] = ${ans}；已用体积 ${usedVolume} / ${cap}（不要求装满，等值时优先不选当前物品）</div>`;
-  stepChip.textContent = '计算完成';
-  log(`<span class="g">✓</span> 最终 f[${n}][${cap}] = <b>${ans}</b>，最优物品：${selected.length ? selected.map(x=>'#'+x).join(', ') : '无'}`);
+  setAnswer(`最大价值：<b>${ans}</b>
+    <div class="path">${info || '<span style="border-color:var(--line);background:transparent;color:var(--muted);">未选择任何物品</span>'}</div>
+    <div style="font-size:12px;margin-top:8px;color:var(--muted);">f[${items.length}][${cap}] = ${ans}；已用体积 ${usedVolume} / ${cap}（等值时优先不选当前物品）</div>`);
+
+  $('#stepInfo').innerHTML = `<span class="badge" style="background:var(--ok);color:#052e16;">完成</span>
+    <span class="detail">最终 f[${items.length}][${cap}] = ${ans}，最优物品：${selected.length ? selected.map(x=>'#'+x).join(', ') : '无'}</span>`;
+
+  log(`<span class="g">✓</span> 全部完成，f[${items.length}][${cap}] = <b>${ans}</b>`);
 }
 
-/* ========== 事件 ========== */
-$('#run').addEventListener('click', run);
-$('#reset').addEventListener('click', () => {
-  ++runId;
-  $('#inputError').hidden = true;
-  dpTable.innerHTML = '';
-  itemsBar.innerHTML = '';
-  rollingBar.innerHTML = '<div style="color:var(--muted);font-size:13px;padding:8px;">等待开始…</div>';
-  eqBox.innerHTML = '<div style="color:var(--muted);font-size:13px;padding:6px 0;">等待开始…</div>';
-  logEl.innerHTML = '';
-  ansEl.className = 'answer';
-  ansEl.textContent = '点击「开始演示」查看最大价值与最优物品组合';
-  stepChip.textContent = '等待开始…';
+/* ================== 结果区 ================== */
+function setAnswer(html){
+  const el = $('#answer');
+  if(typeof html === 'string' && html.includes('<b>')){
+    el.innerHTML = html;
+  }else{
+    el.textContent = html;
+  }
+}
+
+/* ================== 事件绑定 ================== */
+$('#initBtn').addEventListener('click', () => {
+  if(init()) log('<span class="b">▶</span> 初始化完成：' + items.map((it,k)=>`#${k+1}(${it.v},${it.w})`).join(' '));
 });
-itemsInput.addEventListener('keydown', e => { if(e.key === 'Enter') run(); });
-capInput.addEventListener('keydown', e => { if(e.key === 'Enter') run(); });
+$('#resetBtn').addEventListener('click', () => {
+  if(init()) log('<span class="b">↺</span> 已按当前输入重置');
+});
+$('#stepBtn').addEventListener('click', () => { void stepForward(); });
+$('#playBtn').addEventListener('click', () => { void autoPlay(); });
+$('#pauseBtn').addEventListener('click', pausePlay);
+$('#finishBtn').addEventListener('click', finishAll);
+$('#speedRange').addEventListener('input', e => {
+  delayMs = Number(e.target.value);
+  $('#speedLabel').textContent = delayMs + 'ms';
+});
+for(const name of ['itemsInput', 'capInput']){
+  $('#'+name).addEventListener('keydown', e => { if(e.key === 'Enter') init(); });
+}
+window.addEventListener('DOMContentLoaded', () => { init(); });
 </script>
 </body>
 </html>

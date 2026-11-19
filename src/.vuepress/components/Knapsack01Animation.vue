@@ -58,7 +58,7 @@ onBeforeUnmount(() => {
 <template>
   <section ref="container" class="knapsack-01-animation" aria-label="01背包交互动画">
     <div class="knapsack-01-toolbar">
-      <span>逐格填二维表，对照一维容量倒序更新，恢复一种最优物品组合；物品从1开始编号。</span>
+      <span>每点“下一步”计算一格，支持自动播放、暂停和方案恢复；物品从1开始编号。</span>
       <button type="button" :aria-pressed="fullScreen" @click="toggleFullscreen">
         {{ fullScreen ? "退出全屏" : "全屏演示" }}
       </button>
@@ -66,7 +66,7 @@ onBeforeUnmount(() => {
     <p v-if="feedback" class="knapsack-01-feedback" role="status">{{ feedback }}</p>
     <iframe
       ref="frame"
-      title="01背包：二维填表、一维倒序与最优物品组合"
+      title="01背包：单步填表、同步视图与最优物品组合"
       :srcdoc="animationHtml"
       :style="{ height: `${frameHeight}px` }"
       @load="onFrameLoad"

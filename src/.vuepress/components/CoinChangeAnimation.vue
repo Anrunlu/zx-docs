@@ -58,7 +58,7 @@ onBeforeUnmount(() => {
 <template>
   <section ref="container" class="coin-change-animation" aria-label="硬币找零交互动画">
     <div class="coin-change-toolbar">
-      <span>逐金额展开状态转移方程，比较候选并核对最少枚数；支持自定义面额与目标金额。</span>
+      <span>每点“下一步”计算一个金额，支持暂停、自动播放和最优组合恢复。</span>
       <button type="button" :aria-pressed="fullScreen" @click="toggleFullscreen">
         {{ fullScreen ? "退出全屏" : "全屏演示" }}
       </button>
@@ -66,7 +66,7 @@ onBeforeUnmount(() => {
     <p v-if="feedback" class="coin-change-feedback" role="status">{{ feedback }}</p>
     <iframe
       ref="frame"
-      title="硬币找零：逐金额填表、候选比较与最少枚数"
+      title="硬币找零：单步填表、候选比较与最优组合"
       :srcdoc="animationHtml"
       :style="{ height: `${frameHeight}px` }"
       @load="onFrameLoad"
